@@ -1,0 +1,24 @@
+<section class="auth__form">
+    <div class="auth__content">
+        <h1 class="w-full text-3xl font-bold"><%= gettext "Confirm account" %></h1>
+        <p class="text-lg text-low mb-2">
+            <%= gettext("You already confirmed your account?") %>
+            <%= live_patch gettext("Sign in"), to: Routes.auth_login_path(@socket, :login), class: "text-primary underline"  %>
+        </p>
+        <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id="confirm-alerts" />
+
+        <.form let={f} for={@changeset} phx-submit="update" phx-change="validate" class="relative w-full space-y-4">
+           <div class="relative">
+                <%= label f, :email, gettext("Email"), class: "font-medium text-gray-900" %>
+                <%= email_input f, :email, placeholder: gettext("Enter Your Email Address"), required: true %>
+                <%= error_tag f, :email, 1 %>
+            </div>
+       
+            <div>
+              <button type="submit" class="btn primary"><%= gettext "Confirm my account" %></button>
+            </div>
+        </.form>
+    </div>
+</section>
+
+

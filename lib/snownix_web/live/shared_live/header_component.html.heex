@@ -1,0 +1,24 @@
+<section class="header relative text-gray-700  body-font">
+    <div class="flex flex-col flex-wrap items-center justify-between py-4 mx-auto md:flex-row container">
+        <%= live_redirect to: "/", class: "logo relative " do %>
+            Snownix
+            <span class="text-primary">.</span>
+        <% end %>
+        <nav class="top-0 left-0 z-0 flex items-center justify-center w-full h-full -ml-0 space-x-5 text-base md:-ml-5 md:absolute py-4 md:py-0">
+            
+        </nav>
+        <div class="flex flex-col space-y-3 md:space-y-0 md:flex-row relative  items-center space-x-3 md:ml-5 lg:justify-end">
+            <div class="auth__menu">
+                <%= if @current_user do %>
+                    <.live_component 
+                        id="user-menu"
+                        current_user={@current_user}
+                        module={SnownixWeb.SharedLive.UserMenuComponent}/>
+                <% else %>
+                    <%= live_redirect gettext("Sign in"), to: Routes.auth_login_path(@socket, :login) , class: "btn"%>
+                    <%= live_redirect gettext("Sign up"), to: Routes.auth_register_path(@socket, :register), class: "btn primary"  %>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</section>

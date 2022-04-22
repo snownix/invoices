@@ -1,0 +1,9 @@
+{
+  "skip_files": [
+    "test/",
+    "lib/snownix_web.ex",
+    "lib/snownix_web/application.ex",
+    "lib/snownix_web/telemetry.ex",
+    "lib/snownix_web/router.ex"
+  ]
+}

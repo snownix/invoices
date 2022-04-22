@@ -1,0 +1,34 @@
+<section class="auth__form">
+    <div class="auth__content">
+        <h1 class="w-full text-3xl font-bold"><%= gettext "Sign in" %></h1>
+        <p class="text-lg text-low mb-2">
+            <%= gettext "Don’t have an account?" %>
+            <%= live_patch gettext("Sign up") , to: Routes.auth_register_path(@socket, :register) %>
+        </p>
+        <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id="alerts" />
+
+        <.form let={f} for={@changeset} 
+            phx-submit="create" phx-change="validate" class="relative w-full space-y-4" 
+            phx-trigger-action={@trigger_submit} action={Routes.user_session_path(@socket, :create)}>
+              <div class="relative">
+                <%= label f, :email, gettext("Email") , class: "font-medium text-gray-900" %>
+                <%= email_input f, :email, placeholder: gettext("Enter Your Email Address"), required: true, phx_debounce: "blur" %>
+            </div>
+            <div class="relative">
+                <%= label f, :password, gettext("Password") , class: "font-medium text-gray-900" %>
+                <%= password_input f, :password, placeholder: gettext("Password"), required: true, value: input_value(f, :password), phx_throttle: 1000 %>
+                <%= error_tag f, :password %>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between space-y-2 md:space-y-0">
+                <div class="checkbox">
+                    <%= checkbox f, :remember_me  %>
+                    <label for="user_remember_me" >
+                        <%= gettext "Remember me" %>
+                    </label>
+                </div>
+            <%= live_patch gettext("Forgot password?") , to: Routes.auth_forgot_password_path(@socket, :forgot), class: "text-sm" %>
+            </div>
+            <button type="submit" class="btn primary w-full" disabled={length(f.errors) > 0}><%= gettext("Login") %></button>
+        </.form>
+    </div>
+</section>

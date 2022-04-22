@@ -1,0 +1,321 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "./sidebar.css";
+
+html {
+  @apply font-primary scroll-smooth text-black;
+}
+
+input,
+textarea,
+button,
+select,
+.btn {
+  @apply px-4 py-2.5 rounded-md;
+  @apply inline-flex items-center justify-center;
+  @apply text-base font-medium leading-6;
+}
+
+input,
+textarea,
+select {
+  @apply w-full;
+}
+
+input,
+textarea,
+.input__multiselect {
+  @apply focus:ring-gray-100 focus:border-gray-100;
+  @apply dark:placeholder-gray-400 dark:text-white;
+  @apply bg-gray-50 bg-opacity-50 border border-gray-300 text-gray-900 text-sm rounded-lg block;
+  @apply dark:focus:ring-gray-100 dark:focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600;
+}
+
+/**
+ * -----------------------
+ * Buttons
+ * ----------------------- */
+.btn {
+  @apply inline-flex justify-center shadow-sm cursor-pointer space-x-1;
+  @apply border bg-opacity-95 hover:bg-opacity-100 focus:ring-4;
+
+  @apply focus:ring-blue-300 font-medium rounded-lg text-sm;
+  @apply hover:bg-gray-100 hover:text-blue-700 dark:text-white dark:hover:text-gray-700;
+}
+
+.btn.dark {
+  @apply text-light;
+}
+.btn.primary {
+  @apply bg-primary text-light border-none;
+  @apply hover:bg-opacity-90;
+}
+.btn:disabled {
+  @apply bg-gray-100 text-dark cursor-default;
+}
+
+.btn.icon > span {
+  @apply transition-all duration-1000 opacity-0 w-0;
+}
+.btn.icon:hover > span,
+.btn.icon:focus span {
+  @apply opacity-100 duration-200 transition-all w-full;
+}
+
+/** 
+* -----------------------
+* Select
+* ----------------------- */
+select {
+  @apply border;
+}
+/** 
+* -----------------------
+* Checkbox
+* ----------------------- */
+.checkbox {
+  @apply flex items-center;
+}
+
+.checkbox label {
+  @apply ml-3 text-sm font-medium text-black;
+  @apply dark:text-gray-300;
+}
+
+.checkbox input[type="checkbox"] {
+  @apply w-4 h-4 text-primary bg-gray-100 rounded border-gray-300 focus:ring-primary;
+  @apply dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-1 dark:bg-gray-700 dark:border-gray-600;
+}
+
+/** 
+* -----------------------
+* Alerts
+* ----------------------- */
+.alert {
+  @apply p-4 py-3 text-base rounded-lg w-full flex items-center my-5;
+}
+.alert svg {
+  @apply mr-2;
+}
+
+.alerts {
+  transition-property: transform;
+  transition-duration: 2s;
+  transition-delay: 1s;
+  @apply flex flex-col w-full;
+}
+
+.alert-danger {
+  @apply text-red-700 bg-red-100 dark:bg-red-200 dark:text-red-800;
+}
+.alert-info {
+  @apply text-blue-700 bg-blue-100 dark:bg-blue-200 dark:text-blue-800;
+}
+.alert-warn {
+  @apply text-orange-700 bg-orange-100 dark:bg-orange-200 dark:text-orange-800;
+}
+.alert-success {
+  @apply text-green-700 bg-green-100 dark:bg-green-200 dark:text-green-800;
+}
+.invalid-feedback {
+  @apply text-sm;
+  @apply text-red-700 dark:text-red-800;
+}
+
+/** 
+* -----------------------
+* Containers
+* ----------------------- */
+.container {
+  @apply max-w-7xl px-4 md:px-8;
+}
+
+main.container {
+  @apply mt-4 md:mt-10;
+}
+
+.header {
+  @apply border-b border-gray-100;
+}
+.header nav a {
+  @apply relative font-medium leading-6;
+  @apply hover:text-gray-900;
+  @apply text-gray-600 transition duration-150 ease-out;
+}
+
+.logo {
+  @apply flex items-center w-auto text-2xl font-extrabold leading-none text-black select-none;
+}
+
+/** 
+* -------------------------
+* Menu
+* ------------------------- */
+*[data-menu] {
+  @apply relative;
+}
+*[data-menu-dropdown] {
+  @apply flex flex-col w-min  items-start absolute opacity-0;
+  transform: scaleX(0) scaleY(0);
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+  transition-duration: 75ms;
+  /* top: 3.25rem; */
+}
+*[data-menu]:focus-within > *[data-menu-dropdown],
+*[data-hover]:hover > *[data-menu-dropdown],
+*[data-menu-dropdown]:hover {
+  @apply opacity-100 mt-3;
+  transform: scaleX(1) scaleY(1);
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  transition-duration: 100ms;
+  right: 0;
+}
+
+/** 
+* -------------------------
+* Auth
+* ------------------------- */
+
+.auth__menu > a {
+  @apply w-auto;
+}
+.auth__menu {
+  @apply inline-flex space-x-3;
+}
+.auth__form {
+  @apply w-full flex justify-center;
+}
+.auth__form a[href] {
+  @apply text-primary hover:underline dark:text-primary;
+}
+.auth__content {
+  @apply flex flex-col items-start justify-start w-full h-full p-10 md:px-24 max-w-2xl;
+}
+
+.auth__content .btn,
+.auth__content input {
+  @apply py-3.5;
+}
+
+.auth__content input.error {
+  @apply border border-red-500;
+}
+
+/** 
+* -------------------------
+* Scrollbar
+* ------------------------- */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary;
+  @apply bg-opacity-50;
+  border: 0px none #ffffff;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-opacity-100;
+}
+
+::-webkit-scrollbar-thumb:active {
+  @apply bg-primary;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-400 bg-opacity-50;
+  border: none;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-track:hover {
+  background: #666666;
+}
+
+::-webkit-scrollbar-track:active {
+  @apply bg-dark bg-opacity-40;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/** 
+* -------------------------
+* Cards
+* ------------------------- */
+.card {
+  @apply rounded-md p-8;
+  @apply bg-white border border-gray-100;
+}
+
+/** 
+* -------------------------
+* Forms
+* ------------------------- */
+.form__group {
+  @apply flex flex-col space-y-1;
+}
+.form__groups {
+  @apply flex flex-col md:flex-row space-x-8;
+}
+.form__groups .form__group {
+  @apply w-full;
+}
+
+/** 
+* -------------------------
+* Others
+* ------------------------- */
+
+.divider {
+  @apply w-full border-b border-gray-200 my-5;
+}
+
+.avatar {
+  @apply object-cover rounded-lg ring-2 ring-primary ring-opacity-5;
+}
+
+.avatar__text {
+  @apply flex items-center justify-center text-2xl border text-dark rounded-lg font-bold;
+}
+
+/**
+* -------------------------
+* Modal
+* -------------------------
+*/
+
+.phx-modal {
+  @apply flex bg-indigo-100 p-4;
+}
+.phx-modal div {
+  @apply flex flex-col w-full;
+}
+
+/**
+* ------------------------- *
+* Table
+* ------------------------- */
+table {
+  @apply w-full;
+}
+
+th,
+td {
+  @apply text-left p-2;
+}
+th,
+tr:nth-of-type(2n) {
+  @apply bg-gray-100;
+}

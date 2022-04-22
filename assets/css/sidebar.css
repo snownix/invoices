@@ -1,0 +1,12 @@
+.sidebar__menu {
+  @apply w-full;
+}
+
+.sidebar__menu li a {
+  @apply flex items-center space-x-2 text-gray-500 py-2 rounded px-2;
+  @apply hover:bg-dark hover:bg-opacity-5;
+}
+
+.sidebar__menu li a span {
+  @apply font-semibold text-sm text-dark;
+}
