@@ -5,18 +5,21 @@ defmodule SnownixWeb.AccountLive.Settings do
 
   @tabs [
     %{
+      id: "account",
       title: "Account",
       icon: "settings.svg",
       description:
         "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Facilis omnis similique doloribus, expedita corporis maxime harum voluptatem"
     },
     %{
+      id: "security",
       title: "Security",
       icon: "security.svg",
       description:
         "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Facilis omnis similique doloribus, expedita corporis maxime harum voluptatem"
     },
     %{
+      id: "notifications",
       title: "Notifications",
       icon: "notification.svg",
       description:

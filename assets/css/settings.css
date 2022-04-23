@@ -1,0 +1,6 @@
+.settings__tabs {
+  @apply space-y-20;
+}
+.settings__tabs > section {
+  @apply py-6 min-h-screen;
+}

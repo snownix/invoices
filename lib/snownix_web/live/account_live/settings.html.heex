@@ -1,17 +1,14 @@
 <main class="min-w-0 flex-1 border-t border-gray-200 lg:flex">
     <!-- Secondary column (hidden on smaller screens) -->
+    <%# <div class="hidden md:absolute w-full h-full bg-gray-100 bg-opacity-50"></div> %>
     <aside class="hidden lg:block lg:flex-shrink-0 lg:order-first ">
-        <div class="h-full relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto">
-
+        <div class="h-full relative flex flex-col w-96 border-r border-gray-200 bg-white min-h-screen overflow-y-auto">
             <div class="w-full p-5 bg-white border-b">
                 <h2 class="font-medium text-lg">Settings</h2>
             </div>
-
             <div class="tabs flex flex-col bg-white">
-
-
                 <%= for tab <- @tabs do %>
-                    <div phx-click="switch-tab" phx-value-tab={tab.title} class={"flex space-x-2 p-4 border-b
+                    <a href={"##{tab.id}"} phx-click="switch-tab" phx-value-tab={tab.title} class={"flex space-x-2 p-4 border-b
                         cursor-pointer hover:bg-gray-50 " <> (is_active_tab(@tab, tab) && " bg-gray-50" || "" )}>
                         <div class="px-2 py-1">
                             <%= render SnownixWeb.IconsView, tab.icon , %{} %>
@@ -24,23 +21,24 @@
                                 <%= tab.description %>
                             </p>
                         </div>
-                    </div>
-                    <% end %>
+                    </a>
+                <% end %>
             </div>
-
         </div>
     </aside>
     <!-- Primary column -->
-    <section aria-labelledby="primary-heading"
-        class="min-w-0 flex-1 h-full flex flex-col overflow-y-auto lg:order-last p-8">
-        <div class="space-y-2">
-            <h2 class="text-3xl font-bold"><%= @tab.title %></h2>
-            <p class="text-gray-500"><%= @tab.description %></p>
-        </div>
+    <section 
+        class="settings__tabs min-w-0 flex-1 h-full flex flex-col lg:order-last p-8 overflow-y-scroll max-h-screen scroll-smooth">
+        
+        <%# Account %>
+        <section id={Enum.at(@tabs,0).id}>
+            <div class="space-y-2" >
+                <h2 class="text-3xl font-bold"><%= Enum.at(@tabs,0).title %></h2>
+                <p class="text-gray-500"><%= Enum.at(@tabs,0).description %></p>
+            </div>
 
-        <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id="alerts" />
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,0).id}-alerts"} />
 
-        <%= if is_active_tab(@tab, %{ title: "Account" }) do %>
             <%= for entry <- @uploads.avatar.entries do %>
                 <%= for err <- upload_errors(@uploads.avatar, entry) do %>
                     <p class="alert alert-danger"><%= error_to_string(err) %></p>
@@ -54,11 +52,11 @@
                     class="flex flex-col w-full space-y-4">
                     <div class="w-full space-y-3">
                         <div class="flex space-x-4 items-center md:mr-4">
-                            <div class="avatar">
+                            <div class="">
                                 <%= if is_nil(get_user_avatar(@current_user)) do %>
-                                    <div class="w-14 h-14 avatar__text"><%= get_user_avatar_text(@current_user) %></div>
+                                    <div class="w-20 h-20 avatar__text"><%= get_user_avatar_text(@current_user) %></div>
                                 <% else %>
-                                    <img src={get_user_avatar(@current_user)} class="avatar w-14 h-14">
+                                    <img src={get_user_avatar(@current_user)} class="avatar w-20 h-20">
                                 <% end %>
                             </div>
                             <div class="flex space-x-3">
@@ -103,11 +101,19 @@
             <div class="flex-grow flex fex-col items-end self-end">
                 <p class="text-gray-500 py-4">This account was created on <%= date_format(@current_user.inserted_at) %></p>
             </div>
-        <% end %>
-        <%= if is_active_tab(@tab, %{ title: "Security" }) do %>
-        
+        </section>
+    
+        <%# Security %>
+        <section id={Enum.at(@tabs,1).id}>
+            <div class="space-y-2">
+                <h2 class="text-3xl font-bold"><%= Enum.at(@tabs,1).title %></h2>
+                <p class="text-gray-500"><%= Enum.at(@tabs,1).description %></p>
+            </div>
+
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,1).id}-alerts"} />
+
             <.form let={f} for={@security_changeset} phx-submit="security-save" phx-change="security-validate"
-                class="flex flex-col w-full space-y-4">
+                class="flex flex-col w-full space-y-4 min-h-screen">
                 <div class="w-full space-y-3">
                     <div class="form__group">
                         <%= label f, :password, class: "font-medium text-gray-900" %>
@@ -126,6 +132,16 @@
                     </div>
                 </div>
             </.form>
-        <% end %>
+        </section>
+
+        <%# Notifications %>
+        <section id={Enum.at(@tabs,2).id}>
+            <div class="space-y-2" >
+                <h2 class="text-3xl font-bold"><%= Enum.at(@tabs,2).title %></h2>
+                <p class="text-gray-500"><%= Enum.at(@tabs,2).description %></p>
+            </div>
+
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,2).id}-alerts"} />
+        </section>
     </section>
 </main>
