@@ -1,15 +1,16 @@
 defmodule Snownix.Accounts.User do
   use Ecto.Schema
-  import Ecto.Changeset
   use Waffle.Ecto.Schema
+
+  import Ecto.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: true}
 
   schema "users" do
     field :firstname, :string
     field :lastname, :string
-
     field :phone, :string
+    field :avatar, Snownix.Uploaders.AvatarUploader.Type
 
     field :email, :string
     field :password, :string, virtual: true, redact: true
@@ -18,7 +19,8 @@ defmodule Snownix.Accounts.User do
 
     field :admin, :boolean, default: false
 
-    field :avatar, Snownix.Uploaders.AvatarUploader.Type
+    has_many :owned_projects, Snownix.Organization.Project
+    many_to_many :projects, Snownix.Organization.Project, join_through: "users_projects"
 
     timestamps()
   end
@@ -45,12 +47,16 @@ defmodule Snownix.Accounts.User do
 
     changeset =
       user
-      |> cast(attrs, [:email, :password])
+      |> cast(attrs, [:email, :password, :firstname, :lastname])
       |> validate_password(opts)
 
     if uniq_email?,
-      do: validate_email(changeset, attrs),
-      else: changeset |> validate_email_changeset(attrs)
+      do:
+        changeset
+        |> validate_email(attrs),
+      else:
+        changeset
+        |> validate_email_changeset(attrs)
   end
 
   def login_changeset(user, attrs, opts \\ []) do

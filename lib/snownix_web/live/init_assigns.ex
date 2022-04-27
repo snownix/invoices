@@ -4,8 +4,9 @@ defmodule SnownixWeb.InitAssigns do
   """
   import Phoenix.LiveView
 
-  alias Snownix.Accounts
+  alias Snownix.{Accounts, Organization}
   alias Snownix.Accounts.User
+  alias Snownix.Organization.Project
 
   def on_mount(:user, params, session, socket) do
     socket =
@@ -15,6 +16,31 @@ defmodule SnownixWeb.InitAssigns do
       |> assign(:current_user, find_current_user(session))
 
     {:cont, socket}
+  end
+
+  def on_mount(:project, _params, session, socket) do
+    user = socket.assigns.current_user
+
+    if !is_nil(user) do
+      case find_current_project(user, session) do
+        nil ->
+          {:cont, socket}
+
+        project ->
+          {:cont,
+           socket
+           |> assign(:project, project)}
+      end
+    else
+      {:cont, socket}
+    end
+  end
+
+  defp find_current_project(user, session) do
+    with project_id when not is_nil(project_id) <- session["project_id"],
+         %Project{} = project <-
+           Organization.get_project_by_user(user, project_id),
+         do: project
   end
 
   defp find_current_user(session) do

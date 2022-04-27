@@ -12,6 +12,10 @@ if System.get_env("PHX_SERVER") && System.get_env("RELEASE_NAME") do
   config :snownix, SnownixWeb.Endpoint, server: true
 end
 
+# App Information
+config :snownix,
+  app_name: System.get_env("APP_NAME", "Invoices")
+
 # Storage
 if System.get_env("AWS_STORAGE_S3") do
   # Use S3

@@ -18,4 +18,16 @@ defmodule SnownixWeb.UtilsHelpers do
   def get_user_fullname(user) do
     user.firstname <> " " <> user.lastname
   end
+
+  def get_project_logo_text(project) do
+    String.slice(project.name, 0, 2)
+  end
+
+  def get_project_logo(project) do
+    if is_nil(project) or is_nil(project.logo) do
+      nil
+    else
+      Snownix.Uploaders.LogoUploader.url({project.logo, project}, :thumb)
+    end
+  end
 end

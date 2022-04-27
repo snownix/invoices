@@ -1,6 +1,7 @@
 defmodule SnownixWeb.LiveHelpers do
   import Phoenix.LiveView
   import Phoenix.LiveView.Helpers
+  import SnownixWeb.UtilsHelpers
 
   alias Phoenix.LiveView.JS
 
@@ -87,9 +88,6 @@ defmodule SnownixWeb.LiveHelpers do
     naive_date |> DateTime.from_naive!("Etc/UTC") |> Calendar.strftime("%a, %B %d %Y")
   end
 
-  @split_pattern [" ", "\n", "\r", "\t"]
-  @words_per_minute 200
-
   @doc """
   Assign meta tags
   """
@@ -135,5 +133,28 @@ defmodule SnownixWeb.LiveHelpers do
     form.errors
     |> Keyword.get_values(field)
     |> Enum.count() > 0
+  end
+
+  def render_user_avatar(assigns, user, size \\ "w-10 h-10") do
+    ~H"""
+      <%= if is_nil(get_user_avatar(user)) do %>
+          <div class={size<>" avatar__text !text-base"}><%= get_user_avatar_text(user) %></div>
+      <% else %>
+          <img src={get_user_avatar(user)} class={size<>" avatar !rounded-xl"}>
+      <% end %>
+    """
+  end
+
+  def render_project_logo(assigns, project, size \\ "w-10 h-10") do
+    ~H"""
+      <div class="flex flex-shrink-0 items-center justify-center  duration-100
+        hover:ring-4 hover:ring-offset-2 hover:ring-dark hover:ring-opacity-30 rounded-xl w-10 h-10">
+        <%= if is_nil(get_project_logo(project)) do %>
+          <div class={size<>" avatar__text !text-base"}><%= get_project_logo_text(project) %></div>
+        <% else %>
+          <img src={get_project_logo(project)} class={size<>" avatar !rounded-xl"}>
+        <% end %>
+      </div>
+    """
   end
 end

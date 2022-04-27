@@ -1,4 +1,4 @@
-defmodule SnownixWeb.SharedLive.SidebarComponent do
+defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
   use SnownixWeb, :live_component
 
   def mount(socket) do
@@ -11,8 +11,8 @@ defmodule SnownixWeb.SharedLive.SidebarComponent do
 
   def render(assigns) do
     ~H"""
-      <nav aria-label="Sidebar" class="hidden md:block md:flex-shrink-0 md:bg-white md:overflow-y-auto border-r">
-          <div class="flex flex-col h-full lg:w-72 relative space-y-8 py-6 px-4 items-stretch">
+      <nav class="sidebar">
+          <div class="sidebar__container">
                 <!-- logo -->
                 <%= render_project_menu(assigns) %>
 
@@ -39,12 +39,9 @@ defmodule SnownixWeb.SharedLive.SidebarComponent do
     ~H"""
     <div>
       <div class="flex flex-col md:flex-row w-full items-center cursor-pointer">
-          <div class="flex flex-shrink-0 items-center justify-center bg-primary duration-100
-              hover:ring-4 hover:ring-offset-2 hover:ring-dark hover:ring-opacity-30 rounded-xl w-10 h-10">
-              <span class="text-light font-bold ">NA</span>
-          </div>
-          <div class="px-4 text-sm w-full">
-              <h3 class="font-bold text-dark">Neutrapp</h3>
+          <%= render_project_logo(assigns, @project) %>
+          <div class="px-2 text-sm w-full">
+              <h4 class="font-bold text-dark"><%= @project.name %></h4>
               <p class="text-gray-500">Free Plan</p>
           </div>
           <div class="text-gray-400 hidden">
@@ -80,19 +77,19 @@ defmodule SnownixWeb.SharedLive.SidebarComponent do
         <li>
           <a href="/">
             <%= render SnownixWeb.IconsView, "notification.svg", %{} %>
-            <span>Activity</span>
+            <span><%= gettext("Activity") %></span>
           </a>
         </li>
         <li>
-          <a href="/">
+          <%= live_patch to: Routes.org_invoice_index_path(@socket, :index) do %>
             <%= render SnownixWeb.IconsView, "invoices.svg", %{} %>
-            <span>Invoices</span>
-          </a>
+            <span><%= gettext("Invoices") %></span>
+          <% end %>
         </li>
         <li>
           <a href="/">
             <%= render SnownixWeb.IconsView, "quotes.svg", %{} %>
-            <span>Quotes</span>
+            <span><%= gettext("Quotes") %></span>
           </a>
         </li>
       </ul>
@@ -108,19 +105,19 @@ defmodule SnownixWeb.SharedLive.SidebarComponent do
           <li>
             <a href="/">
               <%= render SnownixWeb.IconsView, "clients.svg", %{} %>
-              <span>Clients</span>
+              <span><%= gettext("Clients") %></span>
             </a>
             </li>
           <li>
             <a href="/">
               <%= render SnownixWeb.IconsView, "products.svg", %{} %>
-              <span>Products</span>
+              <span><%= gettext("Products") %></span>
             </a>
             </li>
             <li>
             <a href="/">
               <%= render SnownixWeb.IconsView, "categories.svg", %{} %>
-              <span>Categories</span>
+              <span><%= gettext("Categories") %></span>
             </a>
           </li>
         </ul>
@@ -134,17 +131,17 @@ defmodule SnownixWeb.SharedLive.SidebarComponent do
     <div class="flex flex-col w-full flex-grow justify-end">
       <ul class="sidebar__menu">
           <li>
-            <a href="/">
+            <%= live_redirect to: Routes.org_settings_index_path(@socket, :settings) do %>
               <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
-              <span>Settings</span>
-            </a>
+              <span><%= gettext("Settings") %></span>
+            <% end %>
           </li>
-          <li>
+         <!--  <li>
             <a href="/">
               <%= render SnownixWeb.IconsView, "help.svg", %{} %>
               <span>Help</span>
             </a>
-          </li>
+          </li> -->
         </ul>
     </div>
     """
@@ -152,17 +149,17 @@ defmodule SnownixWeb.SharedLive.SidebarComponent do
 
   def render_profile_menu(assigns) do
     ~H"""
-    <div class="relative">
-      <div class="w-full border-b border-dark border-opacity-20 mb-5"></div>
+    <div>
+    <div class="w-full border-b border-dark border-opacity-10"></div>
       <div
-        class="flex flex-col md:flex-row w-full items-center cursor-pointe cursor-pointer"
+        class="flex flex-col pt-4 md:flex-row w-full items-center cursor-pointe cursor-pointer"
         phx-click="menu_open" phx-target={@myself}>
           <div class="flex flex-shrink-0 items-center justify-center duration-100
               hover:ring-4 hover:ring-offset-2 hover:ring-dark hover:ring-opacity-30 rounded-xl w-10 h-10">
-            <%= render_avatar(assigns, @current_user) %>
+            <%= render_user_avatar(assigns, @current_user) %>
           </div>
           <div class="px-2 text-sm w-full">
-              <h3 class="font-bold text-dark"><%= get_user_fullname(@current_user) %></h3>
+              <h4 class="font-bold text-dark"><%= get_user_fullname(@current_user) %></h4>
               <p class="text-gray-500 text-sm"><%= @current_user.email %></p>
           </div>
           <div class="text-gray-400">
@@ -179,17 +176,17 @@ defmodule SnownixWeb.SharedLive.SidebarComponent do
   def render_profile_nav(assigns) do
     ~H"""
     <div
-      class="absolute flex flex-col min-w-56 p-4 space-y-2 bg-white border z-20 shadow rounded-lg bottom-2 lg:left-72 lg:ml-2"
+      class="absolute flex flex-col w-64 shadow p-4 space-y-2 bg-white border z-20  rounded-lg bottom-2 lg:left-72 lg:ml-2"
       phx-click="menu_open" phx-target={@myself}>
 
-      <div class="fixed inset-0 w-full h-full z-20 bg-gray-100 bg-opacity-50 duration-1000"></div>
+      <div class="fixed inset-0 w-full h-full z-20"></div>
       <div class="flex flex-col z-30 md:flex-row w-full items-center cursor-pointer border-b pb-3">
           <div class="flex flex-shrink-0 items-center justify-center duration-100
               hover:ring-4 hover:ring-offset-2 hover:ring-dark hover:ring-opacity-30 rounded-xl w-10 h-10">
-            <%= render_avatar(assigns, @current_user) %>
+            <%= render_user_avatar(assigns, @current_user) %>
           </div>
           <div class="pl-2 text-sm w-full">
-              <h3 class="font-bold text-dark"><%= get_user_fullname(@current_user) %></h3>
+              <h4 class="font-bold text-dark"><%= get_user_fullname(@current_user) %></h4>
               <p class="text-gray-500 text-sm"><%= @current_user.email %></p>
           </div>
       </div>
@@ -197,28 +194,20 @@ defmodule SnownixWeb.SharedLive.SidebarComponent do
           <li>
             <%= live_redirect to: Routes.account_settings_path(@socket, :settings) do %>
               <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
-              <span>Settings</span>
+              <span><%= gettext("Settings") %></span>
             <% end %>
           </li>
-          <li class="mt-4">
+          <li class="mt-2">
             <a href="/">
               <%= render SnownixWeb.IconsView, "logout.svg", %{} %>
-              <span>Logout</span>
+              <span><%= gettext("Logout") %></span>
             </a>
           </li>
       </ul>
+      <!--
       <div class="text-xs text-gray-400 px-2">v1.5.69 • Terms & Conditions</div>
+      -->
     </div>
-    """
-  end
-
-  def render_avatar(assigns, user) do
-    ~H"""
-      <%= if is_nil(get_user_avatar(user)) do %>
-          <div class="w-10 h-10 avatar__text !text-base"><%= get_user_avatar_text(user) %></div>
-      <% else %>
-          <img src={get_user_avatar(user)} class="avatar w-10 h-10">
-      <% end %>
     """
   end
 end

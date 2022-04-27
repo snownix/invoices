@@ -7,25 +7,25 @@
         </p>
         <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id="register-alerts" />
         
-        <.form let={f} for={@changeset} phx-submit="create" phx-change="validate" class="relative w-full space-y-4">
+        <.form let={f} for={@changeset} phx-submit="create" phx-change="validate" class=" w-full space-y-4">
             <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4">
-                <div class="relative">
+                <div class="w-full">
                     <%= label f, :firstname, gettext("First name") , class: "font-medium text-gray-900" %>
                     <%= text_input f, :firstname, placeholder: gettext("First name"), required: true, phx_debounce: "blur" %>
                     <%= error_tag f, :firstname, 1 %>
                 </div>
-                <div class="relative">
+                <div class="w-full">
                     <%= label f, :lastname, gettext("Last Name") , class: "font-medium text-gray-900" %>
                     <%= text_input f, :lastname, placeholder: gettext("Last Name"), required: true, phx_debounce: "blur" %>
                     <%= error_tag f, :lastname, 1 %>
                 </div>
             </div>
-            <div class="relative">
+            <div >
                 <%= label f, :email, gettext("Email") , class: "font-medium text-gray-900" %>
                 <%= email_input f, :email, placeholder: gettext("Enter Your Email Address"), required: true, phx_debounce: "blur" %>
                 <%= error_tag f, :email, 1 %>
             </div>
-            <div class="relative">
+            <div >
                 <%= label f, :password, gettext("Password") , class: "font-medium text-gray-900" %>
                 <%= password_input f, :password, placeholder: gettext("Password"), required: true, value: input_value(f, :password), phx_debounce: "blur" %>
                 <%= error_tag f, :password, 1 %>

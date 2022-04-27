@@ -1,0 +1,100 @@
+input,
+select,
+button,
+textarea,
+.btn {
+  @apply block w-full !h-max;
+  @apply px-4 py-3 rounded-lg;
+  @apply text-base font-medium leading-6;
+
+  @apply bg-gray-50 bg-opacity-50 border border-gray-300 text-gray-900 text-sm;
+  @apply focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50;
+}
+
+input:disabled,
+button:disabled,
+.btn:disabled {
+  @apply bg-gray-100 text-dark cursor-not-allowed;
+}
+
+input.info,
+textarea.info {
+  @apply border border-primary placeholder:text-primary text-primary;
+}
+
+input.error,
+textarea.error {
+  @apply border border-red-500 placeholder:text-red-500 text-red-500;
+}
+
+/**
+ * -----------------------
+ * Custom Inputs
+ *  Checkbox
+ *  Radiobox
+ * ----------------------- */
+input[type="checkbox"],
+input[type="radio"] {
+  @apply w-auto;
+}
+
+/**
+ * -----------------------
+ * Buttons
+ * ----------------------- */
+
+button,
+.btn {
+  @apply inline-flex items-center justify-center gap-1;
+  @apply cursor-pointer;
+}
+
+button.dark,
+.btn.dark {
+  @apply text-light bg-dark;
+}
+button.light,
+.btn.light {
+  @apply border-none;
+}
+button.primary,
+.btn.primary {
+  @apply bg-primary text-light border-none;
+  @apply hover:bg-opacity-90 hover:text-light;
+}
+
+button.icon,
+.btn.icon > span {
+  @apply transition-all duration-1000 opacity-0 w-0;
+}
+button.icon,
+.btn.icon:hover > span,
+button.icon,
+.btn.icon:focus span {
+  @apply opacity-100 duration-200 transition-all w-full;
+}
+
+/** 
+* -----------------------
+* Select
+* ----------------------- */
+select {
+  @apply border;
+}
+/** 
+* -----------------------
+* Checkbox
+* ----------------------- */
+.checkbox {
+  @apply flex items-center;
+}
+
+.checkbox label {
+  @apply ml-3 text-sm font-medium text-black;
+  @apply dark:text-gray-300;
+}
+
+.checkbox input[type="checkbox"] {
+  @apply w-4 h-4 text-primary bg-gray-100 rounded border-gray-300 focus:ring-primary;
+  @apply dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-1 dark:bg-gray-700 dark:border-gray-600;
+}

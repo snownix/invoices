@@ -2,65 +2,110 @@ defmodule SnownixWeb.Router do
   use SnownixWeb, :router
 
   import SnownixWeb.UserAuth
+  import SnownixWeb.Project
 
   pipeline :browser do
-    plug(:accepts, ["html"])
-    plug(:fetch_session)
-    plug(:fetch_live_flash)
-    plug(:put_root_layout, {SnownixWeb.LayoutView, :root})
-    plug(:protect_from_forgery)
-    plug(:put_secure_browser_headers)
-    plug(:fetch_current_user)
-    plug(SnownixWeb.Plugs.SetLocale)
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, {SnownixWeb.LayoutView, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug :fetch_current_user
+    plug SnownixWeb.Plugs.SetLocale
   end
 
   pipeline :api do
-    plug(:accepts, ["json"])
+    plug :accepts, ["json"]
+  end
+
+  pipeline :project do
+    plug :browser
+    plug :fetch_current_project
+    plug :require_authenticated_user
+    plug :required_project
+  end
+
+  ## Dashboards
+  live_session :project,
+    on_mount: [
+      {SnownixWeb.InitAssigns, :user},
+      {SnownixWeb.InitAssigns, :project}
+    ] do
+    scope "/", SnownixWeb do
+      pipe_through [:project]
+
+      live "/", ProjectLive.Dashboard, :index
+
+      scope "/org", as: :org do
+        live "/invoices", Org.InvoiceLive.Index, :index
+        live "/settings", Org.SettingsLive.Index, :settings
+      end
+    end
   end
 
   ## Liveview routes
-  live_session :default, on_mount: {SnownixWeb.InitAssigns, :user} do
+  live_session :default,
+    on_mount: [{SnownixWeb.InitAssigns, :user}, {SnownixWeb.InitAssigns, :project}] do
     scope "/", SnownixWeb do
-      pipe_through([:browser])
+      pipe_through [:browser]
 
-      live("/", IndexLive.Index, :index)
+      # Public
+      live "/design", IndexLive.Design, :index
 
       scope "/account" do
-        live("/confirm", AuthLive.Reconfirm, :reconfirm)
-        live("/confirm/:token", AuthLive.Confirm, :confirm)
+        live "/confirm", AuthLive.Reconfirm, :reconfirm
+        live "/confirm/:token", AuthLive.Confirm, :confirm
       end
 
+      # User
       scope "/" do
-        pipe_through([:require_authenticated_user])
+        pipe_through [:require_authenticated_user]
 
-        live("/account/settings", AccountLive.Settings, :settings)
+        scope "/projects" do
+          live "/", ProjectLive.Index, :index
+          live "/new", ProjectLive.New, :new
+
+          get "/open/:id", ProjectController, :open
+        end
+
+        live "/account/settings", AccountLive.Settings, :settings
       end
 
-      scope "/admin" do
-        pipe_through([:require_authenticated_user])
+      # Admin
+      scope "/admin", Admin, as: :admin do
+        pipe_through [:require_authenticated_user]
+
+        live "/projects", ProjectLive.Index, :index
+        live "/projects/new", ProjectLive.Index, :new
+        live "/projects/:id/edit", ProjectLive.Index, :edit
+
+        live "/projects/:id", ProjectLive.Show, :show
+        live "/projects/:id/show/edit", ProjectLive.Show, :edit
       end
 
+      # Auth
       scope "/auth" do
-        pipe_through([:redirect_if_user_is_authenticated])
+        pipe_through [:redirect_if_user_is_authenticated]
 
-        live("/login", AuthLive.Login, :login)
-        live("/register", AuthLive.Register, :register)
-        live("/forgot-password", AuthLive.ForgotPassword, :forgot)
-        live("/reset-password/:token", AuthLive.ResetPassword, :reset)
+        live "/login", AuthLive.Login, :login
+        live "/register", AuthLive.Register, :register
+        live "/forgot-password", AuthLive.ForgotPassword, :forgot
+        live "/reset-password/:token", AuthLive.ResetPassword, :reset
       end
     end
   end
 
   ## Controllers
   scope "/auth", SnownixWeb do
-    pipe_through([:browser])
+    pipe_through [:browser]
 
-    delete("/logout", UserSessionController, :delete)
+    delete "/logout", UserSessionController, :delete
   end
 
   scope "/auth", SnownixWeb do
-    pipe_through([:browser, :redirect_if_user_is_authenticated])
-    post("/login", UserSessionController, :create)
+    pipe_through [:browser, :redirect_if_user_is_authenticated]
+    post "/login", UserSessionController, :create
   end
 
   # Other scopes may use custom stacks.

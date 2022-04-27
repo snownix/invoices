@@ -13,7 +13,7 @@ const Hooks = {
     },
     Lang: {
         mounted() {
-            this.el.addEventListener("change", (e) => {
+            this.el.addEventListener('change', (e) => {
                 const parser = new URL(window.location);
                 parser.searchParams.set('locale', e.target.value);
                 window.location = parser.href;
@@ -21,7 +21,7 @@ const Hooks = {
         }
     },
     ScrollOnUpdate: {
-        updated() {
+        mounted() {
             this.el.scrollIntoView();
         }
     },
@@ -69,7 +69,7 @@ const Hooks = {
 
             let targetTextarea = this.getTarget(this.el.getAttribute('id'));
 
-            mde.codemirror.on("change", function () {
+            mde.codemirror.on('change', function () {
                 if (!targetTextarea) {
                     targetTextarea = this.getTarget(this.el.getAttribute('id'));
                 }

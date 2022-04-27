@@ -2,12 +2,20 @@
     <!-- Bottom section -->
     <div class="min-h-0 flex-1 flex overflow-hidden">
         <!-- Narrow sidebar-->
-        <.live_component 
-            id="sidebar"
-            module={SnownixWeb.SharedLive.SidebarComponent}
-            current_user={@current_user}
-        />
-
+        <%= if assigns[:project] do %>
+            <.live_component 
+                id="sidebar"
+                module={SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent}
+                current_user={@current_user}
+                project={@project}
+            />
+        <% else %>
+            <.live_component 
+                id="sidebar"
+                module={SnownixWeb.SharedLive.Sidebar.UserSidebarComponent}
+                current_user={@current_user}
+            />
+        <% end %>
         <!-- Main area -->
         <%= @inner_content %>
     </div>

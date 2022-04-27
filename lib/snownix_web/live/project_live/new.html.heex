@@ -1,0 +1,60 @@
+<section class="flex flex-col items-center py-4 space-y-8 w-full flex-grow justify-center">
+    <section class="space-y-5 max-w-screen-md  w-full">
+        <h2 class="font-semibold">
+            <%= Enum.at(@steps, @step).title %>
+        </h2>
+
+        <%# Situation %>
+        <%= if is_step(assigns, 0) do %>
+            <div class="space-y-2">
+                <%= for item <- @situtations do %>
+                    <div    
+                        id={"sitatuion-#{item.id}"}
+                        phx-click="situation"
+                        phx-value-situation={item.id}
+                        class={"flex  space-x-4 items-center 
+                            p-6 rounded 
+                            bg-white hover:bg-gray-50 cursor-pointer
+                            border border-gray-200" <> (@situation == item.id && " bg-gray-200" ||"")}>
+                        <%= render SnownixWeb.IconsView, item.icon <> ".svg", %{} %>
+                        <p><%= item.description %></p>
+                    </div>
+                <% end %>
+            </div>
+        <% end %>
+
+        <%# Project Information %>
+        <%= if is_step(assigns, 1) do %>
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id="alerts" />
+
+            <.form let={f} for={@changeset} phx-submit="save" phx-change="validate" class="space-y-4">
+                <div class="form__group">
+                    <%= label f, :name, gettext("Enter company name for invoice") %>
+                    <%= text_input f, :name , placeholder: gettext("Name") %>
+                    <%= error_tag f, :name %>
+                </div>
+                <div class="form__group">
+                    <%= label f, :country, gettext("Country") %>
+                    <%= select f, :country , countries_options(), placeholder: gettext("Country") %>
+                    <%= error_tag f, :country %>
+                </div>
+                <div class="form__group">
+                    <%= label f, :email, gettext("Email") %>
+                    <%= email_input f, :email , placeholder: gettext("Email") %>
+                    <%= error_tag f, :email %>
+                </div>
+
+                <div class="flex flex-col space-y-2 md:space-y-0 md:flex-row md:space-x-6">
+                    <button type="button" phx-click="prev">
+                        <%= render SnownixWeb.IconsView, "arrow_prev.svg", %{} %>
+                        Go Back
+                    </button>
+                    <button class="primary" type="submit">
+                        <%= render SnownixWeb.IconsView, "save.svg", %{} %>
+                        Create
+                    </button>
+                </div>
+            </.form>
+        <% end %>
+    </section>
+</section>

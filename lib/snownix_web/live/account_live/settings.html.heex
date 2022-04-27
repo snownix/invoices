@@ -1,8 +1,8 @@
-<main class="min-w-0 flex-1 border-t border-gray-200 lg:flex">
+<main class="min-w-0 flex-1 border-t border-gray-200 lg:flex max-h-screen">
     <!-- Secondary column (hidden on smaller screens) -->
     <%# <div class="hidden md:absolute w-full h-full bg-gray-100 bg-opacity-50"></div> %>
-    <aside class="hidden lg:block lg:flex-shrink-0 lg:order-first ">
-        <div class="h-full relative flex flex-col w-96 border-r border-gray-200 bg-white min-h-screen overflow-y-auto">
+    <aside class="settings__nav">
+        <div class="settings__container">
             <div class="w-full p-5 bg-white border-b">
                 <h2 class="font-medium text-lg">Settings</h2>
             </div>
@@ -13,7 +13,7 @@
                         <div class="px-2 py-1">
                             <%= render SnownixWeb.IconsView, tab.icon , %{} %>
                         </div>
-                        <div>
+                        <div class="info">
                             <h4 class="font-medium">
                                 <%= tab.title %>
                             </h4>
@@ -44,7 +44,7 @@
                     <p class="alert alert-danger"><%= error_to_string(err) %></p>
                 <% end %>
             <% end %>
-            <div class="tab bg-white py-4" phx-drop-target={@uploads.avatar.ref}>
+            <div class="tab  py-4" phx-drop-target={@uploads.avatar.ref}>
                 <form id="upload-avatar" phx-change="validate" class="hidden">
                     <%= live_file_input @uploads.avatar %>
                 </form>

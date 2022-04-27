@@ -1,0 +1,40 @@
+<main class="flex flex-col p-4 md:p-10 space-y-10 w-full">
+    <nav class="w-full flex justify-between">
+        <div class="flex flex-col">
+            <h2 class="font-semibold text-dark"><%= gettext("Projects") %></h2>
+            <p><%= gettext("Here's list of your projects") %></p>
+        </div>
+        <div class="max-w-max">
+            <%= live_redirect to: Routes.project_new_path(@socket, :new), class: "btn primary" do %>
+                <%= render SnownixWeb.IconsView, "plus.svg", %{} %>
+                <%= gettext("New Project") %>
+            <% end %>
+        </div>
+    </nav>
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 w-full">
+        <%= for project <- @projects do %>
+            <%= live_redirect to: Routes.project_path(@socket, :open, project.id) do %>
+                <div class="space-y-2 w-full p-6 rounded-lg hover:bg-gray-50 cursor-pointer  bg-white border">
+                    <div class="flex items-center space-x-2">
+                        <img class="rounded object-cover w-6 h-5"
+                            src={"https://flagicons.lipis.dev/flags/4x3/#{String.downcase(project.country)}.svg"}>
+                        <h3 class="font-medium">
+                            <%= project.name %> <br>
+                        </h3>
+                    </div>
+
+                    <ul class="flex space-x-2">
+                        <%= for member <- project.users do %>
+                            <li>
+                                <div class={"bg-white rounded-xl" <> (member.id == project.user_id && " bg-secondary bg-opacity-10" ||
+                                    "")}>
+                                    <%= render_user_avatar(assigns, member) %>
+                                </div>
+                            </li>
+                        <% end %>
+                    </ul>
+                </div>
+            <% end %>
+        <% end %>
+    </section>
+</main>
