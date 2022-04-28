@@ -1,8 +1,8 @@
 .settings__tabs {
-  @apply space-y-20;
+  @apply min-w-0 flex-1 h-full flex flex-col lg:order-last p-8 overflow-y-scroll max-h-screen scroll-smooth space-y-20;
 }
 .settings__tabs > section {
-  @apply py-6 min-h-screen  max-w-screen-md;
+  @apply py-6 min-h-screen h-full  max-w-screen-md;
 }
 .settings__nav {
   @apply hidden lg:block lg:flex-shrink-0 lg:order-first;
@@ -11,6 +11,19 @@
 .settings__container {
   @apply h-full relative flex flex-col w-96 border-r border-gray-200 bg-white min-h-screen overflow-y-auto;
 }
+.settings__container .tabs .tab__item {
+  @apply flex space-x-2 p-4 border-b cursor-pointer hover:bg-gray-50;
+}
+.settings__container .tabs .tab__item > div:first-child {
+  @apply px-2 py-1;
+}
+
+.settings__container > div:first-child {
+  @apply w-full p-5 bg-white border-b;
+}
+.settings__container > div:first-child h3 {
+  @apply font-medium text-lg;
+}
 
 .settings__nav.minimized .info p {
   @apply hidden;
@@ -18,4 +31,54 @@
 
 .settings__nav.minimized .settings__container {
   @apply w-max;
+}
+
+/**
+* Settings Bloc
+*/
+.settings__header {
+  @apply space-y-2;
+}
+.settings__header h2 {
+  @apply text-3xl font-bold;
+}
+.settings__header p {
+  @apply text-gray-500;
+}
+
+.settings__tabs form {
+  @apply flex flex-col w-full space-y-4;
+}
+
+.settings__tabs form > div {
+  @apply w-full space-y-6;
+}
+
+.settings__tabs input[type="file"] {
+  @apply hidden;
+}
+
+.settings__tabs .image__container {
+  @apply flex space-x-4 items-center md:mr-4;
+}
+.settings__tabs .image__container .image {
+  @apply flex-shrink-0;
+}
+.settings__tabs .image__container .image * {
+  @apply w-20 h-20;
+}
+
+.settings__tabs .image__container .progress {
+  @apply w-full bg-gray-200 rounded-full h-2.5;
+}
+
+.settings__tabs .image__container .progress .value {
+  @apply bg-gray-600 h-2.5 rounded-full;
+}
+.settings__tabs .image__container div {
+  @apply flex space-x-3;
+}
+
+.account__reg {
+  @apply flex-grow flex flex-col items-end self-end;
 }

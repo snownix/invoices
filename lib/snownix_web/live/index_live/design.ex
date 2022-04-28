@@ -15,6 +15,8 @@ defmodule SnownixWeb.IndexLive.Design do
             <div><input placeholder="Disabled" disabled></div>
             <div><input placeholder="Info" class="info"></div>
             <div><input placeholder="Error" class="error"></div>
+            <div><select><option>Basic</option></select></div>
+            <div><select class="error"><option>Error</option></select></div>
             <div><input type="date" placeholder="Date"></div>
             <div><input type="date" placeholder="Invalid" class="error"></div>
             <div><textarea placeholder="Basic"></textarea></div>
@@ -35,6 +37,10 @@ defmodule SnownixWeb.IndexLive.Design do
               <input type="radio" disabled id="rad-2">
               <label for="rad-2">Disabled</label>
             </div>
+            <label class="switch">
+              <input type="checkbox">
+              <span class="slider round"></span>
+            </label>
           </div>
         </section>
 

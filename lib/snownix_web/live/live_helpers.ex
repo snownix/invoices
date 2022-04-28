@@ -135,6 +135,16 @@ defmodule SnownixWeb.LiveHelpers do
     |> Enum.count() > 0
   end
 
+  def tag_class_error(form, field) do
+    has_errors = tag_has_error(form, field)
+
+    if has_errors do
+      " error "
+    else
+      nil
+    end
+  end
+
   def render_user_avatar(assigns, user, size \\ "w-10 h-10") do
     ~H"""
       <%= if is_nil(get_user_avatar(user)) do %>

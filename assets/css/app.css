@@ -241,3 +241,11 @@ th,
 tr:nth-of-type(2n) {
   @apply bg-gray-100;
 }
+
+/**
+* Phoenix 
+*/
+.phx-no-feedback.invalid-feedback,
+.phx-no-feedback .invalid-feedback {
+  display: none;
+}

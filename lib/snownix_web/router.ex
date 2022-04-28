@@ -21,8 +21,8 @@ defmodule SnownixWeb.Router do
 
   pipeline :project do
     plug :browser
-    plug :fetch_current_project
     plug :require_authenticated_user
+    plug :fetch_current_project
     plug :required_project
   end
 
@@ -67,6 +67,7 @@ defmodule SnownixWeb.Router do
           live "/new", ProjectLive.New, :new
 
           get "/open/:id", ProjectController, :open
+          get "/leave", ProjectController, :leave
         end
 
         live "/account/settings", AccountLive.Settings, :settings

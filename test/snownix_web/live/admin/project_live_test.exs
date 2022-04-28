@@ -4,9 +4,36 @@ defmodule SnownixWeb.Admin.ProjectLiveTest do
   import Phoenix.LiveViewTest
   import Snownix.OrganizationFixtures
 
-  @create_attrs %{city: "some city", country: "some country", email: "some email", name: "some name", phone: "some phone", postal: "some postal", street: "some street", vat: "some vat"}
-  @update_attrs %{city: "some updated city", country: "some updated country", email: "some updated email", name: "some updated name", phone: "some updated phone", postal: "some updated postal", street: "some updated street", vat: "some updated vat"}
-  @invalid_attrs %{city: nil, country: nil, email: nil, name: nil, phone: nil, postal: nil, street: nil, vat: nil}
+  @create_attrs %{
+    city: "some city",
+    country: "some country",
+    email: "some email",
+    name: "some name",
+    phone: "some phone",
+    zip: "some zip",
+    street: "some street",
+    vat: "some vat"
+  }
+  @update_attrs %{
+    city: "some updated city",
+    country: "some updated country",
+    email: "some updated email",
+    name: "some updated name",
+    phone: "some updated phone",
+    zip: "some updated zip",
+    street: "some updated street",
+    vat: "some updated vat"
+  }
+  @invalid_attrs %{
+    city: nil,
+    country: nil,
+    email: nil,
+    name: nil,
+    phone: nil,
+    zip: nil,
+    street: nil,
+    vat: nil
+  }
 
   defp create_project(_) do
     project = project_fixture()

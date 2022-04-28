@@ -22,6 +22,7 @@ textarea.info {
   @apply border border-primary placeholder:text-primary text-primary;
 }
 
+select.error,
 input.error,
 textarea.error {
   @apply border border-red-500 placeholder:text-red-500 text-red-500;
@@ -63,6 +64,12 @@ button.primary,
   @apply hover:bg-opacity-90 hover:text-light;
 }
 
+button.danger,
+.btn.danger {
+  @apply bg-red-500 text-light border-none;
+  @apply hover:bg-opacity-90 hover:text-light;
+}
+
 button.icon,
 .btn.icon > span {
   @apply transition-all duration-1000 opacity-0 w-0;
@@ -97,4 +104,57 @@ select {
 .checkbox input[type="checkbox"] {
   @apply w-4 h-4 text-primary bg-gray-100 rounded border-gray-300 focus:ring-primary;
   @apply dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-1 dark:bg-gray-700 dark:border-gray-600;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 26px;
+  @apply flex-shrink-0;
+}
+.switch .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.switch .slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(18px);
+  -ms-transform: translateX(18px);
+  transform: translateX(18px);
+}
+
+.switch input {
+  @apply !hidden;
+}
+.switch .slider.round,
+.switch .slider.round:before {
+  border-radius: 18px;
 }

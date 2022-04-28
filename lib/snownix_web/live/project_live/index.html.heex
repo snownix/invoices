@@ -11,6 +11,21 @@
             <% end %>
         </div>
     </nav>
+    <%= if Enum.count(@projects) == 0 do %>
+    <div class="flex flex-col items-center justify-center h-full" style="">
+        <div class="flex flex-col items-center justify-center">
+                <%= render SnownixWeb.IconsView, "ill-none.svg", %{} %> 
+        </div>
+        <div class="mt-2"><label class="font-medium">No project yet!</label></div>
+        <div class="mt-2"><label class="text-gray-500">This section will contain the list of your projects.</label></div>
+        <div class="mt-6">
+            <%= live_redirect to: Routes.project_new_path(@socket, :new), class: "btn primary" do %>
+                <%= render SnownixWeb.IconsView, "plus.svg", %{} %> 
+                Get Started
+            <% end %>
+        </div>
+    </div>
+    <% else %>
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 w-full">
         <%= for project <- @projects do %>
             <%= live_redirect to: Routes.project_path(@socket, :open, project.id) do %>
@@ -18,10 +33,10 @@
                     <div class="flex items-center space-x-2">
                         <img class="rounded object-cover w-6 h-5"
                             src={"https://flagicons.lipis.dev/flags/4x3/#{String.downcase(project.country)}.svg"}>
-                        <h3 class="font-medium">
-                            <%= project.name %> <br>
-                        </h3>
+                        <h3 class="font-medium"><%= project.name %></h3>
                     </div>
+                    <p class="font-medium"><%= project.email %></p>
+                    <p class="font-medium"><%= project.phone %></p>
 
                     <ul class="flex space-x-2">
                         <%= for member <- project.users do %>
@@ -37,4 +52,5 @@
             <% end %>
         <% end %>
     </section>
+    <% end %>
 </main>

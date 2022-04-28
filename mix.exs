@@ -67,8 +67,9 @@ defmodule Snownix.MixProject do
       {:excoveralls, "~> 0.10", only: :test},
       {:mogrify, "~> 0.9.1"},
       {:cachex, "~> 3.4"},
-      {:slugify, "~> 1.3"},
-      {:faker, "~> 0.17", only: :dev},
+      {:money, "~> 1.9"},
+      {:tz, "~> 0.20.1"},
+      {:tz_extra, "~> 0.20.1"},
       {:earmark, "~> 1.4.20"}
     ]
   end

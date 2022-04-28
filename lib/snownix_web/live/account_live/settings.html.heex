@@ -3,14 +3,13 @@
     <%# <div class="hidden md:absolute w-full h-full bg-gray-100 bg-opacity-50"></div> %>
     <aside class="settings__nav">
         <div class="settings__container">
-            <div class="w-full p-5 bg-white border-b">
-                <h2 class="font-medium text-lg">Settings</h2>
+            <div >
+                <h3>Settings</h3>
             </div>
-            <div class="tabs flex flex-col bg-white">
+            <div class="tabs">
                 <%= for tab <- @tabs do %>
-                    <a href={"##{tab.id}"} phx-click="switch-tab" phx-value-tab={tab.title} class={"flex space-x-2 p-4 border-b
-                        cursor-pointer hover:bg-gray-50 " <> (is_active_tab(@tab, tab) && " bg-gray-50" || "" )}>
-                        <div class="px-2 py-1">
+                    <a href={"##{tab.id}"} phx-click="switch-tab" phx-value-tab={tab.title} class={"tab__item" <> (is_active_tab(@tab, tab) && " bg-gray-50" || "" )}>
+                        <div >
                             <%= render SnownixWeb.IconsView, tab.icon , %{} %>
                         </div>
                         <div class="info">
@@ -28,13 +27,13 @@
     </aside>
     <!-- Primary column -->
     <section 
-        class="settings__tabs min-w-0 flex-1 h-full flex flex-col lg:order-last p-8 overflow-y-scroll max-h-screen scroll-smooth">
+        class="settings__tabs">
         
         <%# Account %>
         <section id={Enum.at(@tabs,0).id}>
-            <div class="space-y-2" >
-                <h2 class="text-3xl font-bold"><%= Enum.at(@tabs,0).title %></h2>
-                <p class="text-gray-500"><%= Enum.at(@tabs,0).description %></p>
+            <div class="settings__header" >
+                <h2><%= Enum.at(@tabs,0).title %></h2>
+                <p ><%= Enum.at(@tabs,0).description %></p>
             </div>
 
             <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,0).id}-alerts"} />
@@ -48,48 +47,52 @@
                 <form id="upload-avatar" phx-change="validate" class="hidden">
                     <%= live_file_input @uploads.avatar %>
                 </form>
-                <.form let={f} for={@changeset} phx-submit="account-save" phx-change="account-validate"
-                    class="flex flex-col w-full space-y-4">
-                    <div class="w-full space-y-3">
-                        <div class="flex space-x-4 items-center md:mr-4">
-                            <div class="">
+                <.form let={f} for={@changeset} phx-submit="account-save" phx-change="account-validate">
+                    <div >
+                        <div class="image__container">
+                            <div class="image">
                                 <%= if is_nil(get_user_avatar(@current_user)) do %>
-                                    <div class="w-20 h-20 avatar__text"><%= get_user_avatar_text(@current_user) %></div>
+                                    <div class="avatar__text"><%= get_user_avatar_text(@current_user) %></div>
                                 <% else %>
-                                    <img src={get_user_avatar(@current_user)} class="avatar w-20 h-20">
+                                    <img src={get_user_avatar(@current_user)} class="avatar">
                                 <% end %>
                             </div>
-                            <div class="flex space-x-3">
+                            <div >
                                 <label class="btn primary" for={"#{@uploads.avatar.ref}"}>
                                     Change
                                 </label>
                                 <button type="button" class="btn" phx-click="delete-avatar">Remove</button>
                             </div>
+                            <%= for entry <- @uploads.avatar.entries do %>
+                                <div class="progress">
+                                    <div class="value" style={"width: #{entry.progress}% !important"}></div>
+                                </div>
+                            <% end %>
                         </div>
                         <div class="form__groups">
                             <div class="form__group">
                                 <%= label f, :firstname, "First Name" , class: "font-medium text-gray-900" %>
-                                    <%= text_input f, :firstname , placeholder: gettext("First name") , value: input_value(f,
+                                <%= text_input f, :firstname , placeholder: gettext("First name") , value: input_value(f,
                                         :firstname), required: true, phx_debounce: "blur" %>
-                                        <%= error_tag f, :firstname, 1 %>
+                                <%= error_tag f, :firstname, 1 %>
                             </div>
                             <div class="form__group">
                                 <%= label f, :lastname, "Last Name" , class: "font-medium text-gray-900" %>
-                                    <%= text_input f, :lastname , placeholder: gettext("Last name") , value: input_value(f,
-                                        :lastname), required: true, phx_debounce: "blur" %>
-                                        <%= error_tag f, :lastname, 1 %>
+                                <%= text_input f, :lastname , placeholder: gettext("Last name") , value: input_value(f,
+                                    :lastname), required: true, phx_debounce: "blur" %>
+                                <%= error_tag f, :lastname, 1 %>
                             </div>
                         </div>
                         <div class="form__group">
                             <%= label f, :email, class: "font-medium text-gray-900" %>
-                                <%= text_input f, :email, placeholder: gettext("Email"), required: true, phx_debounce: "blur" %>
-                                    <%= error_tag f, :email, 1 %>
+                            <%= text_input f, :email, placeholder: gettext("Email"), required: true, phx_debounce: "blur" %>
+                            <%= error_tag f, :email, 1 %>
                         </div>
                         <div class="form__group">
                             <%= label f, :current_password, class: "font-medium text-gray-900" %>
-                                <%= password_input f, :current_password, placeholder: gettext("Password"), required: true,
-                                    phx_debounce: "blur" , value: input_value(f, :current_password) %>
-                                    <%= error_tag f, :current_password, 1 %>
+                            <%= password_input f, :current_password, placeholder: gettext("Password"), required: true,
+                            phx_debounce: "blur" , value: input_value(f, :current_password) %>
+                            <%= error_tag f, :current_password, 1 %>
                         </div>
                         <div class="w-max">
                             <button type="submit" class="btn primary">Save Information</button>
@@ -98,23 +101,22 @@
                 </.form>
             </div>
 
-            <div class="flex-grow flex fex-col items-end self-end">
+            <div class="account__reg">
                 <p class="text-gray-500 py-4">This account was created on <%= date_format(@current_user.inserted_at) %></p>
             </div>
         </section>
     
         <%# Security %>
         <section id={Enum.at(@tabs,1).id}>
-            <div class="space-y-2">
-                <h2 class="text-3xl font-bold"><%= Enum.at(@tabs,1).title %></h2>
-                <p class="text-gray-500"><%= Enum.at(@tabs,1).description %></p>
+            <div class="settings__header" >
+                <h2><%= Enum.at(@tabs,1).title %></h2>
+                <p ><%= Enum.at(@tabs,1).description %></p>
             </div>
 
             <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,1).id}-alerts"} />
 
-            <.form let={f} for={@security_changeset} phx-submit="security-save" phx-change="security-validate"
-                class="flex flex-col w-full space-y-4 min-h-screen">
-                <div class="w-full space-y-3">
+            <.form let={f} for={@security_changeset} phx-submit="security-save" phx-change="security-validate">
+                <div >
                     <div class="form__group">
                         <%= label f, :password, class: "font-medium text-gray-900" %>
                         <%= password_input f, :password, placeholder: gettext("New Password") , required: true, phx_debounce: "blur",
@@ -136,9 +138,9 @@
 
         <%# Notifications %>
         <section id={Enum.at(@tabs,2).id}>
-            <div class="space-y-2" >
-                <h2 class="text-3xl font-bold"><%= Enum.at(@tabs,2).title %></h2>
-                <p class="text-gray-500"><%= Enum.at(@tabs,2).description %></p>
+            <div class="settings__header" >
+                <h2><%= Enum.at(@tabs,2).title %></h2>
+                <p ><%= Enum.at(@tabs,2).description %></p>
             </div>
 
             <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,2).id}-alerts"} />

@@ -20,4 +20,10 @@ defmodule SnownixWeb.ProjectController do
     |> put_session(:project_id, id)
     |> redirect(to: Routes.project_dashboard_path(conn, :index))
   end
+
+  def leave(conn, _) do
+    conn
+    |> delete_session(:project_id)
+    |> redirect(to: Routes.project_index_path(conn, :index))
+  end
 end

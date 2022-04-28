@@ -16,7 +16,7 @@ defmodule Snownix.OrganizationFixtures do
         email: "some email",
         name: "some name",
         phone: "some phone",
-        postal: "some postal",
+        zip: "some zip",
         street: "some street",
         vat: "some vat"
       })

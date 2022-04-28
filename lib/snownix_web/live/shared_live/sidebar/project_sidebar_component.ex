@@ -136,12 +136,12 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
               <span><%= gettext("Settings") %></span>
             <% end %>
           </li>
-         <!--  <li>
-            <a href="/">
-              <%= render SnownixWeb.IconsView, "help.svg", %{} %>
-              <span>Help</span>
-            </a>
-          </li> -->
+          <li>
+            <%= live_redirect to: Routes.project_path(@socket, :leave) do %>
+              <%= render SnownixWeb.IconsView, "leave.svg", %{} %>
+              <span><%= gettext("Leave") %></span>
+            <% end %>
+          </li>
         </ul>
     </div>
     """

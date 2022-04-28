@@ -78,6 +78,8 @@ defmodule Snownix.Organization do
   def update_project(%Project{} = project, attrs) do
     project
     |> Project.changeset(attrs)
+    |> Project.address_changeset(attrs)
+    |> Project.preferences_changeset(attrs)
     |> Repo.update()
   end
 
@@ -108,5 +110,40 @@ defmodule Snownix.Organization do
   """
   def change_project(%Project{} = project, attrs \\ %{}) do
     Project.changeset(project, attrs)
+    |> Project.address_changeset(attrs)
+  end
+
+  def change_project_preferences(%Project{} = project, attrs \\ %{}) do
+    Project.preferences_changeset(project, attrs)
+  end
+
+  @doc """
+  Updates the project logo.
+
+  The project logo is updated .
+  The old logo is deleted
+  The confirmed_at date is also updated to the current time.
+  """
+  def update_project_logo(project, logo) do
+    changeset =
+      project
+      |> Project.logo_changeset(%{logo: logo})
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:project, changeset)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{project: project}} -> {:ok, project}
+      {:error, :project, changeset, _} -> {:error, changeset}
+    end
+  end
+
+  @doc """
+  Delete the project logo.
+
+  The update_project_logo is called with logo nil value
+  """
+  def delete_project_logo(project) do
+    update_project_logo(project, nil)
   end
 end

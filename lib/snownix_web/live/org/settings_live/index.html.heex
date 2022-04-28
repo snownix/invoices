@@ -1,1 +1,208 @@
-Settings
+<main class="min-w-0 flex-1 border-t border-gray-200 lg:flex max-h-screen">
+    <!-- Secondary column (hidden on smaller screens) -->
+    <%# <div class="hidden md:absolute w-full h-full bg-gray-100 bg-opacity-50"></div> %>
+    <aside class="settings__nav">
+        <div class="settings__container">
+            <div >
+                <h3>Settings</h3>
+            </div>
+            <div class="tabs">
+                <%= for tab <- @tabs do %>
+                    <a href={"##{tab.id}"} phx-click="switch-tab" phx-value-tab={tab.title} class={"tab__item" <> (is_active_tab(@tab, tab) && " bg-gray-50" || "" )}>
+                        <div >
+                            <%= render SnownixWeb.IconsView, tab.icon , %{} %>
+                        </div>
+                        <div class="info">
+                            <h4 class="font-medium">
+                                <%= tab.title %>
+                            </h4>
+                            <p class="text-gray-600 text-sm">
+                                <%= tab.description %>
+                            </p>
+                        </div>
+                    </a>
+                <% end %>
+            </div>
+        </div>
+    </aside>
+    <!-- Primary column -->
+    <section 
+        class="settings__tabs">
+        
+        <%# Project %>
+        <section id={Enum.at(@tabs,0).id}>
+            <div class="settings__header" >
+                <h2><%= Enum.at(@tabs,0).title %></h2>
+                <p ><%= Enum.at(@tabs,0).description %></p>
+            </div>
+
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,0).id}-alerts"} />
+
+            <%= for entry <- @uploads.logo.entries do %>
+                <%= for err <- upload_errors(@uploads.logo, entry) do %>
+                    <p class="alert alert-danger"><%= error_to_string(err) %></p>
+                <% end %>
+            <% end %>
+            <div class="tab  py-4" phx-drop-target={@uploads.logo.ref}>
+                <form id="upload-logo" phx-change="validate" class="hidden">
+                    <%= live_file_input @uploads.logo %>
+                </form>
+                <.form let={f} for={@changeset} phx-submit="project-save" phx-change="project-validate">
+                    <div >
+                        <div class="image__container">
+                            <div class="image">
+                                <%= if is_nil(get_project_logo(@project)) do %>
+                                    <div class="avatar__text"><%= get_project_logo_text(@project) %></div>
+                                <% else %>
+                                    <img src={get_project_logo(@project)} class="avatar">
+                                <% end %>
+                            </div>
+                            <div >
+                                <label class="btn primary" for={"#{@uploads.logo.ref}"}>
+                                    Change
+                                </label>
+                                <button type="button" class="btn" phx-click="delete-logo">Remove</button>
+                            </div>
+                            <%= for entry <- @uploads.logo.entries do %>
+                                <div class="progress">
+                                    <div class="value" style={"width: #{entry.progress}% !important"}></div>
+                                </div>
+                            <% end %>
+                        </div>
+                        <div class="form__groups">
+                            <div class="form__group">
+                                <%= label f, :name, gettext("Company Name") , class: "font-medium text-gray-900" %>
+                                <%= text_input f, :name , placeholder: gettext("Company Name") , value: input_value(f,
+                                        :name), required: true, phx_debounce: "blur", class: tag_class_error(f, :name) %>
+                                <%= error_tag f, :name, 1 %>
+                            </div>
+                            <div class="form__group">
+                                <%= label f, :phone, gettext("Phone") , class: "font-medium text-gray-900" %>
+                                <%= text_input f, :phone , placeholder: gettext("Phone") , value: input_value(f,
+                                        :phone), phx_debounce: "blur", class: tag_class_error(f, :phone) %>
+                                <%= error_tag f, :phone, 1 %>
+                            </div>
+                        </div>
+                        <div class="form__groups">
+                            <div class="form__group">
+                                <%= label f, :email, gettext("Email"),  class: "font-medium text-gray-900" %>
+                                <%= text_input f, :email, placeholder: gettext("Email"),  phx_debounce: "blur", class: tag_class_error(f, :email) %>
+                                <%= error_tag f, :email, 1 %>
+                            </div>
+                            <div class="form__group">
+                                <%= label f, :country, gettext("Country"), class: "font-medium text-gray-900" %>
+                                <%= select f, :country, countries_options(), placeholder: gettext("Country"), 
+                                        phx_debounce: "blur" , value: input_value(f, :country), class: tag_class_error(f, :country) %>
+                                <%= error_tag f, :country, 1 %>
+                            </div>
+                        </div>
+                        <div class="form__groups">
+                            <div class="form__group">
+                                <%= label f, :city, gettext("City"), class: "font-medium text-gray-900" %>
+                                <%= text_input f, :city, placeholder: gettext("City"),  phx_debounce: "blur" , class: tag_class_error(f, :city)%>
+                                <%= error_tag f, :city, 1 %>
+                            </div>
+                            <div class="form__group">
+                                <%= label f, :state, gettext("State"), class: "font-medium text-gray-900" %>
+                                <%= text_input f, :state, placeholder: gettext("State"),  phx_debounce: "blur", class: tag_class_error(f, :state) %>
+                                <%= error_tag f, :state, 1 %>
+                            </div>
+                            <div class="form__group">
+                                <%= label f, :zip, gettext("Zip"), class: "font-medium text-gray-900" %>
+                                <%= text_input f, :zip, placeholder: gettext("Zip"),  phx_debounce: "blur", class: tag_class_error(f, :zip) %>
+                                <%= error_tag f, :zip, 1 %>
+                            </div>
+                        </div>
+                        <div class="form__group">
+                            <%= label f, :street, gettext("Address"), class: "font-medium text-gray-900" %>
+                            <%= textarea f, :street, placeholder: gettext("Address"),  phx_debounce: "blur", class: tag_class_error(f, :street) %>
+                            <%= error_tag f, :street, 1 %>
+                        </div>
+                        <div class="w-max">
+                            <button type="submit" class="btn primary">Save Information</button>
+                        </div>
+                    </div>
+                </.form>
+            </div>
+
+            <div class="account__reg">
+                <p class="text-gray-500 py-4">This project was created on <%= date_format(@project.inserted_at) %></p>
+            </div>
+        </section>
+
+
+        <%# Preferences %>
+        <section id={Enum.at(@tabs,1).id}>
+            <div class="settings__header" >
+                <h2><%= Enum.at(@tabs,1).title %></h2>
+                <p ><%= Enum.at(@tabs,1).description %></p>
+            </div>
+
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,1).id}-alerts"} />
+
+            <.form let={f} for={@preferences_changeset} phx-submit="project-save" phx-change="preferences-validate">
+                <div >
+                    <div class="form__groups">
+                        <div class="form__group">
+                            <%= label f, :currency, class: "font-medium text-gray-900" %>
+                            <%= select f, :currency, currencies_options(), placeholder: gettext("New currency") , required: true, phx_debounce: "blur", value: input_value(f, :currency), class: tag_class_error(f, :currency)  %>
+                            <%= error_tag f, :currency, 1 %>
+                        </div>
+                        <div class="form__group">
+                            <%= label f, :fiscal_year, class: "font-medium text-gray-900" %>
+                            <%= select f, :fiscal_year, fiscal_year_options(), placeholder: gettext("Fiscal Year") , required: true, phx_debounce: "blur", value: input_value(f, :fiscal_year), class: tag_class_error(f, :fiscal_year)  %>
+                            <%= error_tag f, :fiscal_year, 1 %>
+                        </div>
+                    </div>
+                    <div class="form__groups">
+                        <div class="form__group">
+                            <%= label f, :date_format, class: "font-medium text-gray-900" %>
+                            <%= select f, :date_format, date_format_options(), placeholder: gettext("Date Format") , required: true, phx_debounce: "blur", value: input_value(f, :date_format), class: tag_class_error(f, :date_format)  %>
+                            <%= error_tag f, :date_format, 1 %>
+                        </div>
+                        <div class="form__group">
+                            <%= label f, :time_zone, class: "font-medium text-gray-900" %>
+                            <%= select f, :time_zone, time_zone_options(), placeholder: gettext("Date Format") , required: true, phx_debounce: "blur", value: input_value(f, :time_zone), class: tag_class_error(f, :time_zone)  %>
+                            <%= error_tag f, :time_zone, 1 %>
+                        </div>
+                    </div>
+                    <label class="flex justify-between items-center">
+                        <div>
+                            <h4 class="font-semibold"><%= gettext("Discount Per Item") %></h4>
+                            <p class="text-gray-500"><%= gettext("Enable this option if you want to add the discount to individual invoice items. By default, the discount is added directly to the invoice.") %></p>
+                        </div>
+                        <div class="switch">
+                            <%= checkbox f, :discount_per_item, value: input_value(f, :discount_per_item) %>
+                            <span class="slider round"></span>
+                        </div>
+                    </label>
+
+                    <label class="flex justify-between items-center space-x-4">
+                        <div>
+                            <h4 class="font-semibold"><%= gettext("Tax Per Item") %></h4>
+                            <p class="text-gray-500"><%= gettext("Enable this option if you want to add the tax to individual invoice items. By default, the tax is added directly to the invoice.") %></p>
+                        </div>
+                        <div class="switch">
+                            <%= checkbox f, :tax_per_item, value: input_value(f, :tax_per_item) %>
+                            <span class="slider round"></span>
+                        </div>
+                    </label>
+
+                    <div class="w-max">
+                        <button type="submit" class="btn primary">Save Information</button>
+                    </div>
+                </div>
+            </.form>
+        </section>
+
+        <%# Notifications %>
+        <section id={Enum.at(@tabs,2).id}>
+            <div class="settings__header" >
+                <h2><%= Enum.at(@tabs,2).title %></h2>
+                <p ><%= Enum.at(@tabs,2).description %></p>
+            </div>
+
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,2).id}-alerts"} />
+        </section>
+    </section>
+</main>
