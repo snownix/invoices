@@ -81,6 +81,11 @@ button.icon,
   @apply opacity-100 duration-200 transition-all w-full;
 }
 
+button.icon svg,
+btn.icon svg {
+  @apply w-5 h-5;
+}
+
 /** 
 * -----------------------
 * Select

@@ -1,8 +1,8 @@
 defmodule SnownixWeb.Admin.ProjectLive.Index do
   use SnownixWeb, :live_view
 
-  alias Snownix.Organization
-  alias Snownix.Organization.Project
+  alias Snownix.Organizations
+  alias Snownix.Organizations.Project
 
   @impl true
   def mount(_params, _session, socket) do
@@ -17,7 +17,7 @@ defmodule SnownixWeb.Admin.ProjectLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Project")
-    |> assign(:project, Organization.get_project!(id))
+    |> assign(:project, Organizations.get_project!(id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -34,13 +34,13 @@ defmodule SnownixWeb.Admin.ProjectLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    project = Organization.get_project!(id)
-    {:ok, _} = Organization.delete_project(project)
+    project = Organizations.get_project!(id)
+    {:ok, _} = Organizations.delete_project(project)
 
     {:noreply, assign(socket, :projects, list_projects())}
   end
 
   defp list_projects do
-    Organization.list_projects()
+    Organizations.list_projects()
   end
 end

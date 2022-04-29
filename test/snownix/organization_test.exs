@@ -1,12 +1,12 @@
-defmodule Snownix.OrganizationTest do
+defmodule Snownix.OrganizationsTest do
   use Snownix.DataCase
 
-  alias Snownix.Organization
+  alias Snownix.Organizations
 
   describe "projects" do
-    alias Snownix.Organization.Project
+    alias Snownix.Organizations.Project
 
-    import Snownix.OrganizationFixtures
+    import Snownix.OrganizationsFixtures
 
     @invalid_attrs %{
       city: nil,
@@ -21,12 +21,12 @@ defmodule Snownix.OrganizationTest do
 
     test "list_projects/0 returns all projects" do
       project = project_fixture()
-      assert Organization.list_projects() == [project]
+      assert Organizations.list_projects() == [project]
     end
 
     test "get_project!/1 returns the project with given id" do
       project = project_fixture()
-      assert Organization.get_project!(project.id) == project
+      assert Organizations.get_project!(project.id) == project
     end
 
     test "create_project/1 with valid data creates a project" do
@@ -41,7 +41,7 @@ defmodule Snownix.OrganizationTest do
         vat: "some vat"
       }
 
-      assert {:ok, %Project{} = project} = Organization.create_project(valid_attrs)
+      assert {:ok, %Project{} = project} = Organizations.create_project(valid_attrs)
       assert project.city == "some city"
       assert project.country == "some country"
       assert project.email == "some email"
@@ -53,7 +53,7 @@ defmodule Snownix.OrganizationTest do
     end
 
     test "create_project/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Organization.create_project(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Organizations.create_project(@invalid_attrs)
     end
 
     test "update_project/2 with valid data updates the project" do
@@ -70,7 +70,7 @@ defmodule Snownix.OrganizationTest do
         vat: "some updated vat"
       }
 
-      assert {:ok, %Project{} = project} = Organization.update_project(project, update_attrs)
+      assert {:ok, %Project{} = project} = Organizations.update_project(project, update_attrs)
       assert project.city == "some updated city"
       assert project.country == "some updated country"
       assert project.email == "some updated email"
@@ -83,19 +83,19 @@ defmodule Snownix.OrganizationTest do
 
     test "update_project/2 with invalid data returns error changeset" do
       project = project_fixture()
-      assert {:error, %Ecto.Changeset{}} = Organization.update_project(project, @invalid_attrs)
-      assert project == Organization.get_project!(project.id)
+      assert {:error, %Ecto.Changeset{}} = Organizations.update_project(project, @invalid_attrs)
+      assert project == Organizations.get_project!(project.id)
     end
 
     test "delete_project/1 deletes the project" do
       project = project_fixture()
-      assert {:ok, %Project{}} = Organization.delete_project(project)
-      assert_raise Ecto.NoResultsError, fn -> Organization.get_project!(project.id) end
+      assert {:ok, %Project{}} = Organizations.delete_project(project)
+      assert_raise Ecto.NoResultsError, fn -> Organizations.get_project!(project.id) end
     end
 
     test "change_project/1 returns a project changeset" do
       project = project_fixture()
-      assert %Ecto.Changeset{} = Organization.change_project(project)
+      assert %Ecto.Changeset{} = Organizations.change_project(project)
     end
   end
 end

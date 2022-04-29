@@ -2,10 +2,20 @@ defmodule SnownixWeb.TaxLiveTest do
   use SnownixWeb.ConnCase
 
   import Phoenix.LiveViewTest
-  import Snownix.ProjectFixtures
+  import Snownix.ProjectsFixtures
 
-  @create_attrs %{compound_tax: true, description: "some description", name: "some name", percent: 42}
-  @update_attrs %{compound_tax: false, description: "some updated description", name: "some updated name", percent: 43}
+  @create_attrs %{
+    compound_tax: true,
+    description: "some description",
+    name: "some name",
+    percent: 42
+  }
+  @update_attrs %{
+    compound_tax: false,
+    description: "some updated description",
+    name: "some updated name",
+    percent: 43
+  }
   @invalid_attrs %{compound_tax: false, description: nil, name: nil, percent: nil}
 
   defp create_tax(_) do

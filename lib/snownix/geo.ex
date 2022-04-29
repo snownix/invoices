@@ -264,4 +264,8 @@ defmodule Snownix.Geo do
   def countries_options() do
     countries() |> Enum.map(fn c -> {c.name, c.iso} end)
   end
+
+  def countries_list() do
+    countries() |> Enum.map(& &1.iso)
+  end
 end

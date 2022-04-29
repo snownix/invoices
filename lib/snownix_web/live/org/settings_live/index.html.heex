@@ -28,7 +28,7 @@
     <!-- Primary column -->
     <section 
         class="settings__tabs">
-        
+
         <%# Project %>
         <section id={Enum.at(@tabs,0).id}>
             <div class="settings__header" >
@@ -47,7 +47,7 @@
                 <form id="upload-logo" phx-change="validate" class="hidden">
                     <%= live_file_input @uploads.logo %>
                 </form>
-                <.form let={f} for={@changeset} phx-submit="project-save" phx-change="project-validate">
+                <.form let={fp} for={@changeset} phx-submit="project-save" phx-change="project-validate">
                     <div >
                         <div class="image__container">
                             <div class="image">
@@ -71,52 +71,52 @@
                         </div>
                         <div class="form__groups">
                             <div class="form__group">
-                                <%= label f, :name, gettext("Company Name") , class: "font-medium text-gray-900" %>
-                                <%= text_input f, :name , placeholder: gettext("Company Name") , value: input_value(f,
-                                        :name), required: true, phx_debounce: "blur", class: tag_class_error(f, :name) %>
-                                <%= error_tag f, :name, 1 %>
+                                <%= label fp, :name, gettext("Company Name") , class: "font-medium text-gray-900" %>
+                                <%= text_input fp, :name , placeholder: gettext("Company Name") , value: input_value(fp,
+                                        :name), required: true, phx_debounce: "blur", class: tag_class_error(fp, :name) %>
+                                <%= error_tag fp, :name, 1 %>
                             </div>
                             <div class="form__group">
-                                <%= label f, :phone, gettext("Phone") , class: "font-medium text-gray-900" %>
-                                <%= text_input f, :phone , placeholder: gettext("Phone") , value: input_value(f,
-                                        :phone), phx_debounce: "blur", class: tag_class_error(f, :phone) %>
-                                <%= error_tag f, :phone, 1 %>
-                            </div>
-                        </div>
-                        <div class="form__groups">
-                            <div class="form__group">
-                                <%= label f, :email, gettext("Email"),  class: "font-medium text-gray-900" %>
-                                <%= text_input f, :email, placeholder: gettext("Email"),  phx_debounce: "blur", class: tag_class_error(f, :email) %>
-                                <%= error_tag f, :email, 1 %>
-                            </div>
-                            <div class="form__group">
-                                <%= label f, :country, gettext("Country"), class: "font-medium text-gray-900" %>
-                                <%= select f, :country, countries_options(), placeholder: gettext("Country"), 
-                                        phx_debounce: "blur" , value: input_value(f, :country), class: tag_class_error(f, :country) %>
-                                <%= error_tag f, :country, 1 %>
+                                <%= label fp, :phone, gettext("Phone") , class: "font-medium text-gray-900" %>
+                                <%= text_input fp, :phone , placeholder: gettext("Phone") , value: input_value(fp,
+                                        :phone), phx_debounce: "blur", class: tag_class_error(fp, :phone) %>
+                                <%= error_tag fp, :phone, 1 %>
                             </div>
                         </div>
                         <div class="form__groups">
                             <div class="form__group">
-                                <%= label f, :city, gettext("City"), class: "font-medium text-gray-900" %>
-                                <%= text_input f, :city, placeholder: gettext("City"),  phx_debounce: "blur" , class: tag_class_error(f, :city)%>
-                                <%= error_tag f, :city, 1 %>
+                                <%= label fp, :email, gettext("Email"),  class: "font-medium text-gray-900" %>
+                                <%= text_input fp, :email, placeholder: gettext("Email"),  phx_debounce: "blur", class: tag_class_error(fp, :email) %>
+                                <%= error_tag fp, :email, 1 %>
                             </div>
                             <div class="form__group">
-                                <%= label f, :state, gettext("State"), class: "font-medium text-gray-900" %>
-                                <%= text_input f, :state, placeholder: gettext("State"),  phx_debounce: "blur", class: tag_class_error(f, :state) %>
-                                <%= error_tag f, :state, 1 %>
+                                <%= label fp, :country, gettext("Country"), class: "font-medium text-gray-900" %>
+                                <%= select fp, :country, countries_options(), placeholder: gettext("Country"), 
+                                        phx_debounce: "blur" , value: input_value(fp, :country), class: tag_class_error(fp, :country) %>
+                                <%= error_tag fp, :country, 1 %>
+                            </div>
+                        </div>
+                        <div class="form__groups">
+                            <div class="form__group">
+                                <%= label fp, :city, gettext("City"), class: "font-medium text-gray-900" %>
+                                <%= text_input fp, :city, placeholder: gettext("City"),  phx_debounce: "blur" , class: tag_class_error(fp, :city)%>
+                                <%= error_tag fp, :city, 1 %>
                             </div>
                             <div class="form__group">
-                                <%= label f, :zip, gettext("Zip"), class: "font-medium text-gray-900" %>
-                                <%= text_input f, :zip, placeholder: gettext("Zip"),  phx_debounce: "blur", class: tag_class_error(f, :zip) %>
-                                <%= error_tag f, :zip, 1 %>
+                                <%= label fp, :state, gettext("State"), class: "font-medium text-gray-900" %>
+                                <%= text_input fp, :state, placeholder: gettext("State"),  phx_debounce: "blur", class: tag_class_error(fp, :state) %>
+                                <%= error_tag fp, :state, 1 %>
+                            </div>
+                            <div class="form__group">
+                                <%= label fp, :zip, gettext("Zip"), class: "font-medium text-gray-900" %>
+                                <%= text_input fp, :zip, placeholder: gettext("Zip"),  phx_debounce: "blur", class: tag_class_error(fp, :zip) %>
+                                <%= error_tag fp, :zip, 1 %>
                             </div>
                         </div>
                         <div class="form__group">
-                            <%= label f, :street, gettext("Address"), class: "font-medium text-gray-900" %>
-                            <%= textarea f, :street, placeholder: gettext("Address"),  phx_debounce: "blur", class: tag_class_error(f, :street) %>
-                            <%= error_tag f, :street, 1 %>
+                            <%= label fp, :street, gettext("Address"), class: "font-medium text-gray-900" %>
+                            <%= textarea fp, :street, placeholder: gettext("Address"),  phx_debounce: "blur", class: tag_class_error(fp, :street) %>
+                            <%= error_tag fp, :street, 1 %>
                         </div>
                         <div class="w-max">
                             <button type="submit" class="btn primary">Save Information</button>
@@ -140,30 +140,30 @@
 
             <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,1).id}-alerts"} />
 
-            <.form let={f} for={@preferences_changeset} phx-submit="project-save" phx-change="preferences-validate">
+            <.form let={fr} for={@preferences_changeset} phx-submit="project-save" phx-change="preferences-validate">
                 <div >
                     <div class="form__groups">
                         <div class="form__group">
-                            <%= label f, :currency, class: "font-medium text-gray-900" %>
-                            <%= select f, :currency, currencies_options(), placeholder: gettext("New currency") , required: true, phx_debounce: "blur", value: input_value(f, :currency), class: tag_class_error(f, :currency)  %>
-                            <%= error_tag f, :currency, 1 %>
+                            <%= label fr, :currency, class: "font-medium text-gray-900" %>
+                            <%= select fr, :currency, currencies_options(), placeholder: gettext("New currency") , required: true, phx_debounce: "blur", value: input_value(fr, :currency), class: tag_class_error(fr, :currency)  %>
+                            <%= error_tag fr, :currency, 1 %>
                         </div>
                         <div class="form__group">
-                            <%= label f, :fiscal_year, class: "font-medium text-gray-900" %>
-                            <%= select f, :fiscal_year, fiscal_year_options(), placeholder: gettext("Fiscal Year") , required: true, phx_debounce: "blur", value: input_value(f, :fiscal_year), class: tag_class_error(f, :fiscal_year)  %>
-                            <%= error_tag f, :fiscal_year, 1 %>
+                            <%= label fr, :fiscal_year, class: "font-medium text-gray-900" %>
+                            <%= select fr, :fiscal_year, fiscal_year_options(), placeholder: gettext("Fiscal Year") , required: true, phx_debounce: "blur", value: input_value(fr, :fiscal_year), class: tag_class_error(fr, :fiscal_year)  %>
+                            <%= error_tag fr, :fiscal_year, 1 %>
                         </div>
                     </div>
                     <div class="form__groups">
                         <div class="form__group">
-                            <%= label f, :date_format, class: "font-medium text-gray-900" %>
-                            <%= select f, :date_format, date_format_options(), placeholder: gettext("Date Format") , required: true, phx_debounce: "blur", value: input_value(f, :date_format), class: tag_class_error(f, :date_format)  %>
-                            <%= error_tag f, :date_format, 1 %>
+                            <%= label fr, :date_format, class: "font-medium text-gray-900" %>
+                            <%= select fr, :date_format, date_format_options(), placeholder: gettext("Date Format") , required: true, phx_debounce: "blur", value: input_value(fr, :date_format), class: tag_class_error(fr, :date_format)  %>
+                            <%= error_tag fr, :date_format, 1 %>
                         </div>
                         <div class="form__group">
-                            <%= label f, :time_zone, class: "font-medium text-gray-900" %>
-                            <%= select f, :time_zone, time_zone_options(), placeholder: gettext("Date Format") , required: true, phx_debounce: "blur", value: input_value(f, :time_zone), class: tag_class_error(f, :time_zone)  %>
-                            <%= error_tag f, :time_zone, 1 %>
+                            <%= label fr, :time_zone, class: "font-medium text-gray-900" %>
+                            <%= select fr, :time_zone, time_zone_options(), placeholder: gettext("Date Format") , required: true, phx_debounce: "blur", value: input_value(fr, :time_zone), class: tag_class_error(fr, :time_zone)  %>
+                            <%= error_tag fr, :time_zone, 1 %>
                         </div>
                     </div>
                     <label class="flex justify-between items-center">
@@ -172,7 +172,7 @@
                             <p class="text-gray-500"><%= gettext("Enable this option if you want to add the discount to individual invoice items. By default, the discount is added directly to the invoice.") %></p>
                         </div>
                         <div class="switch">
-                            <%= checkbox f, :discount_per_item, value: input_value(f, :discount_per_item) %>
+                            <%= checkbox fr, :discount_per_item, value: input_value(fr, :discount_per_item) %>
                             <span class="slider round"></span>
                         </div>
                     </label>
@@ -183,7 +183,7 @@
                             <p class="text-gray-500"><%= gettext("Enable this option if you want to add the tax to individual invoice items. By default, the tax is added directly to the invoice.") %></p>
                         </div>
                         <div class="switch">
-                            <%= checkbox f, :tax_per_item, value: input_value(f, :tax_per_item) %>
+                            <%= checkbox fr, :tax_per_item, value: input_value(fr, :tax_per_item) %>
                             <span class="slider round"></span>
                         </div>
                     </label>
@@ -203,6 +203,60 @@
             </div>
 
             <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,2).id}-alerts"} />
+        </section>
+
+
+        
+        <%# Tax's %>
+        <section id={Enum.at(@tabs,3).id}>
+            <div class="settings__header" >
+                <h2><%= Enum.at(@tabs,3).title %></h2>
+                <p ><%= Enum.at(@tabs,3).description %></p>
+            </div>
+
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,3).id}-alerts"} />
+            
+            <div class="w-full py-4">
+                <.form let={ft} for={@tax_changeset} phx-submit="tax-save" phx-change="tax-validate">
+                    <table>
+                        <thead>
+                            <th>Name</th>
+                            <th>Percent</th>
+                            <th>Description</th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            <%= for tax <- @taxs do %>
+                                <tr>
+                                    <td><%= tax.name %></td>
+                                    <td><%= tax.percent %></td>
+                                    <td><%= tax.description %></td>
+                                    <td class="flex justify-between cursor-pointer">
+                                        <a href="#" phx-click="tax-edit" phx-value-id={tax.id} >
+                                            <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
+                                        </a>
+                                        <span>
+                                            <%= link to: "#", phx_click: "tax-delete", phx_value_id: tax.id, data: [confirm: "Are you sure?"] do %>
+                                                <%= render SnownixWeb.IconsView, "delete.svg", %{} %>
+                                            <% end %>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <% end %>
+                            <tr>
+                                <td><%= text_input ft, :name, placeholder: gettext("Name"), value: input_value(ft, :name), class: tag_class_error(ft, :name) %></td>
+                                <td><%= number_input ft, :percent, placeholder: gettext("Percent"), value: input_value(ft, :percent), class: tag_class_error(ft, :percent), step: "0.05" %></td>
+                                <td><%= text_input ft, :description, placeholder: gettext("Description"), value: input_value(ft, :description), class: tag_class_error(ft, :description) %></td>
+                                <td>
+                                    <button class="primary icon">
+                                        <%= render SnownixWeb.IconsView, ( @tax_action == :create && "plus.svg" || "save.svg"), %{} %>
+                                    </button>
+                                 </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </.form>
+            </div>
         </section>
     </section>
 </main>

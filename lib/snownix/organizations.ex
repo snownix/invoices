@@ -1,12 +1,12 @@
-defmodule Snownix.Organization do
+defmodule Snownix.Organizations do
   @moduledoc """
-  The Organization context.
+  The Organizations context.
   """
 
   import Ecto.Query, warn: false
   alias Snownix.Repo
 
-  alias Snownix.Organization.Project
+  alias Snownix.Organizations.Project
 
   @doc """
   Returns the list of projects.

@@ -2,7 +2,7 @@ defmodule SnownixWeb.Admin.ProjectLiveTest do
   use SnownixWeb.ConnCase
 
   import Phoenix.LiveViewTest
-  import Snownix.OrganizationFixtures
+  import Snownix.OrganizationsFixtures
 
   @create_attrs %{
     city: "some city",

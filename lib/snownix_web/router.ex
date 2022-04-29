@@ -83,6 +83,13 @@ defmodule SnownixWeb.Router do
 
         live "/projects/:id", ProjectLive.Show, :show
         live "/projects/:id/show/edit", ProjectLive.Show, :edit
+
+        live "/taxs", TaxLive.Index, :index
+        live "/taxs/new", TaxLive.Index, :new
+        live "/taxs/:id/edit", TaxLive.Index, :edit
+
+        live "/taxs/:id", TaxLive.Show, :show
+        live "/taxs/:id/show/edit", TaxLive.Show, :edit
       end
 
       # Auth

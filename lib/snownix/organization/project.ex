@@ -1,4 +1,4 @@
-defmodule Snownix.Organization.Project do
+defmodule Snownix.Organizations.Project do
   use Ecto.Schema
   use Waffle.Ecto.Schema
 
@@ -111,7 +111,7 @@ defmodule Snownix.Organization.Project do
   def fiscal_years(), do: @fiscal_years
   def date_formats(), do: @date_formats
 
-  def countries(), do: Snownix.Geo.countries()
+  def countries(), do: Snownix.Geo.countries_list()
 
   def timezones(), do: TzExtra.time_zone_identifiers()
 end

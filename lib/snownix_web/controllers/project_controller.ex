@@ -1,10 +1,10 @@
 defmodule SnownixWeb.ProjectController do
   use SnownixWeb, :controller
 
-  alias Snownix.Organization
+  alias Snownix.Organizations
 
   def open(conn, %{"id" => id}) do
-    project = Organization.get_project_by_user(conn.assigns[:current_user], id)
+    project = Organizations.get_project_by_user(conn.assigns[:current_user], id)
 
     if project do
       log_in_project(conn, id)

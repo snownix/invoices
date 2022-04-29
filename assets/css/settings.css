@@ -1,15 +1,15 @@
 .settings__tabs {
-  @apply min-w-0 flex-1 h-full flex flex-col lg:order-last p-8 overflow-y-scroll max-h-screen scroll-smooth space-y-20;
+  @apply min-w-0 flex-1  flex flex-col  p-8 overflow-y-scroll scroll-smooth space-y-20;
 }
 .settings__tabs > section {
-  @apply py-6 min-h-screen h-full  max-w-screen-md;
+  @apply py-6 min-h-screen max-w-screen-md;
 }
 .settings__nav {
   @apply hidden lg:block lg:flex-shrink-0 lg:order-first;
 }
 
 .settings__container {
-  @apply h-full relative flex flex-col w-96 border-r border-gray-200 bg-white min-h-screen overflow-y-auto;
+  @apply relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto;
 }
 .settings__container .tabs .tab__item {
   @apply flex space-x-2 p-4 border-b cursor-pointer hover:bg-gray-50;

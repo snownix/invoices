@@ -2,14 +2,14 @@ defmodule SnownixWeb.Project do
   import Plug.Conn
   import Phoenix.Controller
 
-  alias Snownix.Organization
-  alias Snownix.Organization.Project
+  alias Snownix.Organizations
+  alias Snownix.Organizations.Project
   alias SnownixWeb.Router.Helpers, as: Routes
 
   defp find_project(user, session) do
     with project_id when not is_nil(project_id) <- session["project_id"],
          %Project{} = project <-
-           Organization.get_project_by_user(user, project_id),
+           Organizations.get_project_by_user(user, project_id),
          do: project
   end
 

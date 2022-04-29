@@ -230,7 +230,7 @@ main.container {
 * Table
 * ------------------------- */
 table {
-  @apply w-full;
+  @apply w-full text-dark;
 }
 
 th,

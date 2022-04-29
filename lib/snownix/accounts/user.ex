@@ -19,8 +19,8 @@ defmodule Snownix.Accounts.User do
 
     field :admin, :boolean, default: false
 
-    has_many :owned_projects, Snownix.Organization.Project
-    many_to_many :projects, Snownix.Organization.Project, join_through: "users_projects"
+    has_many :owned_projects, Snownix.Organizations.Project
+    many_to_many :projects, Snownix.Organizations.Project, join_through: "users_projects"
 
     timestamps()
   end

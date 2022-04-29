@@ -1,7 +1,7 @@
-defmodule Snownix.OrganizationFixtures do
+defmodule Snownix.OrganizationsFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `Snownix.Organization` context.
+  entities via the `Snownix.Organizations` context.
   """
 
   @doc """
@@ -20,7 +20,7 @@ defmodule Snownix.OrganizationFixtures do
         street: "some street",
         vat: "some vat"
       })
-      |> Snownix.Organization.create_project()
+      |> Snownix.Organizations.create_project()
 
     project
   end

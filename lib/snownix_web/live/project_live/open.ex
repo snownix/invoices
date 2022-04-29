@@ -2,7 +2,7 @@ defmodule SnownixWeb.ProjectLive.Open do
   use SnownixWeb, :live_dashboard
 
   alias Snownix.Repo
-  alias Snownix.Organization
+  alias Snownix.Organizations
 
   def mount(_, _, socket) do
     {
@@ -17,7 +17,7 @@ defmodule SnownixWeb.ProjectLive.Open do
 
   defp fetch(socket, id) do
     project =
-      Organization.get_project!(id)
+      Organizations.get_project!(id)
       |> Repo.preload(:users)
 
     socket

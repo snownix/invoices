@@ -2,8 +2,8 @@ defmodule SnownixWeb.ProjectLive.New do
   use SnownixWeb, :live_dashboard
 
   import Snownix.Geo
-  alias Snownix.Organization
-  alias Snownix.Organization.Project
+  alias Snownix.Organizations
+  alias Snownix.Organizations.Project
 
   @situtations [
     %{
@@ -37,13 +37,13 @@ defmodule SnownixWeb.ProjectLive.New do
   end
 
   def assign_changeset(socket) do
-    socket |> assign(:changeset, Organization.change_project(%Project{}))
+    socket |> assign(:changeset, Organizations.change_project(%Project{}))
   end
 
   def handle_event("validate", %{"project" => params}, socket) do
     changeset =
       %Project{}
-      |> Organization.change_project(params)
+      |> Organizations.change_project(params)
       |> Map.put(:action, :validate)
 
     {:noreply, socket |> assign(:changeset, changeset)}
@@ -54,7 +54,7 @@ defmodule SnownixWeb.ProjectLive.New do
 
     params = Map.merge(project_params, %{"situation" => socket.assigns.situation})
 
-    case Organization.create_project(user, params) do
+    case Organizations.create_project(user, params) do
       {:ok, project} ->
         {
           :noreply,
