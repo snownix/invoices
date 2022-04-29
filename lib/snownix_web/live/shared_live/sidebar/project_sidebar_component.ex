@@ -104,8 +104,8 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
         <ul class="sidebar__menu">
           <li>
             <a href="/">
-              <%= render SnownixWeb.IconsView, "clients.svg", %{} %>
-              <span><%= gettext("Clients") %></span>
+              <%= render SnownixWeb.IconsView, "customers.svg", %{} %>
+              <span><%= gettext("Customers") %></span>
             </a>
             </li>
           <li>
