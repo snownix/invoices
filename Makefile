@@ -5,8 +5,7 @@ migrate:
 	@mix ecto.migrate
 	
 reset:
-	@mix ecto.drop
-	@mix ecto.setup
+	@mix ecto.reset
 	@$(MAKE) serve
 
 serve:

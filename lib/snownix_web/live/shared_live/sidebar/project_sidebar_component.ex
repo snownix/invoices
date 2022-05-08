@@ -103,10 +103,10 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
         </p>
         <ul class="sidebar__menu">
           <li>
-            <a href="/">
+            <%= live_patch to: Routes.org_customer_index_path(@socket, :index) do %>
               <%= render SnownixWeb.IconsView, "customers.svg", %{} %>
               <span><%= gettext("Customers") %></span>
-            </a>
+            <% end %>
             </li>
           <li>
             <a href="/">
@@ -198,10 +198,10 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
             <% end %>
           </li>
           <li class="mt-2">
-            <a href="/">
+            <%= link to: Routes.user_session_path(@socket, :delete), method: :delete, data: [confirm: "Are you sure?"] do %>
               <%= render SnownixWeb.IconsView, "logout.svg", %{} %>
               <span><%= gettext("Logout") %></span>
-            </a>
+            <% end %>
           </li>
       </ul>
       <!--

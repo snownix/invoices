@@ -10,8 +10,8 @@ defmodule Snownix.Repo.Migrations.CreateTaxs do
       add :description, :string
       add :compound_tax, :boolean, default: false, null: false
 
-      add :project_id, references(:projects, on_delete: :nothing, type: :uuid)
       add :author_id, references(:users, on_delete: :nothing, type: :uuid)
+      add :project_id, references(:projects, on_delete: :nothing, type: :uuid)
 
       timestamps()
     end

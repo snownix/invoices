@@ -70,7 +70,9 @@ defmodule Snownix.MixProject do
       {:money, "~> 1.9"},
       {:tz, "~> 0.20.1"},
       {:tz_extra, "~> 0.20.1"},
-      {:earmark, "~> 1.4.20"}
+      {:earmark, "~> 1.4.20"},
+      {:timex, "~> 3.0"},
+      {:faker, "~> 0.17", only: :dev}
     ]
   end
 
@@ -84,10 +86,10 @@ defmodule Snownix.MixProject do
     [
       setup: ["deps.get", "ecto.setup"],
       "ecto.seeds": ["run priv/repo/seeds.exs"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "ecto.seeds"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      "ecto.setup": ["ecto.create", "ecto.migrate"],
+      "ecto.reset": ["ecto.drop", "ecto.setup", "ecto.seeds"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
+      "assets.deploy": ["tailwind default --minify", "esbuild de  ult --minify", "phx.digest"]
     ]
   end
 end

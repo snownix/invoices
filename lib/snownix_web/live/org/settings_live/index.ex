@@ -252,14 +252,15 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
   end
 
   def fiscal_year_options() do
-    Project.fiscal_years() |> Enum.map(fn c -> {c.title, c.id} end)
+    Snownix.Helpers.Model.fiscal_years() |> Enum.map(fn c -> {c.title, c.id} end)
   end
 
   def date_format_options() do
-    Project.date_formats() |> Enum.map(fn c -> {Calendar.strftime(Date.utc_today(), c), c} end)
+    Snownix.Helpers.Model.date_formats()
+    |> Enum.map(fn c -> {Calendar.strftime(Date.utc_today(), c), c} end)
   end
 
-  def time_zone_options(), do: Project.timezones()
+  def time_zone_options(), do: Snownix.Helpers.Model.timezones()
 
   # Upload messages
   defp error_to_string(:too_large), do: gettext("File size is too large, max allowed 2MB.")

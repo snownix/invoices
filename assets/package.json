@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "easymde": "^2.16.1",
+    "litepicker": "^2.0.12",
+    "moment": "^2.29.3",
     "simplemde": "^1.11.2"
   }
 }

@@ -1,5 +1,5 @@
 .sidebar {
-  @apply hidden md:block md:flex-shrink-0 md:bg-[#f7f7f7] md:overflow-y-auto overflow-x-hidden border-r max-h-screen;
+  @apply hidden md:block md:flex-shrink-0 md:bg-[#f7f7f7] md:overflow-y-auto overflow-x-hidden border-r min-h-screen;
 }
 
 .sidebar__container {

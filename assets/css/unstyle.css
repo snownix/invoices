@@ -1,0 +1,4 @@
+
+select.unstyle {
+    @apply ring-0 focus:outline-none border-none rounded-none;
+}

@@ -6,9 +6,13 @@
 @import "./settings.css";
 @import "./forms.css";
 @import "./typography.css";
+@import "./table.css";
+@import "./unstyle.css";
 
 html {
-  @apply text-black text-[0.95rem];
+  @apply text-dark;
+  @apply text-[0.95rem];
+  font-family: "Inter";
 }
 
 /** 
@@ -118,7 +122,7 @@ main.container {
 
 .auth__content .btn,
 .auth__content input {
-  @apply py-3.5;
+  @apply py-3.5 w-full;
 }
 
 .auth__content input.error {
@@ -209,7 +213,7 @@ main.container {
 }
 
 .avatar__text {
-  @apply flex items-center justify-center text-2xl border uppercase text-dark rounded-xl font-bold;
+  @apply flex items-center justify-center text-2xl border uppercase text-dark rounded-xl font-bold !leading-none;
 }
 
 /**
@@ -226,26 +230,24 @@ main.container {
 }
 
 /**
-* ------------------------- *
-* Table
-* ------------------------- */
-table {
-  @apply w-full text-dark;
-}
-
-th,
-td {
-  @apply text-left p-2;
-}
-th,
-tr:nth-of-type(2n) {
-  @apply bg-gray-100;
-}
-
-/**
 * Phoenix 
 */
 .phx-no-feedback.invalid-feedback,
 .phx-no-feedback .invalid-feedback {
   display: none;
+}
+
+/**
+ * Customers
+ */
+
+._customer > div {
+  @apply flex flex-col;
+}
+
+._customer > div label {
+  @apply text-gray-400 text-sm;
+}
+._customer > div label:after {
+  content: " :";
 }

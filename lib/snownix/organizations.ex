@@ -21,6 +21,11 @@ defmodule Snownix.Organizations do
     Repo.all(Project)
   end
 
+  def user_list_projects(user) do
+    Repo.preload(user, :projects).projects
+    |> Repo.preload(:users)
+  end
+
   @doc """
   Gets a single project.
 

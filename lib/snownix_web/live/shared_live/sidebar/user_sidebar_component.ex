@@ -52,10 +52,10 @@ defmodule SnownixWeb.SharedLive.Sidebar.UserSidebarComponent do
     <div class="flex flex-col w-full flex-grow justify-end">
       <ul class="sidebar__menu">
           <li>
-            <a href="/">
+            <%= link to: Routes.user_session_path(@socket, :delete), method: :delete, data: [confirm: "Are you sure?"] do %>
               <%= render SnownixWeb.IconsView, "logout.svg", %{} %>
               <span>Logout</span>
-            </a>
+            <% end %>
           </li>
         </ul>
     </div>

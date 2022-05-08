@@ -8,14 +8,7 @@
             </select>
         </form>
         <div class="flex justify-center mt-8 space-x-6">
-            <a href="#" class="text-gray-500 hover:text-gray-500">
-                <span class="sr-only">Instagram</span>
-                <%= render SnownixWeb.IconsView, "instagram.svg", %{} %>
-            </a>
-            <a href="#" class="text-gray-500 hover:text-gray-500">
-                <span class="sr-only">Twitter</span>
-                <%= render SnownixWeb.IconsView, "twitter.svg", %{} %>
-            </a>
+          
         </div>
         <p class="mt-8 text-base leading-6 text-center text-gray-500">© <%= Date.utc_today().year %> <%= assigns[:app_name] || "Snownix" %>. All rights reserved.</p>
     </div>

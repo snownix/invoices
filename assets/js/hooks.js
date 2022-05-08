@@ -1,4 +1,5 @@
-import Mde from 'easymde';
+import moment from 'moment';
+import Litepicker from 'litepicker';
 
 const Hooks = {
     Flash: {
@@ -29,7 +30,7 @@ const Hooks = {
         mounted() {
             const input = this.el.querySelector('input');
             const target = this.el.getAttribute('phx-target');
-            const listName = this.el.getAttribute('data-list');
+            const listName = this.el.dataset.list;
 
             input.addEventListener('keyup', (event) => {
                 let value = event.target.value;
@@ -55,31 +56,31 @@ const Hooks = {
             })
         }
     },
-    Markdown: {
-        mounted() {
-            console.log('loaded!')
-            const mde = new Mde({
+    DateRange: {
+        mounted(){
+            const org = this.el.dataset.innerText;
+
+            new Litepicker({ 
                 element: this.el,
-                uploadImage: true,
-                imageUploadFunction: (file, s, e) => {
-                    console.log('file : ', file)
-                }
-            });
+                singleMode: false,
+                tooltipText: {
+                  one: 'day',
+                  other: 'days'
+                },
+                setup: (picker) => {
+                    picker.on('selected', (date1, date2) => {
+                      // some action
+                        const a = moment(date1.dateInstance);
+                        const b = moment(date2.dateInstance);
 
+                        this.el.innerText = `Period: ${a.format('YYYY-MM-DD')} - ${b.format('YYYY-MM-DD')}  (${b.diff(a, 'days')} days)`;
 
-            let targetTextarea = this.getTarget(this.el.getAttribute('id'));
-
-            mde.codemirror.on('change', function () {
-                if (!targetTextarea) {
-                    targetTextarea = this.getTarget(this.el.getAttribute('id'));
-                }
-                if (targetTextarea) {
-                    targetTextarea.value = mde.value();
-                }
-            });
-        },
-        getTarget(id) {
-            return document.querySelector(`textarea[data-id="target-${id}"]`);
+                        this.pushEvent('period', { start: date1.dateInstance, end: date2.dateInstance})
+                    });
+                  },
+                  
+              });
+            
         }
     }
 }

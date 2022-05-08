@@ -1,0 +1,144 @@
+<main class="flex flex-col max-h-screen w-full">
+    <section class="_header flex flex-col items-center space-y-2 md:space-y-0 md:flex-row justify-between p-8 md:pt-10">
+        <div >
+            <h1 class="font-semibold"><%= gettext "Customers" %></h1>
+        </div>
+        <div class="flex space-x-2">
+            <%= live_patch to: Routes.org_customer_index_path(@socket, :new), class: "btn primary" do %>
+                <%= render SnownixWeb.IconsView, "plus.svg", %{} %>
+                New Customer
+            <% end %>
+            <button disabled>
+                <%= render SnownixWeb.IconsView, "upload.svg", %{} %>
+                Import
+            </button>
+        </div>
+    </section>
+    <section class="_fiters px-4 py-2 flex flex-wrap w-full bg-gray-50 border-t">
+         <!-- Filters Dropdown menu -->
+
+        <div data-menu>
+            <a href="#" class="btn !p-2 !text-xs !rounded-none m-1" >
+                <%= render SnownixWeb.IconsView, "plus.svg", %{size: 18} %>
+                Add Filter
+            </a>
+
+            <!-- Dropdown menu -->
+            <div data-menu-dropdown class="z-10 p-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                <ul class="w-full py-1">
+                    <li phx-hook="DateRange" id="period">
+                        Period Filter
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+         <!-- Filters List -->
+        <%= for {filter, index} <- Enum.with_index(@table.filters) do %>
+            <%= render_filter(assigns,Enum.at(filter,0), filter, index) %> 
+        <% end %>
+    </section>
+    <div class="_table overflow-y-scroll  max-h-full h-full">
+        <.live_component id="customers"  module={SnownixWeb.SharedLive.UI.TableComponent}>
+            <:thead>
+                <th class="w-14"><input type="checkbox" %></th>
+                <%= render_col(assigns, :contact_name, "Contact") %>
+                <%= render_col(assigns, :name, "Name") %>
+                <%= render_col(assigns, :currency, "Currency") %>
+                <th>Amount Due</th>
+                <%= render_col(assigns, :inserted_at, "Register Date") %>
+                <th class="w-14"></th>
+            </:thead>
+            <:tbody>
+                <%= for item <- @customers do %>
+                    <tr id={"item-#{item.id}"} class={if !is_nil(@customer) and @customer.id == item.id, do: "active", else:  "" }>
+                        <td><input type="checkbox" %></td>
+                        <td class="interactive" phx-click="show" phx-value-id={item.id}>
+                            <div class="flex space-x-3 items-center">
+                                <%= render_user_avatar(assigns, item) %>
+                                <div class="flex flex-col">
+                                    <span><%= item.contact_name %></span>
+                                    <small><%= item.email %></small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><%= item.name %></td>
+                        <td><%= item.currency %></td>
+                        <td><%= 0 %></td>
+                        <td><%= date_format(item.inserted_at) %></td>
+                        <td>
+                            <div class="flex justify-end items-center space-x-2">
+                                <%= live_patch to: Routes.org_customer_index_path(@socket, :edit, item.id), class: "btn light  !p-1 !text-gray-500 icon" do %>
+                                    <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
+                                <% end %>
+                                <%= link to: "#", class: "btn light !p-1 !text-gray-500 icon", phx_click: "delete", phx_value_id: item.id, data: [confirm: "Are you sure?"] do %>
+                                    <%= render SnownixWeb.IconsView, "delete.svg", %{} %>
+                                <% end %>
+                            </div>
+                        </td>
+                    </tr>
+                <% end %>
+            </:tbody>
+        </.live_component>
+    </div>
+    <%= form_for :table ,"#", [phx_change: "table", class: "_footer border-t px-4 py-2 justify-between flex w-full items-center"], fn f ->%>
+        <div class="flex items-center space-x-2 ">
+            <label>Lines </label>
+            <%= select f, :limit, Enum.map(1..5, &(&1 * 5)), class: "unstyle", value: @table.limit %>
+        </div>
+        <div class="flex">
+            <a href="#" class="btn sm light" phx-click="page" phx-value-page={@pagination.prev_page}><%= render SnownixWeb.IconsView, "arrow_prev.svg", %{} %></a>
+            <div class="flex  divide-x divide-gray-300 items-center">
+            <p class="px-2">Page: <span><%= @pagination.page %> / <%= @pagination.total %></span></p>
+            <p class="px-2">Total: <span><%= if @pagination.has_next, do: @pagination.page * @pagination.per_page, else: @pagination.count %> / <%= @pagination.count %></span></p>
+            </div>
+            <a href="#" class="btn sm light" phx-click="page" phx-value-page={@pagination.next_page}><%= render SnownixWeb.IconsView, "arrow_next.svg", %{} %></a>
+        </div>
+        <div class="flex items-center space-x-2 ">
+            <label>Page </label>
+            <%= select f, :page, 1..(@pagination.total || 1), class: "unstyle", value: @table.page %>
+        </div>
+    <% end %>
+    <div class="_view">
+        <.live_component 
+            id="customers" 
+            open={!is_nil(@customer)}
+            prev={Routes.org_customer_index_path(@socket,:index)}
+            module={SnownixWeb.SharedLive.UI.DetailsComponent}
+        >
+            <:title><%= gettext "Customer Details" %></:title>
+            <:body>
+                <%= if @live_action == :show do %>
+                    <section class="_profile space-y-2">
+                        <div class="py-2 px-6 rounded bg-gray-50 font-medium text-dark">
+                            <h3>Profile</h3>
+                        </div>
+                        <div class="_customer px-6 rounded-md space-y-1">
+                            <div>
+                                <label><%= gettext "Name" %></label>
+                                <%= @customer.name %>
+                            </div>
+                            <div><label><%= gettext "Contact Name" %></label><%= @customer.contact_name %></div>
+                            <div><label><%= gettext "Email" %></label><%= @customer.email %></div>
+                            <div><label><%= gettext "Phone" %></label><%= @customer.phone %></div>
+                            <div><label><%= gettext "Website" %></label><%= @customer.website %></div>
+                        </div>
+                    </section>
+                <% end %>
+                <%= if @live_action in [:new, :edit] do %>
+                        <.live_component
+                        module={SnownixWeb.Org.CustomerLive.FormComponent}
+                        id={if is_nil(@customer.id), do: "new", else: @customer.id}
+                        title={@page_title}
+                        action={@live_action}
+                        customer={@customer}
+                        project={@project}
+                        current_user={@current_user}
+                        return_to={Routes.org_customer_index_path(@socket, :index)}
+                        />
+                <% end %>
+            </:body>
+        </.live_component>
+    </div>
+</main>

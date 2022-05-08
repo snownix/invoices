@@ -21,7 +21,7 @@ defmodule Snownix.Pagination do
     results = query(query, page, per_page: per_page)
     has_next = length(results) > per_page
     has_prev = page > 1
-    total = Repo.one(from(t in subquery(query), select: count("*")))
+    count = Repo.one(from(t in subquery(query), select: count("*")))
 
     %{
       has_next: has_next,
@@ -29,9 +29,11 @@ defmodule Snownix.Pagination do
       prev_page: page - 1,
       page: page,
       next_page: page + 1,
-      total: Float.ceil(total / per_page, 0) |> trunc,
+      count: count,
+      per_page: per_page,
+      total: Float.ceil(count / per_page, 0) |> trunc,
       first: (page - 1) * per_page + 1,
-      last: Enum.min([page * per_page, total]),
+      last: Enum.min([page * per_page, count]),
       items: Enum.slice(results, 0, per_page)
     }
   end

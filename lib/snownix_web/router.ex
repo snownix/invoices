@@ -37,9 +37,16 @@ defmodule SnownixWeb.Router do
 
       live "/", ProjectLive.Dashboard, :index
 
-      scope "/org", as: :org do
-        live "/invoices", Org.InvoiceLive.Index, :index
-        live "/settings", Org.SettingsLive.Index, :settings
+      scope "/org", Org, as: :org do
+        scope "/customers" do
+          live "/", CustomerLive.Index, :index
+          live "/new", CustomerLive.Index, :new
+          live "/:id", CustomerLive.Index, :show
+          live "/:id/edit", CustomerLive.Index, :edit
+        end
+
+        live "/invoices", InvoiceLive.Index, :index
+        live "/settings", SettingsLive.Index, :settings
       end
     end
   end
@@ -90,6 +97,13 @@ defmodule SnownixWeb.Router do
 
         live "/taxs/:id", TaxLive.Show, :show
         live "/taxs/:id/show/edit", TaxLive.Show, :edit
+
+        live "/customer_users", UserLive.Index, :index
+        live "/customer_users/new", UserLive.Index, :new
+        live "/customer_users/:id/edit", UserLive.Index, :edit
+
+        live "/customer_users/:id", UserLive.Show, :show
+        live "/customer_users/:id/show/edit", UserLive.Show, :edit
       end
 
       # Auth

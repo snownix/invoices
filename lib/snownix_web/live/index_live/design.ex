@@ -98,7 +98,7 @@ defmodule SnownixWeb.IndexLive.Design do
           <div class="py-4 grid grid-cols-3 lg:grid-cols-5 gap-4">
             <div><%= render SnownixWeb.IconsView, "cancel.svg", %{} %><span>Cancel</span></div>
             <div><%= render SnownixWeb.IconsView, "categories.svg", %{} %><span>Categories</span></div>
-            <div><%= render SnownixWeb.IconsView, "clients.svg", %{} %><span>Clients</span></div>
+            <div><%= render SnownixWeb.IconsView, "customers.svg", %{} %><span>Customers</span></div>
             <div><%= render SnownixWeb.IconsView, "help.svg", %{} %><span>Help</span></div>
             <div><%= render SnownixWeb.IconsView, "invoices.svg", %{} %><span>Invoices</span></div>
             <div><%= render SnownixWeb.IconsView, "logout.svg", %{} %><span>Logout</span></div>

@@ -3,26 +3,9 @@ defmodule Snownix.Organizations.Project do
   use Waffle.Ecto.Schema
 
   import Ecto.Changeset
+  import Snownix.Helpers.Model
 
   @primary_key {:id, :binary_id, autogenerate: true}
-
-  @date_formats ["%Y-%m-%d", "%Y-%d-%m", "%m-%d-%Y", "%Y/%m/%d", "%Y/%d/%m", "%m/%d/%Y"]
-  @fiscal_years [
-    %{title: "January-February", id: "1-2"},
-    %{title: "February-March", id: "2-3"},
-    %{title: "March-April", id: "3-4"},
-    %{title: "April-May", id: "4-5"},
-    %{title: "May-June", id: "5-6"},
-    %{title: "June-July", id: "6-7"},
-    %{title: "July-August", id: "7-8"},
-    %{title: "August-September", id: "8-9"},
-    %{title: "September-October", id: "9-10"},
-    %{title: "October-November", id: "10-11"},
-    %{title: "November-December", id: "11-12"},
-    %{title: "December-January", id: "12-1"}
-  ]
-
-  @boolean [true, false]
   @address_fields [:country, :city, :zip, :state, :street]
 
   schema "projects" do
@@ -54,6 +37,9 @@ defmodule Snownix.Organizations.Project do
     belongs_to :user, Snownix.Accounts.User, type: :binary_id
     many_to_many :users, Snownix.Accounts.User, join_through: "users_projects"
 
+    has_many :taxs, Snownix.Projects.Tax
+    has_many :customers, Snownix.Customers.User
+
     timestamps()
   end
 
@@ -61,9 +47,16 @@ defmodule Snownix.Organizations.Project do
   def changeset(project, attrs) do
     project
     |> cast(attrs, [:name, :email, :country, :phone, :vat])
+    |> cast_assocs()
     |> validate_length(:name, max: 100)
-    |> validate_inclusion(:country, countries)
+    |> validate_inclusion(:country, countries())
     |> validate_required([:name, :email, :country])
+  end
+
+  defp cast_assocs(changeset) do
+    changeset
+    |> cast_assoc(:taxs)
+    |> cast_assoc(:customers)
   end
 
   def address_changeset(project, attrs) do
@@ -89,11 +82,12 @@ defmodule Snownix.Organizations.Project do
       :discount_per_item
     ])
     |> validate_length(:language, count: 2)
-    |> validate_inclusion(:fiscal_year, Enum.map(@fiscal_years, & &1.id))
-    |> validate_inclusion(:date_format, @date_formats)
-    |> validate_inclusion(:tax_per_item, @boolean)
+    |> validate_inclusion(:fiscal_year, Enum.map(fiscal_years(), & &1.id))
+    |> validate_inclusion(:date_format, date_formats())
+    |> validate_inclusion(:tax_per_item, booleans())
     |> validate_inclusion(:time_zone, timezones())
-    |> validate_inclusion(:discount_per_item, @boolean)
+    |> validate_inclusion(:currency, currencies())
+    |> validate_inclusion(:discount_per_item, booleans())
   end
 
   def owner_changeset(project, owner) do
@@ -107,11 +101,4 @@ defmodule Snownix.Organizations.Project do
     project
     |> cast_attachments(attrs, [:logo])
   end
-
-  def fiscal_years(), do: @fiscal_years
-  def date_formats(), do: @date_formats
-
-  def countries(), do: Snownix.Geo.countries_list()
-
-  def timezones(), do: TzExtra.time_zone_identifiers()
 end

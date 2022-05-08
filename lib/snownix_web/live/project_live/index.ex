@@ -13,7 +13,9 @@ defmodule SnownixWeb.ProjectLive.Index do
   end
 
   defp fetch(socket) do
-    projects = Organizations.list_projects() |> Repo.preload(:users)
+    user = socket.assigns.current_user
+
+    projects = Organizations.user_list_projects(user)
     socket |> assign(projects: projects, page_title: "My Projects")
   end
 end

@@ -12,7 +12,11 @@ defmodule SnownixWeb.UtilsHelpers do
   end
 
   def get_user_avatar_text(user) do
-    String.at(user.firstname, 0) <> String.at(user.lastname, 0)
+    if Map.has_key?(user, :firstname) do
+      String.at(user.firstname, 0) <> String.at(user.lastname, 0)
+    else
+      slice_name(user.contact_name, 0, 2)
+    end
   end
 
   def get_user_fullname(user) do
@@ -20,7 +24,7 @@ defmodule SnownixWeb.UtilsHelpers do
   end
 
   def get_project_logo_text(project) do
-    String.slice(project.name, 0, 2)
+    slice_name(project.name, 0, 2)
   end
 
   def get_project_logo(project) do
@@ -29,5 +33,11 @@ defmodule SnownixWeb.UtilsHelpers do
     else
       Snownix.Uploaders.LogoUploader.url({project.logo, project}, :thumb)
     end
+  end
+
+  defp slice_name(nil, _index, _size), do: "-"
+
+  defp slice_name(name, index, size) do
+    String.slice(name, index, size)
   end
 end

@@ -1,10 +1,17 @@
 input,
 select,
 button,
+textarea {
+  @apply w-full;
+}
+
+input,
+select,
+button,
 textarea,
 .btn {
-  @apply block w-full !h-max;
-  @apply px-4 py-3 rounded-lg;
+  @apply block !h-max;
+  @apply px-4 py-2.5 rounded-lg;
   @apply text-base font-medium leading-6;
 
   @apply bg-gray-50 bg-opacity-50 border border-gray-300 text-gray-900 text-sm;
@@ -46,7 +53,7 @@ input[type="radio"] {
 
 button,
 .btn {
-  @apply inline-flex items-center justify-center gap-1;
+  @apply inline-flex items-center justify-center gap-1 w-auto;
   @apply cursor-pointer;
 }
 

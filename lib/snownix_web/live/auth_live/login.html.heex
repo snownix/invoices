@@ -28,7 +28,7 @@
                 </div>
             <%= live_patch gettext("Forgot password?") , to: Routes.auth_forgot_password_path(@socket, :forgot), class: "text-sm" %>
             </div>
-            <button type="submit" class="btn primary w-full" disabled={length(f.errors) > 0}><%= gettext("Login") %></button>
+            <button type="submit" phx-disable-with="..." class="btn primary w-full" disabled={length(f.errors) > 0}><%= gettext("Login") %></button>
         </.form>
     </div>
 </section>

@@ -1,0 +1,40 @@
+/**
+* ------------------------- *
+* Table
+* ------------------------- */
+table {
+  @apply w-full ;
+}
+
+th,
+td {
+  @apply text-left px-4 py-2;
+}
+
+th,
+tr:nth-of-type(2n) {
+  @apply bg-gray-50 ;
+}
+
+thead {
+  @apply text-sm text-gray-700 font-normal border-t border-b border-primary border-opacity-10;
+}
+
+tbody {
+}
+
+tr:hover,
+tr.active {
+  @apply bg-primary bg-opacity-5;
+}
+
+tr .interactive:hover,
+tr.active .interactive {
+  @apply cursor-pointer bg-blue-500 bg-opacity-5;
+}
+
+
+
+table .order__btn {
+  @apply cursor-pointer hover:!bg-gray-200;
+}
