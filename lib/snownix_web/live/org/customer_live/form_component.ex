@@ -33,7 +33,7 @@ defmodule SnownixWeb.Org.CustomerLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "customer updated successfully")
-         |> live_patch(to: socket.assigns.return_to)}
+         |> push_patch(to: socket.assigns.return_to)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -49,7 +49,7 @@ defmodule SnownixWeb.Org.CustomerLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "customer created successfully")
-         |> live_patch(to: socket.assigns.return_to)}
+         |> push_patch(to: socket.assigns.return_to)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
