@@ -2,19 +2,35 @@
     <section class="_header flex flex-col items-center space-y-2 md:space-y-0 md:flex-row justify-between p-8 md:pt-10">
         <div >
             <h1 class="font-semibold"><%= gettext "Customers" %></h1>
-            <%= if Enum.count(@selected_items) > 0 do %>
-                <p class="text-gray-400"><%= Enum.count(@selected_items) %> Selected</p>
-            <% end %>
+            <p class="text-gray-400">
+                <%= if Enum.count(@selected_items) > 0 do %>
+                    <%= Enum.count(@selected_items) %> Selected
+                <% else %>
+                    Manage your customers
+                <% end %>
+            </p>
         </div>
-        <div class="flex space-x-2">
-            <%= live_patch to: Routes.org_customer_index_path(@socket, :new), class: "btn primary" do %>
-                <%= render SnownixWeb.IconsView, "plus.svg", %{} %>
-                New Customer
+        <div class="flex space-x-4">
+            <%= if many_selected(assigns) do %>
+            <div class="flex space-x-2">
+                <button class="sm" phx-click="clone-selected">
+                    <%= render SnownixWeb.IconsView, "copy.svg", %{} %>
+                </button>
+                <button class="sm" phx-click="delete-selected">
+                    <%= render SnownixWeb.IconsView, "delete.svg", %{} %>
+                </button>
+            </div>
             <% end %>
-            <button disabled>
-                <%= render SnownixWeb.IconsView, "upload.svg", %{} %>
-                Import
-            </button>
+            <div class="flex space-x-2">
+                <button class="sm" disabled>
+                    <%= render SnownixWeb.IconsView, "upload.svg", %{} %>
+                    Import
+                </button>
+                <%= live_patch to: Routes.org_customer_index_path(@socket, :new), class: "btn sm primary" do %>
+                    <%= render SnownixWeb.IconsView, "plus.svg", %{} %>
+                    New Customer
+                <% end %>
+            </div>
         </div>
     </section>
     <!--

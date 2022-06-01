@@ -9,7 +9,7 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Snownix.Customers.subscribe(socket.assigns.project.id)
+    if connected?(socket), do: Snownix.Customers.subscribe(project_id(socket))
 
     {:ok,
      socket
@@ -50,7 +50,7 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
      case params do
        %{"id" => id} ->
          if connected?(socket),
-           do: Snownix.Customers.subscribe(socket.assigns.project.id, id)
+           do: Snownix.Customers.subscribe(project_id(socket), id)
 
          socket |> fetch_one(id)
 
@@ -102,9 +102,22 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
   end
 
   def handle_event("delete", %{"id" => id}, socket) do
-    {:ok, _} = Customers.delete_user(customer_user(socket.assigns.project.id, id))
+    {:ok, _} = Customers.delete_user(customer_user(project_id(socket), id))
 
     {:noreply, fetch(socket)}
+  end
+
+  def handle_event("delete-selected", _, socket) do
+    {:ok, _} = Customers.delete_users(project_id(socket), socket.assigns.selected_items)
+
+    {:noreply, fetch(socket) |> assign(selected_items: [])}
+  end
+
+  def handle_event("clone-selected", _, socket) do
+    {:ok, %{insert_all: {_, ids}}} =
+      Customers.clone_users(project_id(socket), socket.assigns.selected_items)
+
+    {:noreply, fetch(socket) |> assign(selected_items: ids |> Enum.map(& &1.id))}
   end
 
   def handle_event("delete-filter", %{"index" => index}, socket) do
@@ -148,7 +161,7 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
 
   def fetch_one(socket, id) do
     socket
-    |> assign(:customer, customer_user(socket.assigns.project.id, id))
+    |> assign(:customer, customer_user(project_id(socket), id))
   end
 
   def push_index(socket) do
@@ -157,6 +170,10 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
 
   defp customer_user(project_id, id) do
     Customers.get_user!(project_id, id)
+  end
+
+  defp project_id(%{assigns: %{project: %{id: id}}}) do
+    id
   end
 
   defp list_customer_users(socket) do

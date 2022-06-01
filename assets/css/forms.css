@@ -18,6 +18,16 @@ textarea,
   @apply focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50;
 }
 
+button.sm,
+.btn.sm{
+  @apply py-1.5 px-2 text-sm;
+}
+
+button.xs,
+.btn.xs{
+  @apply py-1 px-1 text-xs;
+}
+
 input:disabled,
 button:disabled,
 .btn:disabled {

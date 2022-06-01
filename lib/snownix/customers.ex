@@ -6,6 +6,7 @@ defmodule Snownix.Customers do
   import Ecto.Query, warn: false
   alias Snownix.Repo
 
+  alias Snownix.Customers
   alias Snownix.Customers.User
 
   @topic inspect(__MODULE__)
@@ -114,7 +115,7 @@ defmodule Snownix.Customers do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user(project, author, attrs \\ %{}) do
+  def create_user(project \\ nil, author \\ nil, attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
     |> User.project_changeset(project)
@@ -157,6 +158,38 @@ defmodule Snownix.Customers do
   def delete_user(%User{} = user) do
     Repo.delete(user)
     |> notify_subscribers([:customer, :deleted])
+  end
+
+  def delete_users(project_id, ids) do
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.delete_all(
+        :delete_all,
+        from(u in User, where: u.project_id == ^project_id and u.id in ^ids)
+      )
+      |> Repo.transaction()
+
+    notify_subscribers({:ok, %User{project_id: project_id}}, [:customer, :deleted_many])
+    result
+  end
+
+  def clone_users(project_id, ids) do
+    users =
+      from(u in User, where: u.project_id == ^project_id and u.id in ^ids)
+      |> Repo.all()
+      |> Enum.map(fn item ->
+        Map.take(item, User.__schema__(:fields))
+        |> Map.delete(:id)
+        |> Map.put(:contact_name, "Clone - #{item.contact_name}")
+      end)
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert_all(:insert_all, User, users, returning: [:id])
+      |> Repo.transaction()
+
+    notify_subscribers({:ok, %User{project_id: project_id}}, [:customer, :created_many])
+    result
   end
 
   @doc """
