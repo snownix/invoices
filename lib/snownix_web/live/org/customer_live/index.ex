@@ -20,18 +20,28 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
        order: :desc,
        order_by: :inserted_at
      })
+     |> assign(all_selected: false, selected_items: [])
      |> fetch()}
   end
 
   @impl true
-  def handle_info({Customers, [:customer, type], customer}, socket) do
-    handle_table_pub(
-      __MODULE__,
-      socket,
-      :customers,
-      :customer,
-      {Customers, [:customer, type], customer}
-    )
+  def handle_info({Customers, [name, type], result}, socket) do
+    case name do
+      :customer ->
+        handle_table_pub(
+          __MODULE__,
+          socket,
+          :customers,
+          :customer,
+          {Customers, [:customer, type], result}
+        )
+
+      :address ->
+        {:noreply, socket |> fetch_one(result.user_id)}
+
+      _ ->
+        {:noreply, socket}
+    end
   end
 
   @impl true
@@ -39,13 +49,10 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
     {:noreply,
      case params do
        %{"id" => id} ->
-         customer = customer_user(id)
-
          if connected?(socket),
-           do: Snownix.Customers.subscribe(socket.assigns.project.id, customer.id)
+           do: Snownix.Customers.subscribe(socket.assigns.project.id, id)
 
-         socket
-         |> assign(:customer, customer)
+         socket |> fetch_one(id)
 
        _ ->
          socket
@@ -95,13 +102,22 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
   end
 
   def handle_event("delete", %{"id" => id}, socket) do
-    {:ok, _} = Customers.delete_user(customer_user(id))
+    {:ok, _} = Customers.delete_user(customer_user(socket.assigns.project.id, id))
 
     {:noreply, fetch(socket)}
   end
 
   def handle_event("delete-filter", %{"index" => index}, socket) do
     {:noreply, socket |> delete_filter_by_index(index)}
+  end
+
+  def handle_event("select", params, socket) do
+    %{"id" => id} = params
+
+    {:noreply,
+     socket
+     |> select_item(id)
+     |> update_selected()}
   end
 
   defp apply_action(socket, :edit) do
@@ -127,15 +143,20 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
   end
 
   def fetch(socket) do
-    socket |> list_customer_users()
+    socket |> list_customer_users() |> update_selected()
+  end
+
+  def fetch_one(socket, id) do
+    socket
+    |> assign(:customer, customer_user(socket.assigns.project.id, id))
   end
 
   def push_index(socket) do
     socket |> push_patch(to: Routes.org_customer_index_path(socket, :index))
   end
 
-  defp customer_user(id) do
-    Customers.get_user!(id)
+  defp customer_user(project_id, id) do
+    Customers.get_user!(project_id, id)
   end
 
   defp list_customer_users(socket) do
@@ -198,14 +219,13 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
   end
 
   defp assign_table_filter(socket, :period, st, en) do
-    table = socket.assigns.table
+    %{table: table} = socket.assigns
 
     filters = [
       [:period, st, en]
       | table.filters
     ]
 
-    IO.inspect(filters)
     socket |> assign(:table, %{table | filters: filters})
   end
 
@@ -234,6 +254,68 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
     })
   end
 
+  defp select_item(socket, id) do
+    %{
+      customers: customers,
+      all_selected: all_selected,
+      selected_items: selected_items
+    } = socket.assigns
+
+    customers =
+      customers
+      |> Enum.map(fn item ->
+        if id === "all" do
+          %{item | selected: !all_selected}
+        else
+          if item.id === id do
+            toggle_select(item)
+          else
+            item
+          end
+        end
+      end)
+
+    selected_ids = Enum.filter(customers, &(&1.selected == true)) |> Enum.map(& &1.id)
+    un_selected_ids = Enum.filter(customers, &(&1.selected == false)) |> Enum.map(& &1.id)
+
+    selected_items =
+      (selected_items ++ selected_ids)
+      |> Enum.uniq()
+      |> Enum.reject(&Enum.member?(un_selected_ids, &1))
+
+    socket
+    |> assign(
+      customers: customers,
+      selected_items: selected_items
+    )
+  end
+
+  defp toggle_select(item) do
+    %{item | selected: !item.selected}
+  end
+
+  defp update_selected(socket) do
+    %{customers: customers, selected_items: selected_items} = socket.assigns
+
+    customers =
+      customers
+      |> Enum.map(fn item ->
+        if Enum.member?(selected_items, item.id) do
+          %{item | selected: true}
+        else
+          item
+        end
+      end)
+
+    socket
+    |> assign(:customers, customers)
+    |> assign(:all_selected, is_nil(Enum.find(customers, &(&1.selected == false))))
+  end
+
+  def many_selected(assigns) do
+    Enum.count(assigns.selected_items) > 0
+  end
+
   def render_col(assigns, name, title) do
     ~H"""
       <th class="order__btn" phx-click="order" phx-value-order={Atom.to_string(name)}>
@@ -255,6 +337,23 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
             X
           </span>
         </a>
+    """
+  end
+
+  def render_checkbox(assigns, item) do
+    ~H"""
+    <div class="big__checkbox" >
+        <input type="checkbox" checked={item.selected}>
+        <label ></label>
+    </div>
+    """
+  end
+
+  def render_filters(assigns) do
+    ~H"""
+    <%= for {filter, index} <- Enum.with_index(@table.filters) do %>
+      <%= render_filter(assigns,Enum.at(filter,0), filter, index) %>
+    <% end %>
     """
   end
 end

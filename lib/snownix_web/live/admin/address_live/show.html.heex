@@ -1,0 +1,66 @@
+<h1>Show Address</h1>
+
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.admin_address_show_path(@socket, :show, @address)}>
+    <.live_component
+      module={SnownixWeb.Admin.AddressLive.FormComponent}
+      id={@address.id}
+      title={@page_title}
+      action={@live_action}
+      address={@address}
+      return_to={Routes.admin_address_show_path(@socket, :show, @address)}
+    />
+  </.modal>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Country:</strong>
+    <%= @address.country %>
+  </li>
+
+  <li>
+    <strong>City:</strong>
+    <%= @address.city %>
+  </li>
+
+  <li>
+    <strong>Fax:</strong>
+    <%= @address.fax %>
+  </li>
+
+  <li>
+    <strong>State:</strong>
+    <%= @address.state %>
+  </li>
+
+  <li>
+    <strong>Zip:</strong>
+    <%= @address.zip %>
+  </li>
+
+  <li>
+    <strong>Street 1:</strong>
+    <%= @address.street %>
+  </li>
+
+  <li>
+    <strong>Street 2:</strong>
+    <%= @address.street_2 %>
+  </li>
+
+  <li>
+    <strong>Phone:</strong>
+    <%= @address.phone %>
+  </li>
+
+  <li>
+    <strong>Currency:</strong>
+    <%= @address.currency %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.admin_address_show_path(@socket, :edit, @address), class: "button" %></span> |
+<span><%= live_redirect "Back", to: Routes.admin_address_index_path(@socket, :index) %></span>

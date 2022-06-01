@@ -118,6 +118,27 @@ select {
   @apply dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-1 dark:bg-gray-700 dark:border-gray-600;
 }
 
+/* Custom checkbox */
+
+
+.big__checkbox label{
+  @apply block w-5 h-5 bg-gray-50 border border-dark border-opacity-20 rounded transition ease-in-out delay-150 cursor-pointer;
+}
+
+.big__checkbox input[type="checkbox"]{
+  @apply hidden;
+}
+
+.big__checkbox input[type="checkbox"]:checked + label {
+  @apply !bg-primary  rotate-180;
+}
+
+.big__checkbox input[type="checkbox"][has-many] + label {
+  @apply !bg-primary  bg-opacity-50 rotate-180;
+}
+
+
+/* Switch */
 .switch {
   position: relative;
   display: inline-block;
@@ -170,3 +191,4 @@ input:checked + .slider:before {
 .switch .slider.round:before {
   border-radius: 18px;
 }
+

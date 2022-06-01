@@ -29,10 +29,9 @@
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 w-full">
         <%= for project <- @projects do %>
             <%= live_redirect to: Routes.project_path(@socket, :open, project.id) do %>
-                <div class="space-y-2 w-full p-6 rounded-lg hover:bg-gray-50 cursor-pointer  bg-white border">
+                <div class="space-y-2 w-full p-6 rounded-lg relative hover:bg-gray-50 cursor-pointer  bg-white border">
                     <div class="flex items-center space-x-2">
-                        <img class="rounded object-cover w-6 h-5"
-                            src={"https://flagicons.lipis.dev/flags/4x3/#{String.downcase(project.country)}.svg"}>
+                        <img class="rounded object-cover w-6 h-5"  src={"https://flagicons.lipis.dev/flags/4x3/#{String.downcase(project.country)}.svg"}>
                         <h3 class="font-medium"><%= project.name %></h3>
                     </div>
                     <p class="font-medium"><%= project.email %></p>

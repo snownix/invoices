@@ -1,6 +1,40 @@
-# Snownix
+# Invoices
 
-Snownix - #1 Phoenix blog
+Invoices - #1 Phoenix Invoicing SAAS
+
+```mermaid
+graph TD
+    Users
+        --> | Credentials | A
+    P[Projects] 
+        -->|Belong to| Users
+
+    A[Auth] 
+        -->|Login / Register| D{Project}
+        --> P
+        
+    D -->| | Quotes
+        --> | Belong to| Customers
+    D -->| | Invoices
+        --> | Belong to| Customers
+
+    Quotes --> | Has One| IA(Invoice Address)
+    Invoices --> | Has One| IA(Invoice Address)
+
+    D -->| | Customers
+        --> |Has many| Address
+    D -->| | Products
+        --> |Belongs to| Categories
+    D -->| | Categories
+        -->|subcategory| Categories
+
+    D ---> S{Settings}
+   
+    S --> Preferences
+    S --> Notifications
+    S --> Taxs
+```
+
 
 To start Phoenix server:
 

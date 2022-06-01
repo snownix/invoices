@@ -66,6 +66,7 @@ defmodule Snownix.Organizations.Project do
     |> validate_length(:state, min: 0, max: 100)
     |> validate_length(:zip, min: 0, max: 10)
     |> validate_length(:street, min: 0, max: 500)
+    |> validate_inclusion(:country, countries())
   end
 
   def preferences_changeset(project, attrs) do

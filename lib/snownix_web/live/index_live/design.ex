@@ -33,9 +33,15 @@ defmodule SnownixWeb.IndexLive.Design do
               <input type="radio" id="rad-1">
               <label for="rad-1">Radiobox</label>
             </div>
-             <div>
+            <div>
               <input type="radio" disabled id="rad-2">
               <label for="rad-2">Disabled</label>
+            </div>
+            <div>
+              <div class="big__checkbox">
+                <input type="checkbox" id="cbox-big">
+                <label for="cbox-big"></label>
+              </div>
             </div>
             <label class="switch">
               <input type="checkbox">

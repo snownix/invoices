@@ -27,16 +27,27 @@ defmodule Snownix.Customers do
       {__MODULE__, event, result}
     )
 
+    notify_subscribers(
+      {:ok, result},
+      result.id,
+      event
+    )
+  end
+
+  defp notify_subscribers({:ok, result}, parent_id, event) do
+    project_id = result.project_id
+
     Phoenix.PubSub.broadcast(
       Snownix.PubSub,
-      @topic <> "#{project_id}" <> "#{result.id}",
+      @topic <> "#{project_id}" <> "#{parent_id}",
       {__MODULE__, event, result}
     )
 
     {:ok, result}
   end
 
-  # defp notify_subscribers({:error, reason}, _, _b), do: {:error, reason}
+  defp notify_subscribers({:error, changeset}, _parent_id, _event), do: {:error, changeset}
+  # defp notify_subscribers({:error, changeset}, _event), do: {:error, changeset}
 
   @doc """
   Returns the list of customer_users.
@@ -47,6 +58,10 @@ defmodule Snownix.Customers do
       [%Ecto.Query{}, ...]
 
   """
+  def list_customer_users() do
+    User |> Repo.all()
+  end
+
   def list_customer_users(project_id, opts) do
     orderby = Keyword.get(opts, :order_by)
     order = Keyword.get(opts, :order, :asc)
@@ -81,7 +96,11 @@ defmodule Snownix.Customers do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user!(project_id, id),
+    do:
+      from(u in User, where: u.project_id == ^project_id and u.id == ^id)
+      |> Repo.one!()
+      |> Repo.preload(:addresses)
 
   @doc """
   Creates a user.
@@ -151,5 +170,105 @@ defmodule Snownix.Customers do
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
+  end
+
+  alias Snownix.Customers.Address
+
+  @doc """
+  Returns the list of addresses.
+
+  ## Examples
+
+      iex> list_addresses()
+      [%Address{}, ...]
+
+  """
+  def list_addresses do
+    Repo.all(Address)
+  end
+
+  @doc """
+  Gets a single address.
+
+  Raises `Ecto.NoResultsError` if the Address does not exist.
+
+  ## Examples
+
+      iex> get_address!(123)
+      %Address{}
+
+      iex> get_address!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_address!(id), do: Repo.get!(Address, id)
+
+  @doc """
+  Creates a address.
+
+  ## Examples
+
+      iex> create_address(%{field: value})
+      {:ok, %Address{}}
+
+      iex> create_address(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_address(attrs \\ %{}) do
+    %Address{}
+    |> Address.changeset(attrs)
+    |> Repo.insert()
+    |> notify_subscribers(attrs["user_id"], [:address, :created])
+  end
+
+  @doc """
+  Updates a address.
+
+  ## Examples
+
+      iex> update_address(address, %{field: new_value})
+      {:ok, %Address{}}
+
+      iex> update_address(address, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_address(%Address{} = address, attrs) do
+    address
+    |> Address.changeset(attrs)
+    |> Repo.update()
+    |> notify_subscribers(address.user_id, [:address, :updated])
+  end
+
+  @doc """
+  Deletes a address.
+
+  ## Examples
+
+      iex> delete_address(address)
+      {:ok, %Address{}}
+
+      iex> delete_address(address)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_address(%Address{} = address) do
+    address
+    |> Repo.delete()
+    |> notify_subscribers(address.user_id, [:address, :deleted])
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking address changes.
+
+  ## Examples
+
+      iex> change_address(address)
+      %Ecto.Changeset{data: %Address{}}
+
+  """
+  def change_address(%Address{} = address, attrs \\ %{}) do
+    Address.changeset(address, attrs)
   end
 end

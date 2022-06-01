@@ -33,8 +33,6 @@ tr.active .interactive {
   @apply cursor-pointer bg-blue-500 bg-opacity-5;
 }
 
-
-
 table .order__btn {
   @apply cursor-pointer hover:!bg-gray-200;
 }

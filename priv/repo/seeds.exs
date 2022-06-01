@@ -15,6 +15,7 @@ defmodule Snownix.Seeds do
 
   alias Snownix.Repo
   alias Snownix.Accounts.User
+  alias Snownix.Customers.Address
   alias Snownix.Organizations.Project
 
   def import_demo() do
@@ -40,11 +41,23 @@ defmodule Snownix.Seeds do
 
   def insert_demo_projects() do
     many_rands(&generate_rand_project/0, 8, 2)
-    |> Enum.each(
-      &(Project.changeset(%Project{}, &1)
-        |> Project.owner_changeset(&1.user)
-        |> Repo.insert!())
-    )
+    |> Enum.each(fn p ->
+      project =
+        Project.changeset(%Project{}, p)
+        |> Project.owner_changeset(p.user)
+        |> Repo.insert!(timeout: :infinity)
+
+      project.customers
+      |> Repo.preload(:addresses)
+      |> Enum.each(fn c ->
+        c.addresses
+        |> Repo.preload(:project)
+        |> Enum.each(fn a ->
+          Address.project_changeset(a, project)
+          |> Repo.update!()
+        end)
+      end)
+    end)
   end
 
   defp many_rands(call, max \\ 5, min \\ 1) do
@@ -80,7 +93,21 @@ defmodule Snownix.Seeds do
       name: Faker.Company.En.name(),
       contact_name: Faker.Person.name(),
       phone: Faker.Phone.EnUs.phone(),
-      email: Faker.Internet.email()
+      email: Faker.Internet.email(),
+      addresses: many_rands(&generate_rand_address/0, 5, 1)
+    }
+  end
+
+  defp generate_rand_address() do
+    %{
+      country: Faker.Address.country_code(),
+      phone: Faker.Phone.EnUs.phone(),
+      email: Faker.Internet.email(),
+      city: Faker.Address.city(),
+      state: Faker.Address.state(),
+      zip: Faker.Address.zip(),
+      street: Faker.Address.street_address(),
+      street_2: Faker.Address.street_address()
     }
   end
 
