@@ -216,6 +216,10 @@ main.container {
   @apply flex items-center justify-center text-2xl border uppercase text-dark rounded-xl font-bold !leading-none;
 }
 
+.avatar, .avatar__text {
+  @apply flex-shrink-0;
+}
+
 /**
 * -------------------------
 * Modal
