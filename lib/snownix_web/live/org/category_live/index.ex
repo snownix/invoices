@@ -1,15 +1,15 @@
-defmodule SnownixWeb.Org.CustomerLive.Index do
+defmodule SnownixWeb.Org.CategoryLive.Index do
   use SnownixWeb, :live_dashboard
   import Snownix.Helpers.TablePub
 
   alias Snownix.Pagination
 
-  alias Snownix.Customers
-  alias Snownix.Customers.User
+  alias Snownix.Products
+  alias Snownix.Products.Category
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Snownix.Customers.subscribe(project_id(socket))
+    if connected?(socket), do: Snownix.Products.subscribe(project_id(socket))
 
     {:ok,
      socket
@@ -25,23 +25,14 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
   end
 
   @impl true
-  def handle_info({Customers, [name, type], result}, socket) do
-    case name do
-      :customer ->
-        handle_table_pub(
-          __MODULE__,
-          socket,
-          :customers,
-          :customer,
-          {Customers, [:customer, type], result}
-        )
-
-      :address ->
-        {:noreply, socket |> fetch_one(result.user_id)}
-
-      _ ->
-        {:noreply, socket}
-    end
+  def handle_info({Products, [:category, type], result}, socket) do
+    handle_table_pub(
+      __MODULE__,
+      socket,
+      :categories,
+      :category,
+      {Products, [:category, type], result}
+    )
   end
 
   @impl true
@@ -50,7 +41,7 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
      case params do
        %{"id" => id} ->
          if connected?(socket),
-           do: Snownix.Customers.subscribe(project_id(socket), id)
+           do: Snownix.Products.subscribe(project_id(socket), id)
 
          socket |> fetch_one(id)
 
@@ -62,7 +53,7 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
 
   @impl true
   def handle_event("show", %{"id" => id}, socket) do
-    {:noreply, socket |> push_patch(to: Routes.org_customer_index_path(socket, :show, id))}
+    {:noreply, socket |> push_patch(to: Routes.org_category_index_path(socket, :show, id))}
   end
 
   def handle_event("table", %{"table" => table_params}, socket) do
@@ -102,20 +93,20 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
   end
 
   def handle_event("delete", %{"id" => id}, socket) do
-    {:ok, _} = Customers.delete_user(customer_user(project_id(socket), id))
+    {:ok, _} = Products.delete_category(category_id(project_id(socket), id))
 
     {:noreply, fetch(socket)}
   end
 
   def handle_event("delete-selected", _, socket) do
-    {:ok, _} = Customers.delete_users(project_id(socket), socket.assigns.selected_items)
+    {:ok, _} = Products.delete_categories(project_id(socket), socket.assigns.selected_items)
 
     {:noreply, fetch(socket) |> assign(selected_items: [])}
   end
 
   def handle_event("clone-selected", _, socket) do
     {:ok, %{insert_all: {_, ids}}} =
-      Customers.clone_users(project_id(socket), socket.assigns.selected_items)
+      Products.clone_categories(project_id(socket), socket.assigns.selected_items)
 
     {:noreply, fetch(socket) |> assign(selected_items: ids |> Enum.map(& &1.id))}
   end
@@ -135,53 +126,53 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
 
   defp apply_action(socket, :edit) do
     socket
-    |> assign(:page_title, "Edit Customer")
+    |> assign(:page_title, "Edit Category")
   end
 
   defp apply_action(socket, :new) do
     socket
-    |> assign(:page_title, "New Customer")
-    |> assign(:customer, %User{})
+    |> assign(:page_title, "New Category")
+    |> assign(:category, %Category{})
   end
 
   defp apply_action(socket, :show) do
     socket
-    |> assign(:page_title, socket.assigns.customer.name)
+    |> assign(:page_title, socket.assigns.category.name)
   end
 
   defp apply_action(socket, :index) do
     socket
-    |> assign(:customer, nil)
-    |> assign(:page_title, "Listing Customers")
+    |> assign(:category, nil)
+    |> assign(:page_title, "Listing Products")
   end
 
   def fetch(socket) do
-    socket |> list_customer_users() |> update_selected()
+    socket |> list_categories() |> update_selected()
   end
 
   def fetch_one(socket, id) do
     socket
-    |> assign(:customer, customer_user(project_id(socket), id))
+    |> assign(:category, category_id(project_id(socket), id))
   end
 
   def push_index(socket) do
-    socket |> push_patch(to: Routes.org_customer_index_path(socket, :index))
+    socket |> push_patch(to: Routes.org_category_index_path(socket, :index))
   end
 
-  defp customer_user(project_id, id) do
-    Customers.get_user!(project_id, id)
+  defp category_id(project_id, id) do
+    Products.get_category!(project_id, id)
   end
 
   defp project_id(%{assigns: %{project: %{id: id}}}) do
     id
   end
 
-  defp list_customer_users(socket) do
+  defp list_categories(socket) do
     %{project: project, table: %{page: page, limit: limit, order: order, order_by: order_by}} =
       socket.assigns
 
     pagination =
-      Customers.list_customer_users(project.id, order_by: order_by, order: order)
+      Products.list_categories(project.id, order_by: order_by, order: order)
       |> Pagination.page(page, per_page: limit)
 
     pagination = %{
@@ -191,7 +182,7 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
 
     socket
     |> assign(:pagination, pagination)
-    |> assign(:customers, pagination.items)
+    |> assign(:categories, pagination.items)
   end
 
   defp assign_table_limit(socket, limit) do
@@ -221,7 +212,7 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
   defp assign_table_order(socket, order) do
     order = String.to_atom(order)
 
-    case order in Customers.User.__schema__(:fields) do
+    case order in Products.Category.__schema__(:fields) do
       true ->
         socket
         |> assign(:table, %{
@@ -273,13 +264,13 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
 
   defp select_item(socket, id) do
     %{
-      customers: customers,
+      categories: categories,
       all_selected: all_selected,
       selected_items: selected_items
     } = socket.assigns
 
-    customers =
-      customers
+    categories =
+      categories
       |> Enum.map(fn item ->
         if id === "all" do
           %{item | selected: !all_selected}
@@ -292,8 +283,8 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
         end
       end)
 
-    selected_ids = Enum.filter(customers, &(&1.selected == true)) |> Enum.map(& &1.id)
-    un_selected_ids = Enum.filter(customers, &(&1.selected == false)) |> Enum.map(& &1.id)
+    selected_ids = Enum.filter(categories, &(&1.selected == true)) |> Enum.map(& &1.id)
+    un_selected_ids = Enum.filter(categories, &(&1.selected == false)) |> Enum.map(& &1.id)
 
     selected_items =
       (selected_items ++ selected_ids)
@@ -302,7 +293,7 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
 
     socket
     |> assign(
-      customers: customers,
+      categories: categories,
       selected_items: selected_items
     )
   end
@@ -312,10 +303,10 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
   end
 
   defp update_selected(socket) do
-    %{customers: customers, selected_items: selected_items} = socket.assigns
+    %{categories: categories, selected_items: selected_items} = socket.assigns
 
-    customers =
-      customers
+    categories =
+      categories
       |> Enum.map(fn item ->
         if Enum.member?(selected_items, item.id) do
           %{item | selected: true}
@@ -325,8 +316,11 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
       end)
 
     socket
-    |> assign(:customers, customers)
-    |> assign(:all_selected, is_nil(Enum.find(customers, &(&1.selected == false))))
+    |> assign(:categories, categories)
+    |> assign(
+      :all_selected,
+      is_nil(Enum.find(categories, &(&1.selected == false))) && Enum.count(categories) > 0
+    )
   end
 
   def many_selected(assigns) do

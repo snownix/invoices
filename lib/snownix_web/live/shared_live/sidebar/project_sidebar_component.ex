@@ -109,16 +109,16 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
             <% end %>
             </li>
           <li>
-            <a href="/">
+            <%= live_patch to: Routes.org_product_index_path(@socket, :index) do %>
               <%= render SnownixWeb.IconsView, "products.svg", %{} %>
               <span><%= gettext("Products") %></span>
-            </a>
+            <% end %>
             </li>
             <li>
-            <a href="/">
+            <%= live_patch to: Routes.org_category_index_path(@socket, :index) do %>
               <%= render SnownixWeb.IconsView, "categories.svg", %{} %>
               <span><%= gettext("Categories") %></span>
-            </a>
+            <% end %>
           </li>
         </ul>
       </div>

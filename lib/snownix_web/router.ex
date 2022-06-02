@@ -45,6 +45,20 @@ defmodule SnownixWeb.Router do
           live "/:id/edit", CustomerLive.Index, :edit
         end
 
+        scope "/categories" do
+          live "/", CategoryLive.Index, :index
+          live "/new", CategoryLive.Index, :new
+          live "/:id", CategoryLive.Index, :show
+          live "/:id/edit", CategoryLive.Index, :edit
+        end
+
+        scope "/products" do
+          live "/", ProductLive.Index, :index
+          live "/new", ProductLive.Index, :new
+          live "/:id", ProductLive.Index, :show
+          live "/:id/edit", ProductLive.Index, :edit
+        end
+
         live "/invoices", InvoiceLive.Index, :index
         live "/settings", SettingsLive.Index, :settings
       end

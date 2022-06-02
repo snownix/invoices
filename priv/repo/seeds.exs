@@ -78,7 +78,9 @@ defmodule Snownix.Seeds do
         currency: Faker.Currency.code(),
         time_zone: "Etc/UTC",
         taxs: many_rands(&generate_rand_tax/0),
-        customers: many_rands(&generate_rand_customer/0, 200, 100),
+        customers: many_rands(&generate_rand_customer/0, 100, 20),
+        categories: many_rands(&generate_rand_category/0, 6, 4),
+        products: many_rands(&generate_rand_products/0, 100, 10),
         user: user
       }
     end
@@ -95,6 +97,22 @@ defmodule Snownix.Seeds do
       phone: Faker.Phone.EnUs.phone(),
       email: Faker.Internet.email(),
       addresses: many_rands(&generate_rand_address/0, 5, 1)
+    }
+  end
+
+  defp generate_rand_category() do
+    %{
+      name: Faker.Vehicle.make()
+    }
+  end
+
+  defp generate_rand_products() do
+    %{
+      name: Faker.Vehicle.make_and_model(),
+      description: Faker.Vehicle.standard_specs() |> Enum.join(", "),
+      price: Faker.Commerce.price() * 10,
+      currency: Faker.Currency.code(),
+      tax_per_item: Enum.random(5..60) * 0.01
     }
   end
 

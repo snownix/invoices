@@ -1,12 +1,12 @@
 <main class="flex flex-col max-h-screen w-full">
     <section class="_header flex flex-col items-center space-y-2 md:space-y-0 md:flex-row justify-between p-8 md:pt-10">
         <div >
-            <h1 class="font-semibold"><%= gettext "Categories" %></h1>
+            <h1 class="font-semibold"><%= gettext "Products" %></h1>
             <p class="text-gray-400">
                 <%= if Enum.count(@selected_items) > 0 do %>
                     <%= Enum.count(@selected_items) %> Selected
                 <% else %>
-                    Manage your categories
+                    Manage your products
                 <% end %>
             </p>
         </div>
@@ -26,16 +26,16 @@
                     <%= render SnownixWeb.IconsView, "upload.svg", %{} %>
                     Import
                 </button>
-                <%= live_patch to: Routes.org_category_index_path(@socket, :new), class: "btn sm primary" do %>
+                <%= live_patch to: Routes.org_product_index_path(@socket, :new), class: "btn sm primary" do %>
                     <%= render SnownixWeb.IconsView, "plus.svg", %{} %>
-                    New Category
+                    New Product
                 <% end %>
             </div>
         </div>
     </section>
  
     <div class="_table overflow-y-scroll  max-h-full h-full">
-        <.live_component id="categories"  module={SnownixWeb.SharedLive.UI.TableComponent}>
+        <.live_component id="products"  module={SnownixWeb.SharedLive.UI.TableComponent}>
             <:thead>
                 <th class="w-14">
                     <div class="big__checkbox" phx-click="select" phx-value-id="all">
@@ -44,23 +44,25 @@
                     </div>
                 </th>
                 <%= render_col(assigns, :contact_name, "Name") %>
+                <%= render_col(assigns, :price, "Price") %>
                 <%= render_col(assigns, :inserted_at, "Created Date") %>
                 <th class="w-14"></th>
             </:thead>
             <:tbody>
-                <%= for item <- @categories do %>
+                <%= for item <- @products do %>
                     <tr 
                         id={"item-#{item.id}"} 
-                        class={if (!is_nil(@category) and @category.id == item.id or item.selected), do: "active", else:  "" }
+                        class={if (!is_nil(@product) and @product.id == item.id or item.selected), do: "active", else:  "" }
                         phx-click="select" phx-value-id={item.id}>
                         <td >
                             <%= render_checkbox(assigns, item) %>
                         </td>
                         <td><%= item.name %></td>
+                        <td><%= money_format(item) %></td>
                         <td><%= date_format(item.inserted_at) %></td>
                         <td>
                             <div class="flex justify-end items-center space-x-2">
-                                <%= live_patch to: Routes.org_category_index_path(@socket, :edit, item.id), class: "btn light  !p-1 !text-gray-500 icon" do %>
+                                <%= live_patch to: Routes.org_product_index_path(@socket, :edit, item.id), class: "btn light  !p-1 !text-gray-500 icon" do %>
                                     <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
                                 <% end %>
                                 <%= link to: "#", class: "btn light !p-1 !text-gray-500 icon", phx_click: "delete", phx_value_id: item.id, data: [confirm: "Are you sure?"] do %>
@@ -93,30 +95,30 @@
     <% end %>
     <div class="_view">
         <.live_component 
-            id="categories" 
-            open={!is_nil(@category)}
-            prev={Routes.org_category_index_path(@socket,:index)}
+            id="products" 
+            open={!is_nil(@product)}
+            prev={Routes.org_product_index_path(@socket,:index)}
             module={SnownixWeb.SharedLive.UI.DetailsComponent}
         >
-            <:title><%= gettext "Category Details" %></:title>
+            <:title><%= gettext "Product Details" %></:title>
             <:body>
                 <%= if @live_action == :show do %>
                     <.live_component 
                         id="profile"
-                        module={SnownixWeb.Org.CategoryLive.ShowComponent}
-                        category={@category}
+                        module={SnownixWeb.Org.ProductLive.ShowComponent}
+                        product={@product}
                     />
                 <% end %>
                 <%= if @live_action in [:new, :edit] do %>
                         <.live_component
-                        module={SnownixWeb.Org.CategoryLive.FormComponent}
-                        id={if is_nil(@category.id), do: "new", else: @category.id}
+                        module={SnownixWeb.Org.ProductLive.FormComponent}
+                        id={if is_nil(@product.id), do: "new", else: @product.id}
                         title={@page_title}
                         action={@live_action}
-                        category={@category}
+                        product={@product}
                         project={@project}
                         current_user={@current_user}
-                        return_to={Routes.org_category_index_path(@socket, :index)}
+                        return_to={Routes.org_product_index_path(@socket, :index)}
                         />
                 <% end %>
             </:body>

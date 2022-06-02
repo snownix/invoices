@@ -38,7 +38,10 @@ defmodule Snownix.Organizations.Project do
     many_to_many :users, Snownix.Accounts.User, join_through: "users_projects"
 
     has_many :taxs, Snownix.Projects.Tax
+    has_many :units, Snownix.Products.Unit
     has_many :customers, Snownix.Customers.User
+    has_many :products, Snownix.Products.Product
+    has_many :categories, Snownix.Products.Category
 
     timestamps()
   end
@@ -57,6 +60,8 @@ defmodule Snownix.Organizations.Project do
     changeset
     |> cast_assoc(:taxs)
     |> cast_assoc(:customers)
+    |> cast_assoc(:categories)
+    |> cast_assoc(:products)
   end
 
   def address_changeset(project, attrs) do

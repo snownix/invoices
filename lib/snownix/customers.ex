@@ -4,6 +4,8 @@ defmodule Snownix.Customers do
   """
 
   import Ecto.Query, warn: false
+  import Snownix.Helpers.Sorting
+
   alias Snownix.Repo
 
   alias Snownix.Customers.User
@@ -72,14 +74,8 @@ defmodule Snownix.Customers do
             ^project_id
       )
 
-    sort_customers_by(query, orderby, order)
+    sort_query_by(query, orderby, order)
   end
-
-  def sort_customers_by(query, nil, _), do: query
-
-  def sort_customers_by(query, orderby, :asc), do: query |> order_by(asc: ^orderby)
-  def sort_customers_by(query, orderby, :desc), do: query |> order_by(desc: ^orderby)
-  def sort_customers_by(query, _, _), do: query
 
   @doc """
   Gets a single user.

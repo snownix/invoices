@@ -88,6 +88,10 @@ defmodule SnownixWeb.LiveHelpers do
     naive_date |> DateTime.from_naive!("Etc/UTC") |> Calendar.strftime("%a, %B %d %Y")
   end
 
+  def money_format(%{price: price, currency: currency}) do
+    Money.to_string(Money.new(trunc(price * 100), String.to_atom(currency)))
+  end
+
   @doc """
   Assign meta tags
   """

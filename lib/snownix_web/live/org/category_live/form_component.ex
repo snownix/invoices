@@ -1,11 +1,11 @@
-defmodule SnownixWeb.Org.CustomerLive.FormComponent do
+defmodule SnownixWeb.Org.CategoryLive.FormComponent do
   use SnownixWeb, :live_component
 
-  alias Snownix.Customers
+  alias Snownix.Products
 
   @impl true
-  def update(%{customer: customer} = assigns, socket) do
-    changeset = Customers.change_user(customer)
+  def update(%{category: category} = assigns, socket) do
+    changeset = Products.change_category(category)
 
     {:ok,
      socket
@@ -14,25 +14,25 @@ defmodule SnownixWeb.Org.CustomerLive.FormComponent do
   end
 
   @impl true
-  def handle_event("validate", %{"user" => customer_params}, socket) do
+  def handle_event("validate", %{"category" => category_params}, socket) do
     changeset =
-      socket.assigns.customer
-      |> Customers.change_user(customer_params)
+      socket.assigns.category
+      |> Products.change_category(category_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
-  def handle_event("save", %{"user" => customer_params}, socket) do
-    save_customer(socket, socket.assigns.action, customer_params)
+  def handle_event("save", %{"category" => category_params}, socket) do
+    save_category(socket, socket.assigns.action, category_params)
   end
 
-  defp save_customer(socket, :edit, customer_params) do
-    case Customers.update_user(socket.assigns.customer, customer_params) do
-      {:ok, _customer} ->
+  defp save_category(socket, :edit, category_params) do
+    case Products.update_category(socket.assigns.category, category_params) do
+      {:ok, _category} ->
         {:noreply,
          socket
-         |> put_flash(:info, "customer updated successfully")
+         |> put_flash(:info, "category updated successfully")
          |> push_patch(to: socket.assigns.return_to)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -40,15 +40,15 @@ defmodule SnownixWeb.Org.CustomerLive.FormComponent do
     end
   end
 
-  defp save_customer(socket, :new, customer_params) do
+  defp save_category(socket, :new, category_params) do
     project = socket.assigns.project
-    user = socket.assigns.current_user
+    category = socket.assigns.current_user
 
-    case Customers.create_user(project, user, customer_params) do
-      {:ok, _customer} ->
+    case Products.create_category(project, category, category_params) do
+      {:ok, _category} ->
         {:noreply,
          socket
-         |> put_flash(:info, "customer created successfully")
+         |> put_flash(:info, "category created successfully")
          |> push_patch(to: socket.assigns.return_to)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

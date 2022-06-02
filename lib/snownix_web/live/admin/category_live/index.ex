@@ -28,7 +28,7 @@ defmodule SnownixWeb.Admin.CategoryLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Categories")
+    |> assign(:page_title, "Listing Products")
     |> assign(:category, nil)
   end
 

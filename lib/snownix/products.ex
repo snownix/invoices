@@ -4,9 +4,51 @@ defmodule Snownix.Products do
   """
 
   import Ecto.Query, warn: false
+  import Snownix.Helpers.Sorting
+
   alias Snownix.Repo
 
   alias Snownix.Products.Category
+
+  @topic inspect(__MODULE__)
+
+  def subscribe(project_id) do
+    Phoenix.PubSub.subscribe(Snownix.PubSub, @topic <> "#{project_id}")
+  end
+
+  def subscribe(project_id, item_id) do
+    Phoenix.PubSub.subscribe(Snownix.PubSub, @topic <> "#{project_id}" <> "#{item_id}")
+  end
+
+  defp notify_subscribers({:ok, result}, event) do
+    project_id = result.project_id
+
+    Phoenix.PubSub.broadcast(
+      Snownix.PubSub,
+      @topic <> "#{project_id}",
+      {__MODULE__, event, result}
+    )
+
+    notify_subscribers(
+      {:ok, result},
+      result.id,
+      event
+    )
+  end
+
+  defp notify_subscribers({:ok, result}, parent_id, event) do
+    project_id = result.project_id
+
+    Phoenix.PubSub.broadcast(
+      Snownix.PubSub,
+      @topic <> "#{project_id}" <> "#{parent_id}",
+      {__MODULE__, event, result}
+    )
+
+    {:ok, result}
+  end
+
+  defp notify_subscribers({:error, changeset}, _parent_id, _event), do: {:error, changeset}
 
   @doc """
   Returns the list of categories.
@@ -17,8 +59,22 @@ defmodule Snownix.Products do
       [%Category{}, ...]
 
   """
-  def list_categories do
+  def list_categories() do
     Repo.all(Category)
+  end
+
+  def list_categories(project_id, opts) do
+    orderby = Keyword.get(opts, :order_by)
+    order = Keyword.get(opts, :order, :asc)
+
+    query =
+      from(c in Category,
+        where:
+          c.project_id ==
+            ^project_id
+      )
+
+    sort_query_by(query, orderby, order)
   end
 
   @doc """
@@ -35,7 +91,10 @@ defmodule Snownix.Products do
       ** (Ecto.NoResultsError)
 
   """
-  def get_category!(id), do: Repo.get!(Category, id)
+  def get_category!(project_id, id),
+    do:
+      from(u in Category, where: u.project_id == ^project_id and u.id == ^id)
+      |> Repo.one!()
 
   @doc """
   Creates a category.
@@ -49,10 +108,13 @@ defmodule Snownix.Products do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_category(attrs \\ %{}) do
+  def create_category(project \\ nil, author \\ nil, attrs \\ %{}) do
     %Category{}
     |> Category.changeset(attrs)
+    |> Category.project_changeset(project)
+    |> Category.owner_changeset(author)
     |> Repo.insert()
+    |> notify_subscribers([:category, :created])
   end
 
   @doc """
@@ -71,6 +133,7 @@ defmodule Snownix.Products do
     category
     |> Category.changeset(attrs)
     |> Repo.update()
+    |> notify_subscribers([:category, :created])
   end
 
   @doc """
@@ -87,6 +150,39 @@ defmodule Snownix.Products do
   """
   def delete_category(%Category{} = category) do
     Repo.delete(category)
+    |> notify_subscribers([:category, :deleted])
+  end
+
+  def delete_categories(project_id, ids) do
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.delete_all(
+        :delete_all,
+        from(u in Category, where: u.project_id == ^project_id and u.id in ^ids)
+      )
+      |> Repo.transaction()
+
+    notify_subscribers({:ok, %Category{project_id: project_id}}, [:category, :deleted_many])
+    result
+  end
+
+  def clone_categories(project_id, ids) do
+    categories =
+      from(u in Category, where: u.project_id == ^project_id and u.id in ^ids)
+      |> Repo.all()
+      |> Enum.map(fn item ->
+        Map.take(item, Category.__schema__(:fields))
+        |> Map.delete(:id)
+        |> Map.put(:name, "Clone - #{item.name}")
+      end)
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert_all(:insert_all, Category, categories, returning: [:id])
+      |> Repo.transaction()
+
+    notify_subscribers({:ok, %Category{project_id: project_id}}, [:category, :created_many])
+    result
   end
 
   @doc """
@@ -149,6 +245,7 @@ defmodule Snownix.Products do
     %Unit{}
     |> Unit.changeset(attrs)
     |> Repo.insert()
+    |> notify_subscribers([:unit, :inserted])
   end
 
   @doc """
@@ -167,6 +264,7 @@ defmodule Snownix.Products do
     unit
     |> Unit.changeset(attrs)
     |> Repo.update()
+    |> notify_subscribers([:unit, :updated])
   end
 
   @doc """
@@ -183,6 +281,7 @@ defmodule Snownix.Products do
   """
   def delete_unit(%Unit{} = unit) do
     Repo.delete(unit)
+    |> notify_subscribers([:unit, :deleted])
   end
 
   @doc """
@@ -209,8 +308,22 @@ defmodule Snownix.Products do
       [%Product{}, ...]
 
   """
-  def list_products do
+  def list_products() do
     Repo.all(Product)
+  end
+
+  def list_products(project_id, opts) do
+    orderby = Keyword.get(opts, :order_by)
+    order = Keyword.get(opts, :order, :asc)
+
+    query =
+      from(c in Product,
+        where:
+          c.project_id ==
+            ^project_id
+      )
+
+    sort_query_by(query, orderby, order)
   end
 
   @doc """
@@ -227,7 +340,10 @@ defmodule Snownix.Products do
       ** (Ecto.NoResultsError)
 
   """
-  def get_product!(id), do: Repo.get!(Product, id)
+  def get_product!(project_id, id),
+    do:
+      from(u in Product, where: u.project_id == ^project_id and u.id == ^id)
+      |> Repo.one!()
 
   @doc """
   Creates a product.
@@ -241,10 +357,13 @@ defmodule Snownix.Products do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_product(attrs \\ %{}) do
+  def create_product(project \\ nil, author \\ nil, attrs \\ %{}) do
     %Product{}
     |> Product.changeset(attrs)
+    |> Product.project_changeset(project)
+    |> Product.owner_changeset(author)
     |> Repo.insert()
+    |> notify_subscribers([:product, :created])
   end
 
   @doc """
@@ -263,6 +382,7 @@ defmodule Snownix.Products do
     product
     |> Product.changeset(attrs)
     |> Repo.update()
+    |> notify_subscribers([:product, :updated])
   end
 
   @doc """
@@ -279,6 +399,7 @@ defmodule Snownix.Products do
   """
   def delete_product(%Product{} = product) do
     Repo.delete(product)
+    |> notify_subscribers([:product, :deleted])
   end
 
   @doc """
