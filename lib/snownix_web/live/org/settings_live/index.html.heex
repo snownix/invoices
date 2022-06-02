@@ -229,7 +229,7 @@
                             <%= for tax <- @taxs do %>
                                 <tr>
                                     <td><%= tax.name %></td>
-                                    <td><%= tax.percent %></td>
+                                    <td><%= tax_format(tax.percent) %></td>
                                     <td><%= tax.description %></td>
                                     <td class="flex justify-between cursor-pointer">
                                         <a href="#" phx-click="tax-edit" phx-value-id={tax.id} >

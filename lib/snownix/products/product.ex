@@ -10,8 +10,8 @@ defmodule Snownix.Products.Product do
 
     field :currency, :string
 
-    field :price, :float
-    field :tax_per_item, :float
+    field :price, :integer, default: 0
+    field :tax_per_item, :integer, default: 0
 
     field :selected, :boolean, virtual: true, default: false
 

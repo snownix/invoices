@@ -6,7 +6,7 @@ defmodule Snownix.Repo.Migrations.CreateTaxs do
       add :id, :uuid, primary_key: true
 
       add :name, :string
-      add :percent, :float, default: 0.0
+      add :percent, :integer, default: 0
       add :description, :string
       add :compound_tax, :boolean, default: false, null: false
 

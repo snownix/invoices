@@ -87,7 +87,10 @@ defmodule Snownix.Seeds do
   end
 
   defp generate_rand_tax() do
-    %{name: Faker.Pokemon.name(), percent: Float.round(:rand.uniform(100) * 0.5)}
+    %{
+      name: Faker.Pokemon.name(),
+      percent: Enum.random(1..50) * 100
+    }
   end
 
   defp generate_rand_customer() do
@@ -110,9 +113,9 @@ defmodule Snownix.Seeds do
     %{
       name: Faker.Vehicle.make_and_model(),
       description: Faker.Vehicle.standard_specs() |> Enum.join(", "),
-      price: Faker.Commerce.price() * 10,
+      price: round(Faker.Commerce.price() * 10000),
       currency: Faker.Currency.code(),
-      tax_per_item: Enum.random(5..60) * 0.01
+      tax_per_item: Enum.random(1..50) * 100
     }
   end
 

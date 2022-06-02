@@ -89,7 +89,11 @@ defmodule SnownixWeb.LiveHelpers do
   end
 
   def money_format(%{price: price, currency: currency}) do
-    Money.to_string(Money.new(trunc(price * 100), String.to_atom(currency)))
+    Money.to_string(Money.new(price, String.to_atom(currency)))
+  end
+
+  def tax_format(percent) do
+    "#{Float.round(percent / 100)}%"
   end
 
   @doc """

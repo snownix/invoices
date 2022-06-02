@@ -43,8 +43,9 @@
                         <label ></label>
                     </div>
                 </th>
-                <%= render_col(assigns, :contact_name, "Name") %>
+                <%= render_col(assigns, :name, "Name") %>
                 <%= render_col(assigns, :price, "Price") %>
+                <%= render_col(assigns, :tax_per_item, "Tax") %>
                 <%= render_col(assigns, :inserted_at, "Created Date") %>
                 <th class="w-14"></th>
             </:thead>
@@ -57,7 +58,11 @@
                         <td >
                             <%= render_checkbox(assigns, item) %>
                         </td>
-                        <td><%= item.name %></td>
+                        <td>
+                            <span class="font-medium"><%= item.name %></span>
+                            <p class=" text-sm text-gray-500 break-words"><%= item.description %></p>
+                        </td>
+                        <td><%= tax_format(item.tax_per_item) %></td>
                         <td><%= money_format(item) %></td>
                         <td><%= date_format(item.inserted_at) %></td>
                         <td>
