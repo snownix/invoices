@@ -84,37 +84,75 @@ defmodule SnownixWeb.Router do
       scope "/admin", Admin, as: :admin do
         pipe_through [:require_authenticated_user]
 
-        # Projects
-        live "/projects", ProjectLive.Index, :index
-        live "/projects/new", ProjectLive.Index, :new
-        live "/projects/:id/edit", ProjectLive.Index, :edit
+        # Products
+        scope "/products" do
+          live "/", ProductLive.Index, :index
+          live "/new", ProductLive.Index, :new
+          live "/:id/edit", ProductLive.Index, :edit
 
-        live "/projects/:id", ProjectLive.Show, :show
-        live "/projects/:id/show/edit", ProjectLive.Show, :edit
+          live "/:id", ProductLive.Show, :show
+          live "/:id/show/edit", ProductLive.Show, :edit
+        end
+
+        # Units
+        scope "/units" do
+          live "/", UnitLive.Index, :index
+          live "/new", UnitLive.Index, :new
+          live "/:id/edit", UnitLive.Index, :edit
+
+          live "/:id", UnitLive.Show, :show
+          live "/:id/show/edit", UnitLive.Show, :edit
+        end
+
+        # Category
+        scope "/categories" do
+          live "/", CategoryLive.Index, :index
+          live "/new", CategoryLive.Index, :new
+          live "/:id/edit", CategoryLive.Index, :edit
+
+          live "/:id", CategoryLive.Show, :show
+          live "/:id/show/edit", CategoryLive.Show, :edit
+        end
+
+        # Projects
+        scope "/projects" do
+          live "/", ProjectLive.Index, :index
+          live "/new", ProjectLive.Index, :new
+          live "/:id/edit", ProjectLive.Index, :edit
+
+          live "/:id", ProjectLive.Show, :show
+          live "/:id/show/edit", ProjectLive.Show, :edit
+        end
 
         # Taxs
-        live "/taxs", TaxLive.Index, :index
-        live "/taxs/new", TaxLive.Index, :new
-        live "/taxs/:id/edit", TaxLive.Index, :edit
+        scope "/taxs" do
+          live "/", TaxLive.Index, :index
+          live "/new", TaxLive.Index, :new
+          live "/:id/edit", TaxLive.Index, :edit
 
-        live "/taxs/:id", TaxLive.Show, :show
-        live "/taxs/:id/show/edit", TaxLive.Show, :edit
+          live "/:id", TaxLive.Show, :show
+          live "/:id/show/edit", TaxLive.Show, :edit
+        end
 
         # Customers
-        live "/customer_users", UserLive.Index, :index
-        live "/customer_users/new", UserLive.Index, :new
-        live "/customer_users/:id/edit", UserLive.Index, :edit
+        scope "/customer_users" do
+          live "/", UserLive.Index, :index
+          live "/new", UserLive.Index, :new
+          live "/:id/edit", UserLive.Index, :edit
 
-        live "/customer_users/:id", UserLive.Show, :show
-        live "/customer_users/:id/show/edit", UserLive.Show, :edit
+          live "/:id", UserLive.Show, :show
+          live "/:id/show/edit", UserLive.Show, :edit
+        end
 
         # Address
-        live "/addresses", AddressLive.Index, :index
-        live "/addresses/new", AddressLive.Index, :new
-        live "/addresses/:id/edit", AddressLive.Index, :edit
+        scope "/addresses" do
+          live "/", AddressLive.Index, :index
+          live "/new", AddressLive.Index, :new
+          live "/:id/edit", AddressLive.Index, :edit
 
-        live "/addresses/:id", AddressLive.Show, :show
-        live "/addresses/:id/show/edit", AddressLive.Show, :edit
+          live "/:id", AddressLive.Show, :show
+          live "/:id/show/edit", AddressLive.Show, :edit
+        end
       end
 
       # Auth

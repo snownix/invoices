@@ -4,6 +4,7 @@ defmodule Snownix.Repo.Migrations.CreateCustomerUsers do
   def change do
     create table(:customer_users, primary_key: false) do
       add :id, :uuid, primary_key: true
+
       add :name, :string
       add :contact_name, :string
       add :phone, :string

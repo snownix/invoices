@@ -6,7 +6,6 @@ defmodule Snownix.Customers do
   import Ecto.Query, warn: false
   alias Snownix.Repo
 
-  alias Snownix.Customers
   alias Snownix.Customers.User
 
   @topic inspect(__MODULE__)
@@ -48,7 +47,6 @@ defmodule Snownix.Customers do
   end
 
   defp notify_subscribers({:error, changeset}, _parent_id, _event), do: {:error, changeset}
-  # defp notify_subscribers({:error, changeset}, _event), do: {:error, changeset}
 
   @doc """
   Returns the list of customer_users.

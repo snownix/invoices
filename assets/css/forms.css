@@ -20,7 +20,7 @@ textarea,
 
 button.sm,
 .btn.sm{
-  @apply py-1.5 px-2 text-sm;
+  /* @apply py-2 px-4 text-sm; */
 }
 
 button.xs,
