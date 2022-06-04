@@ -402,6 +402,38 @@ defmodule Snownix.Products do
     |> notify_subscribers([:product, :deleted])
   end
 
+  def delete_products(project_id, ids) do
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.delete_all(
+        :delete_all,
+        from(u in Product, where: u.project_id == ^project_id and u.id in ^ids)
+      )
+      |> Repo.transaction()
+
+    notify_subscribers({:ok, %Product{project_id: project_id}}, [:product, :deleted_many])
+    result
+  end
+
+  def clone_products(project_id, ids) do
+    products =
+      from(u in Product, where: u.project_id == ^project_id and u.id in ^ids)
+      |> Repo.all()
+      |> Enum.map(fn item ->
+        Map.take(item, Product.__schema__(:fields))
+        |> Map.delete(:id)
+        |> Map.put(:name, "Clone - #{item.name}")
+      end)
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert_all(:insert_all, Product, products, returning: [:id])
+      |> Repo.transaction()
+
+    notify_subscribers({:ok, %Product{project_id: project_id}}, [:product, :created_many])
+    result
+  end
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking product changes.
 
