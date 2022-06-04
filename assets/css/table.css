@@ -11,6 +11,9 @@ td {
   @apply text-left px-4 py-2;
 }
 
+tr,th{
+}
+
 th,
 tr:nth-of-type(2n) {
   @apply bg-gray-50 ;

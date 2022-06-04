@@ -58,12 +58,13 @@
                         <td >
                             <%= render_checkbox(assigns, item) %>
                         </td>
-                        <td>
+                         <td class="interactive" phx-click="show" phx-value-id={item.id}>
                             <span class="font-medium"><%= item.name %></span>
                             <p class=" text-sm text-gray-500 break-words"><%= item.description %></p>
                         </td>
-                        <td><%= tax_format(item.tax_per_item) %></td>
+                        
                         <td><%= money_format(item) %></td>
+                        <td><%= tax_format(item.tax_per_item) %></td>
                         <td><%= date_format(item.inserted_at) %></td>
                         <td>
                             <div class="flex justify-end items-center space-x-2">
