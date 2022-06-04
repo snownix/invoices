@@ -175,4 +175,13 @@ defmodule SnownixWeb.LiveHelpers do
       </div>
     """
   end
+
+  def render_text_avatar(assigns, text, size \\ "w-10 h-10") do
+    ~H"""
+      <div class="flex flex-shrink-0 items-center justify-center  duration-100
+        hover:ring-4 hover:ring-offset-2 hover:ring-dark hover:ring-opacity-30 rounded-xl w-10 h-10">
+        <div class={size<>" avatar__text !text-base"}><%= get_avatar_text(text) %></div>
+      </div>
+    """
+  end
 end
