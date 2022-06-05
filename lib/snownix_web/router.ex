@@ -62,7 +62,7 @@ defmodule SnownixWeb.Router do
         live "/invoices", InvoiceLive.Index, :index
         live "/settings", SettingsLive.Index, :settings
 
-        live "/activity", ActivityLive.Index, :index
+        live "/activities", ActivityLive.Index, :index
       end
     end
   end

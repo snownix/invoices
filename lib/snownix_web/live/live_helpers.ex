@@ -88,9 +88,27 @@ defmodule SnownixWeb.LiveHelpers do
     naive_date |> DateTime.from_naive!("Etc/UTC") |> Calendar.strftime("%a, %B %d %Y")
   end
 
-  def money_format(%{price: price, currency: currency}) do
-    Money.to_string(Money.new(price, String.to_atom(currency)))
+  def hour_format(nil), do: nil
+
+  def hour_format(naive_date) do
+    naive_date = naive_date |> DateTime.from_naive!("Etc/UTC")
+
+    if Timex.after?(Timex.now(), Timex.shift(naive_date, minutes: 59)) do
+      naive_date |> Calendar.strftime("%H:%M")
+    else
+      Timex.from_now(naive_date)
+    end
   end
+
+  def money_format(%{price: price, currency: currency}) do
+    if !is_nil(currency) and is_integer(price) do
+      Money.to_string(Money.new(price, String.to_atom(currency)))
+    else
+      nil
+    end
+  end
+
+  def money_format(_), do: nil
 
   def tax_format(percent) do
     "#{Float.round(percent / 100)}%"

@@ -15,40 +15,13 @@
     </section>
     <section
         class="_content flex flex-col relative items-center space-y-2 md:space-y-0 md:flex-row justify-between border-t border-primary border-opacity-10 overflow-y-scroll max-h-full h-full">
-        <div class="_activities space-y-8 px-8 max-h-full h-full relative">
+        <div class="_activities space-y-4 px-8 max-h-full h-full relative">
             <div class="_bar fixed h-full border-r-2 border-gray-300 mx-4 -z-10"></div>
 
             <!--  -->
-            <div class="_activity w-full py-2 flex items-start space-x-4">
-                <div class="_meta flex items-center space-x-2 py-1">
-                    <div class="_type w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
-                        U
-                    </div>
-
-                    <time datetime="2020-01-21">13:59</time>
-                </div>
-
-                <div class="_content flex flex-col space-x-4">
-                    <div class="_icon flex items-center space-x-2">
-                        <%= render_text_avatar(assigns, "Yassine Rais") %>
-                        <span class="font-semibold">Yassine Rais</span>
-                        <p>sent message to thread in channel</p>
-                        <span class="font-semibold">#invoices</span>
-                    </div>
-
-                    <div class="_note flex ">
-                        <span class="text-dark text-opacity-50">
-                            <svg class="w-8" viewBox="-4 10 90 100" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-width="6"
-                                    d="m2.69412,-2.13346c9.09909,113.20112 63.71794,96.63965 92.62963,98.87074"
-                                    stroke="currentColor" fill="none"></path>
-                            </svg>
-                        </span>
-                        <p class="p-4 border blrder-gray-500 rounded-lg">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius error deleniti rem vel, quo alias temporibus facere nisi, id reiciendis, sed consequuntur eligendi. At quaerat temporibus, perspiciatis consectetur animi cumque.</p>
-                    </div>
-
-                </div>
-            </div>
+            <%= for row <- @activities do %>
+                <%= render_activity(assigns, row) %>
+            <% end %>
             <!--  -->
         </div>
 

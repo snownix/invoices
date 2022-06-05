@@ -1,0 +1,61 @@
+<h1>Show Activity</h1>
+
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.admin_activity_show_path(@socket, :show, @activity)}>
+    <.live_component
+      module={SnownixWeb.Admin.ActivityLive.FormComponent}
+      id={@activity.id}
+      title={@page_title}
+      action={@live_action}
+      activity={@activity}
+      return_to={Routes.admin_activity_show_path(@socket, :show, @activity)}
+    />
+  </.modal>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Type:</strong>
+    <%= @activity.type %>
+  </li>
+
+  <li>
+    <strong>Target:</strong>
+    <%= @activity.target_id %>
+  </li>
+
+  <li>
+    <strong>From:</strong>
+    <%= @activity.from %>
+  </li>
+
+  <li>
+    <strong>To:</strong>
+    <%= @activity.to %>
+  </li>
+
+  <li>
+    <strong>Title:</strong>
+    <%= @activity.title %>
+  </li>
+
+  <li>
+    <strong>Note:</strong>
+    <%= @activity.note %>
+  </li>
+
+  <li>
+    <strong>Level:</strong>
+    <%= @activity.level %>
+  </li>
+
+  <li>
+    <strong>Link:</strong>
+    <%= @activity.link %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.admin_activity_show_path(@socket, :edit, @activity), class: "button" %></span> |
+<span><%= live_redirect "Back", to: Routes.admin_activity_index_path(@socket, :index) %></span>

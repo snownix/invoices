@@ -28,7 +28,9 @@ defmodule SnownixWeb.Org.CustomerLive.FormComponent do
   end
 
   defp save_customer(socket, :edit, customer_params) do
-    case Customers.update_user(socket.assigns.customer, customer_params) do
+    %{customer: customer, project: project, current_user: user} = socket.assigns
+
+    case Customers.update_user(customer, customer_params, project, user) do
       {:ok, _customer} ->
         {:noreply,
          socket
@@ -41,8 +43,7 @@ defmodule SnownixWeb.Org.CustomerLive.FormComponent do
   end
 
   defp save_customer(socket, :new, customer_params) do
-    project = socket.assigns.project
-    user = socket.assigns.current_user
+    %{project: project, current_user: user} = socket.assigns
 
     case Customers.create_user(project, user, customer_params) do
       {:ok, _customer} ->
