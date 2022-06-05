@@ -21,6 +21,10 @@ defmodule SnownixWeb.Org.ActivityLive.Index do
      |> fetch()}
   end
 
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
   def handle_info({Projects, [name, type], result}, socket) do
     case name do
       :activity ->
