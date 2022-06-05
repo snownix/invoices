@@ -28,30 +28,31 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
   end
 
   defp save_product(socket, :edit, product_params) do
-    case Products.update_product(socket.assigns.product, product_params) do
+    %{project: project, current_user: user} = socket.assigns
+
+    case Products.update_product(socket.assigns.product, product_params, project, user) do
       {:ok, _product} ->
         {:noreply,
          socket
          |> put_flash(:info, "product updated successfully")
          |> push_patch(to: socket.assigns.return_to)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
     end
   end
 
   defp save_product(socket, :new, product_params) do
-    project = socket.assigns.project
-    product = socket.assigns.current_user
+    %{project: project, current_user: user} = socket.assigns
 
-    case Products.create_product(project, product, product_params) do
+    case Products.create_product(project, user, product_params) do
       {:ok, _product} ->
         {:noreply,
          socket
          |> put_flash(:info, "product created successfully")
          |> push_patch(to: socket.assigns.return_to)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
   end

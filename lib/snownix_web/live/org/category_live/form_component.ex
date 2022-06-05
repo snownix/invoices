@@ -28,30 +28,31 @@ defmodule SnownixWeb.Org.CategoryLive.FormComponent do
   end
 
   defp save_category(socket, :edit, category_params) do
-    case Products.update_category(socket.assigns.category, category_params) do
+    %{project: project, current_user: user} = socket.assigns
+
+    case Products.update_category(socket.assigns.category, category_params, project, user) do
       {:ok, _category} ->
         {:noreply,
          socket
          |> put_flash(:info, "category updated successfully")
          |> push_patch(to: socket.assigns.return_to)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
     end
   end
 
   defp save_category(socket, :new, category_params) do
-    project = socket.assigns.project
-    category = socket.assigns.current_user
+    %{project: project, current_user: user} = socket.assigns
 
-    case Products.create_category(project, category, category_params) do
+    case Products.create_category(project, user, category_params) do
       {:ok, _category} ->
         {:noreply,
          socket
          |> put_flash(:info, "category created successfully")
          |> push_patch(to: socket.assigns.return_to)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
   end

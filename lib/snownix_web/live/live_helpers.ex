@@ -88,9 +88,27 @@ defmodule SnownixWeb.LiveHelpers do
     naive_date |> DateTime.from_naive!("Etc/UTC") |> Calendar.strftime("%a, %B %d %Y")
   end
 
-  def money_format(%{price: price, currency: currency}) do
-    Money.to_string(Money.new(price, String.to_atom(currency)))
+  def hour_format(nil), do: nil
+
+  def hour_format(naive_date) do
+    naive_date = naive_date |> DateTime.from_naive!("Etc/UTC")
+
+    if Timex.after?(Timex.now(), Timex.shift(naive_date, minutes: 59)) do
+      naive_date |> Calendar.strftime("%H:%M")
+    else
+      Timex.from_now(naive_date)
+    end
   end
+
+  def money_format(%{price: price, currency: currency}) do
+    if !is_nil(currency) and is_integer(price) do
+      Money.to_string(Money.new(price, String.to_atom(currency)))
+    else
+      nil
+    end
+  end
+
+  def money_format(_), do: nil
 
   def tax_format(percent) do
     "#{Float.round(percent / 100)}%"
@@ -172,6 +190,15 @@ defmodule SnownixWeb.LiveHelpers do
         <% else %>
           <img src={get_project_logo(project)} class={size<>" avatar !rounded-xl"}>
         <% end %>
+      </div>
+    """
+  end
+
+  def render_text_avatar(assigns, text, size \\ "w-10 h-10") do
+    ~H"""
+      <div class="flex flex-shrink-0 items-center justify-center  duration-100
+        hover:ring-4 hover:ring-offset-2 hover:ring-dark hover:ring-opacity-30 rounded-xl w-10 h-10">
+        <div class={size<>" avatar__text !text-base"}><%= get_avatar_text(text) %></div>
       </div>
     """
   end

@@ -93,7 +93,9 @@ defmodule SnownixWeb.Org.ProductLive.Index do
   end
 
   def handle_event("delete", %{"id" => id}, socket) do
-    {:ok, _} = Products.delete_product(product_id(project_id(socket), id))
+    %{project: project, current_user: user} = socket.assigns
+
+    {:ok, _} = Products.delete_product(product_id(project.id, id), project, user)
 
     {:noreply, fetch(socket)}
   end

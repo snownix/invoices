@@ -75,10 +75,10 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
     <div class="flex flex-col w-full space-y-6">
       <ul class="sidebar__menu">
         <li>
-          <a href="/">
+          <%= live_patch to: Routes.org_activity_index_path(@socket, :index) do %>
             <%= render SnownixWeb.IconsView, "notification.svg", %{} %>
             <span><%= gettext("Activity") %></span>
-          </a>
+          <% end %>
         </li>
         <li>
           <%= live_patch to: Routes.org_invoice_index_path(@socket, :index) do %>

@@ -6,7 +6,10 @@ defmodule Snownix.Organizations do
   import Ecto.Query, warn: false
   alias Snownix.Repo
 
+  alias Snownix.Projects
   alias Snownix.Organizations.Project
+
+  @activity_field :name
 
   @doc """
   Returns the list of projects.
@@ -61,11 +64,14 @@ defmodule Snownix.Organizations do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_project(owner, attrs \\ %{}) do
-    %Project{}
-    |> Project.changeset(attrs)
-    |> Project.owner_changeset(owner)
-    |> Repo.insert()
+  def create_project(user, attrs \\ %{}) do
+    project =
+      %Project{}
+      |> Project.changeset(attrs)
+      |> Project.owner_changeset(user)
+      |> Repo.insert()
+
+    project |> Projects.log_activity(project, user, :create, @activity_field)
   end
 
   @doc """
@@ -86,6 +92,37 @@ defmodule Snownix.Organizations do
     |> Project.address_changeset(attrs)
     |> Project.preferences_changeset(attrs)
     |> Repo.update()
+  end
+
+  def update_project(%Project{} = project, attrs, user) do
+    %{changes: changes} =
+      project
+      |> Project.changeset(attrs)
+      |> Project.address_changeset(attrs)
+      |> Project.preferences_changeset(attrs)
+
+    changes =
+      changes
+      |> Enum.map(fn {key, new_val} ->
+        "#{String.capitalize("#{key}")}: " <>
+          case {is_nil(Map.get(project, key)), is_nil(new_val)} do
+            {true, true} ->
+              ""
+
+            {false, false} ->
+              "from (**#{Map.get(project, key)}**) to (**#{new_val}**)"
+
+            {true, false} ->
+              "define the value to (**#{new_val}**)"
+
+            {false, true} ->
+              "removed (**#{Map.get(project, key)})"
+          end
+      end)
+      |> Enum.join("\n")
+
+    update_project(project, attrs)
+    |> Projects.log_activity(project, user, :update, @activity_field, changes)
   end
 
   @doc """

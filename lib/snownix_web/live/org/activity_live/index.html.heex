@@ -1,0 +1,29 @@
+<main class="flex flex-col max-h-screen w-full overflow-y-none">
+    <section
+        class="_header flex flex-col items-center space-y-2 md:space-y-0 md:flex-row justify-between p-8 md:pt-10 ">
+        <div>
+            <h1 class="font-semibold">Activities</h1>
+            <p class="text-gray-400">
+                Follow the latest activities
+            </p>
+        </div>
+        <div class="flex space-x-4">
+            <div class="flex space-x-2">
+                <!-- Buttons -->
+            </div>
+        </div>
+    </section>
+    <section
+        class="_content flex flex-col relative items-center space-y-2 md:space-y-0 md:flex-row justify-between border-t border-primary border-opacity-10 overflow-y-scroll max-h-full h-full">
+        <div class="_activities space-y-4 px-8 max-h-full h-full relative">
+            <div class="_bar fixed h-full border-r-2 border-gray-300 mx-4 -z-10"></div>
+
+            <!--  -->
+            <%= for row <- @activities do %>
+                <%= render_activity(assigns, row) %>
+            <% end %>
+            <!--  -->
+        </div>
+
+    </section>
+</main>
