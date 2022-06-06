@@ -71,17 +71,18 @@ defmodule SnownixWeb.Org.ActivityLive.Index do
     |> assign(:activities, pagination.items)
   end
 
-  defp assign_table_limit(socket, limit) do
-    limit = String.to_integer(limit)
+  # TODOl: logs infintiy scroll load
+  # defp assign_table_limit(socket, limit) do
+  #   limit = String.to_integer(limit)
 
-    case limit >= 1 and limit <= 100 do
-      true ->
-        socket |> assign(:table, %{socket.assigns.table | limit: limit})
+  #   case limit >= 1 and limit <= 100 do
+  #     true ->
+  #       socket |> assign(:table, %{socket.assigns.table | limit: limit})
 
-      _ ->
-        socket
-    end
-  end
+  #     _ ->
+  #       socket
+  #   end
+  # end
 
   defp assign_table_page(socket, page) do
     page = String.to_integer(page)

@@ -129,7 +129,13 @@ defmodule Snownix.ProductsTest do
     end
 
     test "create_product/1 with valid data creates a product" do
-      valid_attrs = %{currency: "some currency", description: "some description", name: "some name", price: 120.5, tax_per_item: 120.5}
+      valid_attrs = %{
+        currency: "some currency",
+        description: "some description",
+        name: "some name",
+        price: 120.5,
+        tax_per_item: 120.5
+      }
 
       assert {:ok, %Product{} = product} = Products.create_product(valid_attrs)
       assert product.currency == "some currency"
@@ -145,7 +151,14 @@ defmodule Snownix.ProductsTest do
 
     test "update_product/2 with valid data updates the product" do
       product = product_fixture()
-      update_attrs = %{currency: "some updated currency", description: "some updated description", name: "some updated name", price: 456.7, tax_per_item: 456.7}
+
+      update_attrs = %{
+        currency: "some updated currency",
+        description: "some updated description",
+        name: "some updated name",
+        price: 456.7,
+        tax_per_item: 456.7
+      }
 
       assert {:ok, %Product{} = product} = Products.update_product(product, update_attrs)
       assert product.currency == "some updated currency"

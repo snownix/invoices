@@ -4,9 +4,36 @@ defmodule SnownixWeb.Admin.ActivityLiveTest do
   import Phoenix.LiveViewTest
   import Snownix.ProjectsFixtures
 
-  @create_attrs %{from: "some from", level: "some level", link: "some link", note: "some note", target_id: "7488a646-e31f-11e4-aace-600308960662", title: "some title", to: "some to", type: "some type"}
-  @update_attrs %{from: "some updated from", level: "some updated level", link: "some updated link", note: "some updated note", target_id: "7488a646-e31f-11e4-aace-600308960668", title: "some updated title", to: "some updated to", type: "some updated type"}
-  @invalid_attrs %{from: nil, level: nil, link: nil, note: nil, target_id: nil, title: nil, to: nil, type: nil}
+  @create_attrs %{
+    from: "some from",
+    level: "some level",
+    link: "some link",
+    note: "some note",
+    target_id: "7488a646-e31f-11e4-aace-600308960662",
+    title: "some title",
+    to: "some to",
+    type: "some type"
+  }
+  @update_attrs %{
+    from: "some updated from",
+    level: "some updated level",
+    link: "some updated link",
+    note: "some updated note",
+    target_id: "7488a646-e31f-11e4-aace-600308960668",
+    title: "some updated title",
+    to: "some updated to",
+    type: "some updated type"
+  }
+  @invalid_attrs %{
+    from: nil,
+    level: nil,
+    link: nil,
+    note: nil,
+    target_id: nil,
+    title: nil,
+    to: nil,
+    type: nil
+  }
 
   defp create_activity(_) do
     activity = activity_fixture()

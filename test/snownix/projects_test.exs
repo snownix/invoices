@@ -8,7 +8,16 @@ defmodule Snownix.ProjectsTest do
 
     import Snownix.ProjectsFixtures
 
-    @invalid_attrs %{from: nil, level: nil, link: nil, note: nil, target_id: nil, title: nil, to: nil, type: nil}
+    @invalid_attrs %{
+      from: nil,
+      level: nil,
+      link: nil,
+      note: nil,
+      target_id: nil,
+      title: nil,
+      to: nil,
+      type: nil
+    }
 
     test "list_activities/0 returns all activities" do
       activity = activity_fixture()
@@ -21,7 +30,16 @@ defmodule Snownix.ProjectsTest do
     end
 
     test "create_activity/1 with valid data creates a activity" do
-      valid_attrs = %{from: "some from", level: "some level", link: "some link", note: "some note", target_id: "7488a646-e31f-11e4-aace-600308960662", title: "some title", to: "some to", type: "some type"}
+      valid_attrs = %{
+        from: "some from",
+        level: "some level",
+        link: "some link",
+        note: "some note",
+        target_id: "7488a646-e31f-11e4-aace-600308960662",
+        title: "some title",
+        to: "some to",
+        type: "some type"
+      }
 
       assert {:ok, %Activity{} = activity} = Projects.create_activity(valid_attrs)
       assert activity.from == "some from"
@@ -40,7 +58,17 @@ defmodule Snownix.ProjectsTest do
 
     test "update_activity/2 with valid data updates the activity" do
       activity = activity_fixture()
-      update_attrs = %{from: "some updated from", level: "some updated level", link: "some updated link", note: "some updated note", target_id: "7488a646-e31f-11e4-aace-600308960668", title: "some updated title", to: "some updated to", type: "some updated type"}
+
+      update_attrs = %{
+        from: "some updated from",
+        level: "some updated level",
+        link: "some updated link",
+        note: "some updated note",
+        target_id: "7488a646-e31f-11e4-aace-600308960668",
+        title: "some updated title",
+        to: "some updated to",
+        type: "some updated type"
+      }
 
       assert {:ok, %Activity{} = activity} = Projects.update_activity(activity, update_attrs)
       assert activity.from == "some updated from"

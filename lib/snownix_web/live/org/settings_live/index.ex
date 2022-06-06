@@ -3,7 +3,6 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
 
   import Snownix.Geo
   alias Snownix.Organizations
-  alias Snownix.Organizations.Project
   alias Snownix.Projects
   alias Snownix.Projects.Tax
 
