@@ -39,6 +39,8 @@ defmodule Snownix.Products do
     )
   end
 
+  defp notify_subscribers({:error, result}, _), do: {:error, result}
+
   defp notify_subscribers({:ok, result}, parent_id, event) do
     project_id = result.project_id
 
@@ -50,8 +52,6 @@ defmodule Snownix.Products do
 
     {:ok, result}
   end
-
-  defp notify_subscribers({:error, changeset}, _parent_id, _event), do: {:error, changeset}
 
   @doc """
   Returns the list of categories.
@@ -94,6 +94,9 @@ defmodule Snownix.Products do
       ** (Ecto.NoResultsError)
 
   """
+  def get_category!(id),
+    do: Repo.get!(Category, id)
+
   def get_category!(project_id, id),
     do:
       from(u in Category, where: u.project_id == ^project_id and u.id == ^id)
@@ -354,6 +357,9 @@ defmodule Snownix.Products do
       ** (Ecto.NoResultsError)
 
   """
+
+  def get_product!(id), do: Repo.get!(Product, id)
+
   def get_product!(project_id, id),
     do:
       from(u in Product, where: u.project_id == ^project_id and u.id == ^id)

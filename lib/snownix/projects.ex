@@ -217,6 +217,14 @@ defmodule Snownix.Projects do
       {:error, %Ecto.Changeset{}}
 
   """
+
+  def create_activity(attrs \\ %{}) do
+    %Activity{}
+    |> Activity.changeset(attrs)
+    |> Repo.insert()
+    |> notify_subscribers([:activity, :created])
+  end
+
   def create_activity(attrs \\ %{}, project, user) do
     %Activity{}
     |> Activity.changeset(attrs)

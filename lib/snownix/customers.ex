@@ -93,6 +93,11 @@ defmodule Snownix.Customers do
       ** (Ecto.NoResultsError)
 
   """
+  def get_user!(id),
+    do:
+      Repo.get!(User, id)
+      |> Repo.preload(:addresses)
+
   def get_user!(project_id, id),
     do:
       from(u in User, where: u.project_id == ^project_id and u.id == ^id)
