@@ -13,14 +13,14 @@ defmodule SnownixWeb.UtilsHelpers do
 
   def get_user_avatar_text(user) do
     if Map.has_key?(user, :firstname) do
-      get_avatar_text(user.firstname <> " " <> user.lastname)
+      get_avatar_text(get_user_fullname(user))
     else
       get_avatar_text(user.contact_name)
     end
   end
 
   def get_user_fullname(user) do
-    user.firstname <> " " <> user.lastname
+    "#{user.firstname} #{user.lastname}"
   end
 
   def get_project_logo_text(project) do

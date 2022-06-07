@@ -23,7 +23,7 @@ defmodule Snownix.Projects.Tax do
     |> validate_required([:name, :percent])
     |> validate_length(:name, max: 50)
     |> validate_length(:description, max: 150)
-    |> validate_number(:percent, greater_than_or_equal_to: 0, less_than_or_equal_to: 10000)
+    |> validate_number(:percent, greater_than_or_equal_to: 0, less_than_or_equal_to: 10_000)
   end
 
   def owner_changeset(tax, project, author) do

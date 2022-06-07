@@ -49,9 +49,6 @@ defmodule SnownixWeb.AccountLive.Settings do
     {:noreply, socket |> assign(:tab, select_tab(tab))}
   end
 
-  @doc """
-  Account changeset
-  """
   def handle_event("account-validate", %{"user" => user_params}, socket) do
     {:noreply,
      socket
@@ -82,9 +79,6 @@ defmodule SnownixWeb.AccountLive.Settings do
     end
   end
 
-  @doc """
-  Seucurity changeset
-  """
   def handle_event("security-validate", %{"user" => user_params}, socket) do
     {:noreply,
      socket

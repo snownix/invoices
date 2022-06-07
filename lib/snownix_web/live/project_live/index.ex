@@ -1,7 +1,6 @@
 defmodule SnownixWeb.ProjectLive.Index do
   use SnownixWeb, :live_dashboard
 
-  alias Snownix.Repo
   alias Snownix.Organizations
 
   def mount(_, _, socket) do
