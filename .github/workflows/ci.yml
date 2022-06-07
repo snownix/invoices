@@ -67,7 +67,7 @@ jobs:
             priv/plts
           key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
       - run: mix format --check-formatted
-      - run: mix credo
+      - run: mix credo --ignore readability
       - run: mix dialyzer --no-check --ignore-exit-status
 
   mix-test:
