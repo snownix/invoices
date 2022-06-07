@@ -35,6 +35,10 @@ defmodule Snownix.Projects do
     )
   end
 
+  defp notify_subscribers({:error, changeset}, _event) do
+    {:error, changeset}
+  end
+
   defp notify_subscribers({:ok, result}, parent_id, event) do
     project_id = result.project_id
 
@@ -45,10 +49,6 @@ defmodule Snownix.Projects do
     )
 
     {:ok, result}
-  end
-
-  defp notify_subscribers({:error, changeset}, _event) do
-    {:error, changeset}
   end
 
   @doc """
@@ -217,6 +217,14 @@ defmodule Snownix.Projects do
       {:error, %Ecto.Changeset{}}
 
   """
+
+  def create_activity(attrs \\ %{}) do
+    %Activity{}
+    |> Activity.changeset(attrs)
+    |> Repo.insert()
+    |> notify_subscribers([:activity, :created])
+  end
+
   def create_activity(attrs \\ %{}, project, user) do
     %Activity{}
     |> Activity.changeset(attrs)
