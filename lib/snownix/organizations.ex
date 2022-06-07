@@ -103,7 +103,7 @@ defmodule Snownix.Organizations do
 
     changes =
       changes
-      |> Enum.map(fn {key, new_val} ->
+      |> Enum.map_join("\n", fn {key, new_val} ->
         "#{String.capitalize("#{key}")}: " <>
           case {is_nil(Map.get(project, key)), is_nil(new_val)} do
             {true, true} ->
@@ -119,7 +119,6 @@ defmodule Snownix.Organizations do
               "removed (**#{Map.get(project, key)})"
           end
       end)
-      |> Enum.join("\n")
 
     update_project(project, attrs)
     |> Projects.log_activity(project, user, :update, @activity_field, changes)

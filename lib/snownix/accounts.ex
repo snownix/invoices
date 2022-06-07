@@ -5,7 +5,6 @@ defmodule Snownix.Accounts do
 
   import Ecto.Query, warn: false
   alias Snownix.Repo
-  alias Snownix.Avatar
 
   alias Snownix.Accounts.{User, UserToken, UserNotifier}
 

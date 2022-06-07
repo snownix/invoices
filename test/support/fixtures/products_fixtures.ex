@@ -39,11 +39,11 @@ defmodule Snownix.ProductsFixtures do
     {:ok, product} =
       attrs
       |> Enum.into(%{
-        currency: "some currency",
+        currency: "MAD",
         description: "some description",
         name: "some name",
-        price: 120.5,
-        tax_per_item: 120.5
+        price: 12_050,
+        tax_per_item: 12_050
       })
       |> Snownix.Products.create_product()
 

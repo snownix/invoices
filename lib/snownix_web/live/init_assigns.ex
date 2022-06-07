@@ -21,7 +21,9 @@ defmodule SnownixWeb.InitAssigns do
   def on_mount(:project, _params, session, socket) do
     user = socket.assigns.current_user
 
-    if !is_nil(user) do
+    if is_nil(user) do
+      {:cont, socket}
+    else
       case find_current_project(user, session) do
         nil ->
           {:cont, socket}
@@ -31,8 +33,6 @@ defmodule SnownixWeb.InitAssigns do
            socket
            |> assign(:project, project)}
       end
-    else
-      {:cont, socket}
     end
   end
 

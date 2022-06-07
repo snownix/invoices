@@ -115,8 +115,6 @@ defmodule SnownixWeb.Org.CustomerLive.AddressesComponent do
   end
 
   def handle_info({Customers, [:address, type], address}, socket) do
-    IO.inspect(address, label: "address ")
-
     handle_table_pub(
       __MODULE__,
       socket,
