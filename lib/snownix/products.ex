@@ -114,7 +114,14 @@ defmodule Snownix.Products do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_category(project \\ nil, user \\ nil, attrs \\ %{}) do
+  def create_category(attrs \\ %{}) do
+    %Category{}
+    |> Category.changeset(attrs)
+    |> Repo.insert()
+    |> notify_subscribers([:category, :created])
+  end
+
+  def create_category(project, user, attrs \\ %{}) do
     %Category{}
     |> Category.changeset(attrs)
     |> Category.project_changeset(project)
@@ -377,7 +384,14 @@ defmodule Snownix.Products do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_product(project \\ nil, user \\ nil, attrs \\ %{}) do
+  def create_product(attrs \\ %{}) do
+    %Product{}
+    |> Product.changeset(attrs)
+    |> Repo.insert()
+    |> notify_subscribers([:product, :created])
+  end
+
+  def create_product(project, user, attrs \\ %{}) do
     %Product{}
     |> Product.changeset(attrs)
     |> Product.project_changeset(project)

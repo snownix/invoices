@@ -112,8 +112,3 @@ msgstr ""
 #: lib/snownix_web/live/auth_live/register.html.heex:25
 msgid "Terms and conditions"
 msgstr ""
-
-#, elixir-autogen, elixir-format
-#: lib/snownix_web/live/auth_live/register.html.heex:13
-msgid "Username"
-msgstr ""
