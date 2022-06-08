@@ -156,15 +156,19 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
       <ul class="sidebar__menu">
           <li>
             <%= live_redirect to: Routes.org_settings_index_path(@socket, :settings) do %>
+              <div>
               <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
               <span><%= gettext("Settings") %></span>
-            <% end %>
+              </div>
+              <% end %>
           </li>
           <li>
             <%= live_redirect to: Routes.project_path(@socket, :leave) do %>
+              <div>
               <%= render SnownixWeb.IconsView, "leave.svg", %{} %>
               <span><%= gettext("Leave") %></span>
-            <% end %>
+              </div>
+              <% end %>
           </li>
         </ul>
     </div>
@@ -200,7 +204,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
   def render_profile_nav(assigns) do
     ~H"""
     <div
-      class="absolute flex flex-col w-64 shadow p-4 space-y-2 bg-white border z-20  rounded-lg bottom-2 lg:left-72 lg:ml-2"
+      class="absolute flex flex-col w-64 shadow px-4 py-2 space-y-2 bg-white border z-20  rounded-lg bottom-2 lg:left-72 lg:ml-2"
       phx-click="menu_open" phx-target={@myself}>
 
       <div class="fixed inset-0 w-full h-full z-20"></div>
@@ -217,14 +221,18 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
       <ul class="sidebar__menu z-30">
           <li>
             <%= live_redirect to: Routes.account_settings_path(@socket, :settings) do %>
+              <div>
               <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
               <span><%= gettext("Settings") %></span>
-            <% end %>
+              </div>
+              <% end %>
           </li>
           <li class="mt-2">
             <%= link to: Routes.user_session_path(@socket, :delete), method: :delete, data: [confirm: "Are you sure?"] do %>
-              <%= render SnownixWeb.IconsView, "logout.svg", %{} %>
-              <span><%= gettext("Logout") %></span>
+              <div>
+                <%= render SnownixWeb.IconsView, "logout.svg", %{} %>
+                <span><%= gettext("Logout") %></span>
+              </div>
             <% end %>
           </li>
       </ul>
