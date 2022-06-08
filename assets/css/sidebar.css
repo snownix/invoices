@@ -9,9 +9,27 @@
   @apply w-full;
 }
 
-.sidebar__menu li a {
-  @apply flex items-center space-x-2 text-gray-500 py-2 rounded px-2;
-  @apply hover:bg-dark  hover:bg-opacity-5;
+.sidebar__menu li a, 
+.sidebar__menu li div, 
+.sidebar__menu ._shortkey 
+{
+  @apply flex items-center space-x-2 justify-between;
+}
+
+.sidebar__menu ._shortkey{
+  @apply p-0.5 px-2 bg-grayDark text-low bg-opacity-5 rounded space-x-1 tabular-nums;
+}
+
+.sidebar__menu .shortcut__press ._shortkey {
+  @apply bg-opacity-20;
+}
+
+.sidebar__menu li a{
+  @apply  text-gray-500 py-1.5 rounded px-2;
+}
+
+.sidebar__menu li a:hover {
+  @apply bg-grayDark bg-opacity-5 text-grayDark;
 }
 
 .sidebar__menu li a span {

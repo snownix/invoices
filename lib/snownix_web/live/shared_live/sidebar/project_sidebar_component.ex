@@ -41,7 +41,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
       <div class="flex flex-col md:flex-row w-full items-center cursor-pointer">
           <%= render_project_logo(assigns, @project) %>
           <div class="px-2 text-sm w-full">
-              <h4 class="font-bold text-dark"><%= @project.name %></h4>
+              <h4 class="font-bold"><%= @project.name %></h4>
               <p class="text-gray-500">Free Plan</p>
           </div>
           <div class="text-gray-400 hidden">
@@ -74,22 +74,40 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
     ~H"""
     <div class="flex flex-col w-full space-y-6">
       <ul class="sidebar__menu">
-        <li>
-          <%= live_patch to: Routes.org_activity_index_path(@socket, :index) do %>
-            <%= render SnownixWeb.IconsView, "notification.svg", %{} %>
-            <span><%= gettext("Activity") %></span>
+        <li phx-hook="ShortCut" data-key="1" data-target-el="#nav-activity" id="sk-nav-activity">
+          <%= live_patch to: Routes.org_activity_index_path(@socket, :index), id: "nav-activity" do %>
+            <div>
+              <%= render SnownixWeb.IconsView, "notification.svg", %{} %>
+              <span><%= gettext("Activity") %></span>
+            </div>
+            <span class="_shortkey">
+              <%= render SnownixWeb.IconsView, "cmd.svg" , %{} %>
+              <span>1</span>
+            </span>
           <% end %>
         </li>
-        <li>
-          <%= live_patch to: Routes.org_invoice_index_path(@socket, :index) do %>
-            <%= render SnownixWeb.IconsView, "invoices.svg", %{} %>
-            <span><%= gettext("Invoices") %></span>
+        <li phx-hook="ShortCut" data-key="2" data-target-el="#nav-invoices" id="sk-nav-invoices">
+          <%= live_patch to: Routes.org_invoice_index_path(@socket, :index), id: "nav-invoices" do %>
+            <div>
+              <%= render SnownixWeb.IconsView, "invoices.svg", %{} %>
+              <span><%= gettext("Invoices") %></span>
+            </div>
+            <span class="_shortkey">
+              <%= render SnownixWeb.IconsView, "cmd.svg" , %{} %>
+              <span>2</span>
+            </span>
           <% end %>
         </li>
-        <li>
-          <a href="/">
-            <%= render SnownixWeb.IconsView, "quotes.svg", %{} %>
-            <span><%= gettext("Quotes") %></span>
+        <li phx-hook="ShortCut" data-key="3" data-target-el="#nav-quotes" id="sk-nav-quotes">
+          <a href="/" id="nav-quotes">
+            <div>
+              <%= render SnownixWeb.IconsView, "quotes.svg", %{} %>
+              <span><%= gettext("Quotes") %></span>
+            </div>
+            <span class="_shortkey">
+              <%= render SnownixWeb.IconsView, "cmd.svg" , %{} %>
+              <span>3</span>
+            </span>
           </a>
         </li>
       </ul>
@@ -98,27 +116,33 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
         <div class="border-b border-dark border-opacity-10 w-full"></div>
       </div>
       <div class="flex flex-col">
-        <p class="mb-2 text-dark font-semibold text-sm px-2 text-gray-400">
+        <p class="mb-2 font-semibold text-sm px-2 text-gray-400">
           Advanced
         </p>
         <ul class="sidebar__menu">
           <li>
             <%= live_patch to: Routes.org_customer_index_path(@socket, :index) do %>
-              <%= render SnownixWeb.IconsView, "customers.svg", %{} %>
-              <span><%= gettext("Customers") %></span>
+              <div>
+                <%= render SnownixWeb.IconsView, "customers.svg", %{} %>
+                <span><%= gettext("Customers") %></span>
+              </div>
             <% end %>
             </li>
           <li>
             <%= live_patch to: Routes.org_product_index_path(@socket, :index) do %>
+              <div>
               <%= render SnownixWeb.IconsView, "products.svg", %{} %>
-              <span><%= gettext("Products") %></span>
-            <% end %>
+                <span><%= gettext("Products") %></span>
+                </div>
+              <% end %>
             </li>
             <li>
             <%= live_patch to: Routes.org_category_index_path(@socket, :index) do %>
-              <%= render SnownixWeb.IconsView, "categories.svg", %{} %>
-              <span><%= gettext("Categories") %></span>
-            <% end %>
+              <div>
+                <%= render SnownixWeb.IconsView, "categories.svg", %{} %>
+                <span><%= gettext("Categories") %></span>
+              </div>
+              <% end %>
           </li>
         </ul>
       </div>
@@ -159,7 +183,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
             <%= render_user_avatar(assigns, @current_user) %>
           </div>
           <div class="px-2 text-sm w-full">
-              <h4 class="font-bold text-dark"><%= get_user_fullname(@current_user) %></h4>
+              <h4 class="font-bold"><%= get_user_fullname(@current_user) %></h4>
               <p class="text-gray-500 text-sm"><%= @current_user.email %></p>
           </div>
           <div class="text-gray-400">
@@ -186,7 +210,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
             <%= render_user_avatar(assigns, @current_user) %>
           </div>
           <div class="pl-2 text-sm w-full">
-              <h4 class="font-bold text-dark"><%= get_user_fullname(@current_user) %></h4>
+              <h4 class="font-bold"><%= get_user_fullname(@current_user) %></h4>
               <p class="text-gray-500 text-sm"><%= @current_user.email %></p>
           </div>
       </div>
