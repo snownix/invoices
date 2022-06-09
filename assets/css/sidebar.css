@@ -75,11 +75,9 @@
   @apply opacity-0;
 }
 
-.mini .sidebar__container .sidebar__menu li:hover{
-}
 
 .mini .sidebar__container .sidebar__menu li:hover span{
-  @apply absolute flex left-16 px-3 py-2 bg-grayDark text-light rounded-md z-30;
+  @apply absolute opacity-100 flex left-16 px-3 py-2 bg-grayDark text-light rounded-md z-30;
 }
 
 .mini .sidebar__container .sidebar__menu li div { @apply justify-center w-full; }
