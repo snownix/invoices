@@ -8,7 +8,31 @@ defmodule Snownix.InvoicesTest do
 
     import Snownix.InvoicesFixtures
 
-    @invalid_attrs %{allow_edit: nil, currency: nil, discount: nil, discount_per_item: nil, discount_type: nil, discount_val: nil, due_amount: nil, due_date: nil, from_date: nil, invoice_number: nil, note: nil, paid_status: nil, reference_number: nil, sent_email: nil, sent_sms: nil, sequence_number: nil, status: nil, sub_total: nil, tax: nil, tax_per_item: nil, to_date: nil, total: nil, viewed: nil}
+    @invalid_attrs %{
+      allow_edit: nil,
+      currency: nil,
+      discount: nil,
+      discount_per_item: nil,
+      discount_type: nil,
+      discount_val: nil,
+      due_amount: nil,
+      due_date: nil,
+      from_date: nil,
+      invoice_number: nil,
+      note: nil,
+      paid_status: nil,
+      reference_number: nil,
+      sent_email: nil,
+      sent_sms: nil,
+      sequence_number: nil,
+      status: nil,
+      sub_total: nil,
+      tax: nil,
+      tax_per_item: nil,
+      to_date: nil,
+      total: nil,
+      viewed: nil
+    }
 
     test "list_invoices/0 returns all invoices" do
       invoice = invoice_fixture()
@@ -21,7 +45,31 @@ defmodule Snownix.InvoicesTest do
     end
 
     test "create_invoice/1 with valid data creates a invoice" do
-      valid_attrs = %{allow_edit: true, currency: "some currency", discount: 42, discount_per_item: true, discount_type: "some discount_type", discount_val: 42, due_amount: 42, due_date: ~N[2022-06-04 14:27:00], from_date: ~N[2022-06-04 14:27:00], invoice_number: "some invoice_number", note: "some note", paid_status: "some paid_status", reference_number: "some reference_number", sent_email: true, sent_sms: true, sequence_number: 42, status: "some status", sub_total: 42, tax: 42, tax_per_item: true, to_date: ~N[2022-06-04 14:27:00], total: 42, viewed: 42}
+      valid_attrs = %{
+        allow_edit: true,
+        currency: "some currency",
+        discount: 42,
+        discount_per_item: true,
+        discount_type: "some discount_type",
+        discount_val: 42,
+        due_amount: 42,
+        due_date: ~N[2022-06-04 14:27:00],
+        from_date: ~N[2022-06-04 14:27:00],
+        invoice_number: "some invoice_number",
+        note: "some note",
+        paid_status: "some paid_status",
+        reference_number: "some reference_number",
+        sent_email: true,
+        sent_sms: true,
+        sequence_number: 42,
+        status: "some status",
+        sub_total: 42,
+        tax: 42,
+        tax_per_item: true,
+        to_date: ~N[2022-06-04 14:27:00],
+        total: 42,
+        viewed: 42
+      }
 
       assert {:ok, %Invoice{} = invoice} = Invoices.create_invoice(valid_attrs)
       assert invoice.allow_edit == true
@@ -55,7 +103,32 @@ defmodule Snownix.InvoicesTest do
 
     test "update_invoice/2 with valid data updates the invoice" do
       invoice = invoice_fixture()
-      update_attrs = %{allow_edit: false, currency: "some updated currency", discount: 43, discount_per_item: false, discount_type: "some updated discount_type", discount_val: 43, due_amount: 43, due_date: ~N[2022-06-05 14:27:00], from_date: ~N[2022-06-05 14:27:00], invoice_number: "some updated invoice_number", note: "some updated note", paid_status: "some updated paid_status", reference_number: "some updated reference_number", sent_email: false, sent_sms: false, sequence_number: 43, status: "some updated status", sub_total: 43, tax: 43, tax_per_item: false, to_date: ~N[2022-06-05 14:27:00], total: 43, viewed: 43}
+
+      update_attrs = %{
+        allow_edit: false,
+        currency: "some updated currency",
+        discount: 43,
+        discount_per_item: false,
+        discount_type: "some updated discount_type",
+        discount_val: 43,
+        due_amount: 43,
+        due_date: ~N[2022-06-05 14:27:00],
+        from_date: ~N[2022-06-05 14:27:00],
+        invoice_number: "some updated invoice_number",
+        note: "some updated note",
+        paid_status: "some updated paid_status",
+        reference_number: "some updated reference_number",
+        sent_email: false,
+        sent_sms: false,
+        sequence_number: 43,
+        status: "some updated status",
+        sub_total: 43,
+        tax: 43,
+        tax_per_item: false,
+        to_date: ~N[2022-06-05 14:27:00],
+        total: 43,
+        viewed: 43
+      }
 
       assert {:ok, %Invoice{} = invoice} = Invoices.update_invoice(invoice, update_attrs)
       assert invoice.allow_edit == false

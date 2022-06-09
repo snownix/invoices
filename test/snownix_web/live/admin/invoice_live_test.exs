@@ -4,9 +4,81 @@ defmodule SnownixWeb.Admin.InvoiceLiveTest do
   import Phoenix.LiveViewTest
   import Snownix.InvoicesFixtures
 
-  @create_attrs %{allow_edit: true, currency: "some currency", discount: 42, discount_per_item: true, discount_type: "some discount_type", discount_val: 42, due_amount: 42, due_date: %{day: 4, hour: 14, minute: 27, month: 6, year: 2022}, from_date: %{day: 4, hour: 14, minute: 27, month: 6, year: 2022}, invoice_number: "some invoice_number", note: "some note", paid_status: "some paid_status", reference_number: "some reference_number", sent_email: true, sent_sms: true, sequence_number: 42, status: "some status", sub_total: 42, tax: 42, tax_per_item: true, to_date: %{day: 4, hour: 14, minute: 27, month: 6, year: 2022}, total: 42, viewed: 42}
-  @update_attrs %{allow_edit: false, currency: "some updated currency", discount: 43, discount_per_item: false, discount_type: "some updated discount_type", discount_val: 43, due_amount: 43, due_date: %{day: 5, hour: 14, minute: 27, month: 6, year: 2022}, from_date: %{day: 5, hour: 14, minute: 27, month: 6, year: 2022}, invoice_number: "some updated invoice_number", note: "some updated note", paid_status: "some updated paid_status", reference_number: "some updated reference_number", sent_email: false, sent_sms: false, sequence_number: 43, status: "some updated status", sub_total: 43, tax: 43, tax_per_item: false, to_date: %{day: 5, hour: 14, minute: 27, month: 6, year: 2022}, total: 43, viewed: 43}
-  @invalid_attrs %{allow_edit: false, currency: nil, discount: nil, discount_per_item: false, discount_type: nil, discount_val: nil, due_amount: nil, due_date: %{day: 30, hour: 14, minute: 27, month: 2, year: 2022}, from_date: %{day: 30, hour: 14, minute: 27, month: 2, year: 2022}, invoice_number: nil, note: nil, paid_status: nil, reference_number: nil, sent_email: false, sent_sms: false, sequence_number: nil, status: nil, sub_total: nil, tax: nil, tax_per_item: false, to_date: %{day: 30, hour: 14, minute: 27, month: 2, year: 2022}, total: nil, viewed: nil}
+  @create_attrs %{
+    allow_edit: true,
+    currency: "some currency",
+    discount: 42,
+    discount_per_item: true,
+    discount_type: "some discount_type",
+    discount_val: 42,
+    due_amount: 42,
+    due_date: %{day: 4, hour: 14, minute: 27, month: 6, year: 2022},
+    from_date: %{day: 4, hour: 14, minute: 27, month: 6, year: 2022},
+    invoice_number: "some invoice_number",
+    note: "some note",
+    paid_status: "some paid_status",
+    reference_number: "some reference_number",
+    sent_email: true,
+    sent_sms: true,
+    sequence_number: 42,
+    status: "some status",
+    sub_total: 42,
+    tax: 42,
+    tax_per_item: true,
+    to_date: %{day: 4, hour: 14, minute: 27, month: 6, year: 2022},
+    total: 42,
+    viewed: 42
+  }
+  @update_attrs %{
+    allow_edit: false,
+    currency: "some updated currency",
+    discount: 43,
+    discount_per_item: false,
+    discount_type: "some updated discount_type",
+    discount_val: 43,
+    due_amount: 43,
+    due_date: %{day: 5, hour: 14, minute: 27, month: 6, year: 2022},
+    from_date: %{day: 5, hour: 14, minute: 27, month: 6, year: 2022},
+    invoice_number: "some updated invoice_number",
+    note: "some updated note",
+    paid_status: "some updated paid_status",
+    reference_number: "some updated reference_number",
+    sent_email: false,
+    sent_sms: false,
+    sequence_number: 43,
+    status: "some updated status",
+    sub_total: 43,
+    tax: 43,
+    tax_per_item: false,
+    to_date: %{day: 5, hour: 14, minute: 27, month: 6, year: 2022},
+    total: 43,
+    viewed: 43
+  }
+  @invalid_attrs %{
+    allow_edit: false,
+    currency: nil,
+    discount: nil,
+    discount_per_item: false,
+    discount_type: nil,
+    discount_val: nil,
+    due_amount: nil,
+    due_date: %{day: 30, hour: 14, minute: 27, month: 2, year: 2022},
+    from_date: %{day: 30, hour: 14, minute: 27, month: 2, year: 2022},
+    invoice_number: nil,
+    note: nil,
+    paid_status: nil,
+    reference_number: nil,
+    sent_email: false,
+    sent_sms: false,
+    sequence_number: nil,
+    status: nil,
+    sub_total: nil,
+    tax: nil,
+    tax_per_item: false,
+    to_date: %{day: 30, hour: 14, minute: 27, month: 2, year: 2022},
+    total: nil,
+    viewed: nil
+  }
 
   defp create_invoice(_) do
     invoice = invoice_fixture()
