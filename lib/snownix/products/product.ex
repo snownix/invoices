@@ -30,16 +30,15 @@ defmodule Snownix.Products.Product do
     |> validate_required([:name, :price, :currency, :tax_per_item, :unit_id])
   end
 
-  def put_project(changeset, project) do
+  def change_project(changeset, project) do
     put_assoc(changeset, :project, project)
   end
 
-  def put_category(changeset, category) do
+  def change_category(changeset, category) do
     put_change(changeset, :category_id, category.id)
   end
 
-  def put_author(changeset, author) do
+  def change_author(changeset, author) do
     put_assoc(changeset, :author, author)
   end
-
 end

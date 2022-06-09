@@ -27,15 +27,15 @@
   </div>
 
   <.live_component
-    module={SnownixWeb.SharedLive.UI.SearchSelectComponent}
     id="units-search-select"
+    type="unit"
+    module={SnownixWeb.SharedLive.UI.SearchSelectComponent}
     items={@units}
     selected_item={@selected_unit}
     form={f}
     field={:unit_id}
-    type="unit"
-    parent={@myself}
-    />
+    parent={@myself} />
+
   <div class="form__group">
     <%= label f, :tax_per_item %>
     <%= number_input f, :tax_per_item %>

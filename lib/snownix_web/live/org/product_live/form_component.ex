@@ -2,7 +2,6 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
   use SnownixWeb, :live_component
 
   alias Snownix.Products
-  alias Snownix.Repo
 
   @impl true
   def update(%{product: product} = assigns, socket) do
@@ -105,5 +104,4 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
 
     assign(socket, units: units, selected_unit: selected_unit)
   end
-
 end

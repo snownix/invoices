@@ -86,14 +86,16 @@ const Hooks = {
     SearchSelect: {
         mounted() {
             this.hidden = true;
-            let list = this.el.querySelector(".dropdown-content");
+            const list = this.el.querySelector(".dropdown__content");
             list.style.display = "none"
             this.addListeners()
         },
         updated() {
+            const list = this.el.querySelector(".dropdown__content");
             if (this.hidden) {
-                let list = this.el.querySelector(".dropdown-content");
                 list.style.display = "none";
+            } else {
+                list.style.display = "block";
             }
             this.removeListeners()
             this.addListeners()
@@ -102,9 +104,9 @@ const Hooks = {
             this.removeListeners()
         },
         addListeners() {
-            let input = this.el.querySelector(".search-input");
-            let toggleBtn = this.el.querySelector(".toggle-btn");
-            let list = this.el.querySelector(".dropdown-content");
+            const input = this.el.querySelector(".search__input");
+            const toggleBtn = this.el.querySelector(".toggle__btn");
+            let list = this.el.querySelector(".dropdown__content");
 
             this.focusEvt = input.addEventListener("focus", (evt) => {
                 this.hidden = false;
@@ -113,15 +115,19 @@ const Hooks = {
             this.keyupEvt = input.addEventListener("keyup", (evt) => {
                 this.hidden = false;
                 list.style.display = "block";
-                let value = evt.target.value;
-                this.pushEventTo(this.el.getAttribute("phx-target"), "filter", value);
+                clearTimeout(this.keyupTimeout);
+                this.keyupTimeout = setTimeout(() => {
+                    const value = evt.target.value;
+                    this.pushEventTo(this.el.getAttribute("phx-target"), "filter", value);
+                }, 400);
             })
             this.blurEvt = input.addEventListener("blur", (evt) => {
-                list = this.el.querySelector(".dropdown-content");
+                list = this.el.querySelector(".dropdown__content");
                 this.hidden = true;
-                setTimeout(() => {
+                clearTimeout(this.blurTimeout);
+                this.blurTimeout = setTimeout(() => {
                     list.style.display = "none";                    
-                }, 200);
+                }, 250);
             })
             this.clickEvt = toggleBtn.addEventListener("click", (evt) => {7
                 this.hidden = !this.hidden;

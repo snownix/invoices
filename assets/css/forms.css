@@ -202,3 +202,11 @@ input:checked + .slider:before {
   border-radius: 18px;
 }
 
+.search__select__item {
+  @apply hover:bg-indigo-100 w-full px-4 py-2 border-0 rounded-none flex justify-start
+}
+
+.search__select__item__active {
+  @apply bg-indigo-600 w-full px-4 py-2 border-0 rounded-none flex justify-start text-white
+}
+
