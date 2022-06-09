@@ -9,6 +9,8 @@
 @import "./table.css";
 @import "./unstyle.css";
 
+@import "./org/activity.css";
+
 html {
   @apply text-dark;
   @apply text-[0.95rem];

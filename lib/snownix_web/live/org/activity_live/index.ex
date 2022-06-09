@@ -122,7 +122,10 @@ defmodule SnownixWeb.Org.ActivityLive.Index do
         </div>
 
         <div class="_content flex flex-col">
-            <time phx-hook="TimeAgo" id={row.id} datetime={row.inserted_at}><%= hour_format(row.inserted_at) %></time>
+            <div class="activity__time">
+              <time phx-hook="TimeAgo" id={row.id} datetime={row.inserted_at}><%= hour_format(row.inserted_at) %></time>
+              <time datetime={row.inserted_at}><%= datetime_format(row.inserted_at) %></time>
+            </div>
             <div class="_icon mt-2 flex items-center space-x-2 ">
                 <a class="flex items-center space-x-2">
                   <%= render_text_avatar(assigns, row.from) %>

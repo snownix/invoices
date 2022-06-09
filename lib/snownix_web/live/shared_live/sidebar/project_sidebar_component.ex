@@ -117,7 +117,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
       </div>
       <div class="flex flex-col">
         <p class="sidebar__group">
-          Advanced
+          <%= gettext "Advanced" %>
         </p>
         <ul class="sidebar__menu">
           <li>
@@ -154,11 +154,11 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
     ~H"""
     <div class="flex flex-col w-full flex-grow !justify-end">
       <ul class="sidebar__menu">
-          <li>
-            <a href="javascript:void(0)" class="btn__minimize">
+          <li class="btn__minimize">
+            <a href="javascript:void(0)" >
               <div>
                 <%= render SnownixWeb.IconsView, "minimize.svg", %{} %>
-                <span><%= gettext("Sidebar") %></span>
+                <span><%= gettext("Toggle Sidebar") %></span>
               </div>
             </a>
           </li>

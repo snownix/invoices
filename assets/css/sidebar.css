@@ -47,12 +47,13 @@
 /* Minimzed sidebar */
 
 .sidebar *{
-  @apply transition-all duration-75;
+  @apply transition-all duration-300;
 }
 
 .sidebar.mini .btn__minimize.active svg{
   @apply rotate-90;
 }
+
 
 .sidebar.mini .sidebar__profile{
   @apply left-24;

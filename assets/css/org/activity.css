@@ -1,0 +1,9 @@
+.activity__time time:last-child,
+.activity__time:hover time:first-child {
+    @apply hidden;
+}
+
+.activity__time time:first-child,
+.activity__time:hover time:last-child {
+    @apply block;
+}

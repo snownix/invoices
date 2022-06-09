@@ -4,30 +4,15 @@ import Litepicker from 'litepicker';
 const Hooks = {
     Sidebar : {
         key: 'sidebar-minimized',
-        sidebar: null,
         mounted(){
             this.el.querySelectorAll('.btn__minimize').forEach(el=>{
                 el.addEventListener('click', () => this.toggleMinimize());
             });
 
-            this.updateClass();
-            this.updateBtnClass();
+            this._updateUI();
         },
-        updateClass(){
-            if (this.isMinimized()){
-                this.el.classList.add('mini');
-            }else{
-                this.el.classList.remove('mini');
-            }
-        },
-        updateBtnClass(){
-            this.el.querySelectorAll('.btn__minimize').forEach(el=>{
-                if (this.isMinimized()){
-                    el.classList.add('active');
-                }else{
-                    el.classList.remove('active');
-                }
-            });
+        updated(){
+            this._updateUI();
         },
         isMinimized(){
             return localStorage.getItem(this.key) === 'true';
@@ -36,9 +21,28 @@ const Hooks = {
             const newState = !this.isMinimized();
             localStorage.setItem(this.key, newState);
 
-            this.updateClass();
-            this.updateBtnClass();
+            this._updateUI();
             return newState;
+        },
+        _updateClass(){
+            if (this.isMinimized()){
+                this.el.classList.add('mini');
+            }else{
+                this.el.classList.remove('mini');
+            }
+        },
+        _updateBtnClass(){
+            this.el.querySelectorAll('.btn__minimize').forEach(el=>{
+                if (this.isMinimized()){
+                    el.classList.add('active');
+                }else{
+                    el.classList.remove('active');
+                }
+            });
+        },
+        _updateUI(){
+            this._updateClass();
+            this._updateBtnClass();
         }
     },
     Flash: {

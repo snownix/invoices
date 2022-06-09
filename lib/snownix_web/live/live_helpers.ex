@@ -100,6 +100,12 @@ defmodule SnownixWeb.LiveHelpers do
     end
   end
 
+  def datetime_format(nil), do: nil
+
+  def datetime_format(naive_date) do
+    naive_date |> DateTime.from_naive!("Etc/UTC") |> Calendar.strftime("%a, %B %d %Y %H:%M:%S")
+  end
+
   def money_format(%{price: price, currency: currency}) do
     if !is_nil(currency) and is_integer(price) do
       Money.to_string(Money.new(price, String.to_atom(currency)))
