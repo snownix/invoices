@@ -11,7 +11,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.UserSidebarComponent do
 
   def render(assigns) do
     ~H"""
-      <nav class="sidebar">
+      <nav class="sidebar" phx-hook="Sidebar" id="user-sidebar">
           <div class="sidebar__container">
                 <!-- user -->
                 <%= render_profile_menu(assigns) %>
@@ -32,14 +32,18 @@ defmodule SnownixWeb.SharedLive.Sidebar.UserSidebarComponent do
       <ul class="sidebar__menu">
         <li>
           <%= live_redirect to: Routes.project_index_path(@socket, :index) do %>
-            <%= render SnownixWeb.IconsView, "notification.svg", %{} %>
-            <span>Projects</span>
+            <div>
+              <%= render SnownixWeb.IconsView, "notification.svg", %{} %>
+              <span>Projects</span>
+            </div>
           <% end %>
         </li>
         <li>
             <%= live_redirect to: Routes.account_settings_path(@socket, :settings) do %>
-              <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
-              <span>Settings</span>
+              <div>
+                <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
+                <span>Settings</span>
+              </div>
             <% end %>
           </li>
       </ul>
@@ -53,9 +57,11 @@ defmodule SnownixWeb.SharedLive.Sidebar.UserSidebarComponent do
       <ul class="sidebar__menu">
           <li>
             <%= link to: Routes.user_session_path(@socket, :delete), method: :delete, data: [confirm: "Are you sure?"] do %>
-              <%= render SnownixWeb.IconsView, "logout.svg", %{} %>
-              <span>Logout</span>
-            <% end %>
+              <div>
+                <%= render SnownixWeb.IconsView, "logout.svg", %{} %>
+                <span>Logout</span>
+              </div>
+              <% end %>
           </li>
         </ul>
     </div>

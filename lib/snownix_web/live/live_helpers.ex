@@ -183,12 +183,11 @@ defmodule SnownixWeb.LiveHelpers do
 
   def render_project_logo(assigns, project, size \\ "w-10 h-10") do
     ~H"""
-      <div class="flex flex-shrink-0 items-center justify-center  duration-100
-        hover:ring-4 hover:ring-offset-2 hover:ring-dark hover:ring-opacity-30 rounded-xl w-10 h-10">
+      <div class={"project__logo " <> size }>
         <%= if is_nil(get_project_logo(project)) do %>
-          <div class={size<>" avatar__text !text-base"}><%= get_project_logo_text(project) %></div>
+          <div class={ size <>" avatar__text !text-base"}><%= get_project_logo_text(project) %></div>
         <% else %>
-          <img src={get_project_logo(project)} class={size<>" avatar !rounded-xl"}>
+          <img src={get_project_logo(project)} class={ size <>" avatar !rounded-xl"}>
         <% end %>
       </div>
     """

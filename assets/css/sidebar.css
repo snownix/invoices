@@ -1,19 +1,83 @@
 .sidebar {
-  @apply hidden md:block md:flex-shrink-0 md:bg-[#f7f7f7] md:overflow-y-auto overflow-x-hidden border-r min-h-screen;
+  @apply hidden  md:block md:flex-shrink-0 md:bg-[#f7f7f7] md:overflow-y-auto overflow-x-hidden border-r min-h-screen;
 }
 
 .sidebar__container {
-  @apply flex flex-col h-full lg:w-72 relative space-y-4 py-6 px-4 items-stretch;
+  @apply flex flex-col h-full lg:w-72 space-y-4 py-6 px-4 items-stretch;
 }
 .sidebar__menu {
   @apply w-full;
 }
 
-.sidebar__menu li a {
-  @apply flex items-center space-x-2 text-gray-500 py-2 rounded px-2;
-  @apply hover:bg-dark  hover:bg-opacity-5;
+.sidebar__menu li a, 
+.sidebar__menu li div, 
+.sidebar__menu ._shortkey 
+{
+  @apply flex items-center space-x-2 justify-between;
+}
+
+.sidebar__menu ._shortkey{
+  @apply p-0.5 px-2 bg-grayDark text-low bg-opacity-5 rounded space-x-1 tabular-nums;
+}
+
+.sidebar__menu .shortcut__press ._shortkey {
+  @apply bg-opacity-20;
+}
+
+.sidebar__menu li a{
+  @apply  text-gray-500 py-1.5 rounded px-2;
+}
+
+.sidebar__menu li a:hover {
+  @apply bg-grayDark bg-opacity-5 text-grayDark;
 }
 
 .sidebar__menu li a span {
   @apply font-semibold text-sm;
 }
+
+.sidebar__group {
+  @apply mb-2 font-semibold text-sm px-2 text-gray-400;
+}
+
+.sidebar__profile{
+  @apply absolute flex flex-col w-64 shadow px-4 py-2 space-y-2 bg-white border z-20
+          rounded-lg bottom-2 left-0 md:left-72 lg:ml-2;
+}
+/* Minimzed sidebar */
+
+.sidebar *{
+  @apply transition-all duration-75;
+}
+
+.sidebar.mini .btn__minimize.active svg{
+  @apply rotate-90;
+}
+
+.sidebar.mini .sidebar__profile{
+  @apply left-24;
+}
+
+.sidebar.mini .sidebar__search input{
+  @apply pl-0 placeholder:text-transparent;
+}
+
+.sidebar.mini .sidebar__container {
+  @apply w-20;
+}
+
+.mini .inmini__hide, 
+.mini .sidebar__container .sidebar__menu li div > span,
+.mini .sidebar__container .sidebar__menu li ._shortkey 
+{ @apply hidden opacity-0; }
+
+.mini .sidebar__group {
+  @apply opacity-0;
+}
+
+
+.mini .sidebar__container .sidebar__menu li:hover span{
+  @apply absolute opacity-100 flex left-16 px-3 py-2 bg-grayDark text-light rounded-md z-30;
+}
+
+.mini .sidebar__container .sidebar__menu li div { @apply justify-center w-full; }
