@@ -10,17 +10,12 @@ select,
 button,
 textarea,
 .btn {
-  @apply block !h-max;
+  @apply block;
   @apply px-4 py-2.5 rounded-lg;
   @apply text-base font-medium leading-6;
 
   @apply bg-gray-50 bg-opacity-50 border border-gray-300 text-gray-900 text-sm;
   @apply focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50;
-}
-
-button.sm,
-.btn.sm{
-  /* @apply py-2 px-4 text-sm; */
 }
 
 button.xs,
@@ -34,6 +29,10 @@ button:disabled,
   @apply bg-gray-100 text-dark cursor-not-allowed;
 }
 
+textarea {
+ @apply h-24 
+}
+
 input.info,
 textarea.info {
   @apply border border-primary placeholder:text-primary text-primary;
@@ -44,6 +43,7 @@ input.error,
 textarea.error {
   @apply border border-red-500 placeholder:text-red-500 text-red-500;
 }
+
 
 /**
  * -----------------------

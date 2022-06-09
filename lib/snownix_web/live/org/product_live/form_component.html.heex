@@ -7,12 +7,53 @@
   phx-target={@myself}
   phx-change="validate"
   phx-submit="save">
+
+  <div class="form__group">
+    <%= label f, :name %>
+    <%= text_input f, :name %>
+    <%= error_tag f, :name %>
+  </div>
+
+  <div class="form__group">
+    <%= label f, :description %>
+    <%= textarea f, :description %>
+    <%= error_tag f, :description %>
+  </div>
+
+  <div class="form__group">
+    <%= label f, :price %>
+    <%= number_input f, :price %>
+    <%= error_tag f, :price %>
+  </div>
+
+  <.live_component
+    module={SnownixWeb.SharedLive.UI.SearchSelectComponent}
+    id="units-search-select"
+    items={@units}
+    selected_item={@selected_unit}
+    form={f}
+    field={:unit_id}
+    type="unit"
+    parent={@myself}
+    />
+  <div class="form__group">
+    <%= label f, :tax_per_item %>
+    <%= number_input f, :tax_per_item %>
+    <%= error_tag f, :tax_per_item %>
+  </div>    
+
+  <div class="form__group">
+    <%= label f, :currency %>
+    <%= select f, :currency, currencies_options(), prompt: "Choose a currency" %>
+    <%= error_tag f, :currency %>
+  </div>
+
+  <div class="form__group">
+    <%= label f, :category %>
+    <%= select f, :category, @categories, prompt: "Choose a category", value: @product.category_id %>
+    <%= error_tag f, :tax %>
+  </div>    
   
-    <div class="form__group">
-      <%= label f, :name %>
-      <%= text_input f, :name %>
-      <%= error_tag f, :name %>
-    </div>
   <div>
     <%= submit "Save", phx_disable_with: "Saving...", class: "primary" %>
   </div>

@@ -36,6 +36,8 @@ defmodule Snownix.Products do
     )
   end
 
+  defp notify_subscribers({:error, changeset}, _event), do: {:error, changeset}
+
   defp notify_subscribers({:ok, result}, parent_id, event) do
     project_id = result.project_id
 
@@ -47,8 +49,6 @@ defmodule Snownix.Products do
 
     {:ok, result}
   end
-
-  defp notify_subscribers({:error, changeset}, _parent_id, _event), do: {:error, changeset}
 
   @doc """
   Returns the list of categories.
@@ -63,16 +63,21 @@ defmodule Snownix.Products do
     Repo.all(Category)
   end
 
+  def list_categories(project_id) do
+    query =
+      from c in Category,
+        where: c.project_id == ^project_id
+
+    Repo.all(query)
+  end
+
   def list_categories(project_id, opts) do
     orderby = Keyword.get(opts, :order_by)
     order = Keyword.get(opts, :order, :asc)
 
     query =
-      from(c in Category,
-        where:
-          c.project_id ==
-            ^project_id
-      )
+      from c in Category,
+        where: c.project_id == ^project_id
 
     sort_query_by(query, orderby, order)
   end
@@ -153,22 +158,23 @@ defmodule Snownix.Products do
     |> notify_subscribers([:category, :deleted])
   end
 
+  def categories_by_ids_query(project_id, ids) do
+    from u in Category,
+      where: u.project_id == ^project_id and u.id in ^ids
+  end
+
   def delete_categories(project_id, ids) do
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.delete_all(
-        :delete_all,
-        from(u in Category, where: u.project_id == ^project_id and u.id in ^ids)
-      )
-      |> Repo.transaction()
+    project_id
+    |> categories_by_ids_query(ids)
+    |> Repo.delete_all()
 
     notify_subscribers({:ok, %Category{project_id: project_id}}, [:category, :deleted_many])
-    result
   end
 
   def clone_categories(project_id, ids) do
     categories =
-      from(u in Category, where: u.project_id == ^project_id and u.id in ^ids)
+      project_id
+      |> categories_by_ids_query(ids)
       |> Repo.all()
       |> Enum.map(fn item ->
         Map.take(item, Category.__schema__(:fields))
@@ -317,11 +323,8 @@ defmodule Snownix.Products do
     order = Keyword.get(opts, :order, :asc)
 
     query =
-      from(c in Product,
-        where:
-          c.project_id ==
-            ^project_id
-      )
+      from c in Product,
+        where: c.project_id == ^project_id
 
     sort_query_by(query, orderby, order)
   end
@@ -357,11 +360,12 @@ defmodule Snownix.Products do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_product(project \\ nil, author \\ nil, attrs \\ %{}) do
+  def create_product(project \\ nil, author, category \\ nil, attrs \\ %{}) do
     %Product{}
     |> Product.changeset(attrs)
-    |> Product.project_changeset(project)
-    |> Product.owner_changeset(author)
+    |> Product.put_project(project)
+    |> Product.put_category(category)
+    |> Product.put_author(author)
     |> Repo.insert()
     |> notify_subscribers([:product, :created])
   end
@@ -378,9 +382,11 @@ defmodule Snownix.Products do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_product(%Product{} = product, attrs) do
+  def update_product(%Product{} = product, category, attrs) do
     product
+    |> Repo.preload(:category)
     |> Product.changeset(attrs)
+    |> Product.put_category(category)
     |> Repo.update()
     |> notify_subscribers([:product, :updated])
   end
@@ -403,16 +409,13 @@ defmodule Snownix.Products do
   end
 
   def delete_products(project_id, ids) do
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.delete_all(
-        :delete_all,
-        from(u in Product, where: u.project_id == ^project_id and u.id in ^ids)
-      )
-      |> Repo.transaction()
+    query =
+      from u in Product,
+        where: u.project_id == ^project_id and u.id in ^ids
+
+    Repo.delete_all(query)
 
     notify_subscribers({:ok, %Product{project_id: project_id}}, [:product, :deleted_many])
-    result
   end
 
   def clone_products(project_id, ids) do

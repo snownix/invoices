@@ -72,7 +72,8 @@ defmodule Snownix.MixProject do
       {:tz_extra, "~> 0.20.1"},
       {:earmark, "~> 1.4.20"},
       {:timex, "~> 3.0"},
-      {:faker, "~> 0.17", only: :dev}
+      {:faker, "~> 0.17", only: :dev},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
     ]
   end
 

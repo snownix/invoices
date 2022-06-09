@@ -17,7 +17,7 @@ defmodule SnownixWeb.Plugs.SetLocale do
 
   defp fetch_locale_from(conn) do
     (conn.params["locale"] || conn.cookies["locale"] || get_session(conn, :locale))
-    |> check_locale
+    |> check_locale()
   end
 
   defp set_locale_to(conn, locale) do
