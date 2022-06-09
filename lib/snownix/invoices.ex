@@ -37,6 +37,8 @@ defmodule Snownix.Invoices do
     )
   end
 
+  defp notify_subscribers({:error, changeset}, _event), do: {:error, changeset}
+
   defp notify_subscribers({:ok, result}, parent_id, event) do
     project_id = result.project_id
 
@@ -48,8 +50,6 @@ defmodule Snownix.Invoices do
 
     {:ok, result}
   end
-
-  defp notify_subscribers({:error, changeset}, _event), do: {:error, changeset}
 
   alias Snownix.Invoices.Invoice
 
@@ -94,6 +94,9 @@ defmodule Snownix.Invoices do
       ** (Ecto.NoResultsError)
 
   """
+  def get_invoice!(id),
+    do: Repo.get!(Invoice, id)
+
   def get_invoice!(project_id, id),
     do:
       from(u in Invoice, where: u.project_id == ^project_id and u.id == ^id)
@@ -111,7 +114,14 @@ defmodule Snownix.Invoices do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_invoice(project \\ nil, user \\ nil, attrs \\ %{}) do
+  def create_invoice(attrs \\ %{}) do
+    %Invoice{}
+    |> Invoice.changeset(attrs)
+    |> Repo.insert()
+    |> notify_subscribers([:invoice, :created])
+  end
+
+  def create_invoice(project, user, attrs \\ %{}) do
     %Invoice{}
     |> Invoice.changeset(attrs)
     |> Invoice.project_changeset(project)

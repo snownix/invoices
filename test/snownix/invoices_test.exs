@@ -47,7 +47,7 @@ defmodule Snownix.InvoicesTest do
     test "create_invoice/1 with valid data creates a invoice" do
       valid_attrs = %{
         allow_edit: true,
-        currency: "some currency",
+        currency: "MAD",
         discount: 42,
         discount_per_item: true,
         discount_type: "some discount_type",
@@ -73,7 +73,7 @@ defmodule Snownix.InvoicesTest do
 
       assert {:ok, %Invoice{} = invoice} = Invoices.create_invoice(valid_attrs)
       assert invoice.allow_edit == true
-      assert invoice.currency == "some currency"
+      assert invoice.currency == "MAD"
       assert invoice.discount == 42
       assert invoice.discount_per_item == true
       assert invoice.discount_type == "some discount_type"
@@ -106,7 +106,7 @@ defmodule Snownix.InvoicesTest do
 
       update_attrs = %{
         allow_edit: false,
-        currency: "some updated currency",
+        currency: "EUR",
         discount: 43,
         discount_per_item: false,
         discount_type: "some updated discount_type",
@@ -132,7 +132,7 @@ defmodule Snownix.InvoicesTest do
 
       assert {:ok, %Invoice{} = invoice} = Invoices.update_invoice(invoice, update_attrs)
       assert invoice.allow_edit == false
-      assert invoice.currency == "some updated currency"
+      assert invoice.currency == "EUR"
       assert invoice.discount == 43
       assert invoice.discount_per_item == false
       assert invoice.discount_type == "some updated discount_type"

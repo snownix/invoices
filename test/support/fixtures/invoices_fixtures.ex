@@ -12,7 +12,7 @@ defmodule Snownix.InvoicesFixtures do
       attrs
       |> Enum.into(%{
         allow_edit: true,
-        currency: "some currency",
+        currency: "MAD",
         discount: 42,
         discount_per_item: true,
         discount_type: "some discount_type",
