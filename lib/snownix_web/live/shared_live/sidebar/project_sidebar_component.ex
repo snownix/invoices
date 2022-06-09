@@ -11,7 +11,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
 
   def render(assigns) do
     ~H"""
-      <nav class="sidebar">
+      <nav class="sidebar" phx-hook="Sidebar" id="project-sidebar">
           <div class="sidebar__container">
                 <!-- logo -->
                 <%= render_project_menu(assigns) %>
@@ -39,8 +39,8 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
     ~H"""
     <div>
       <div class="flex flex-col md:flex-row w-full items-center cursor-pointer">
-          <%= render_project_logo(assigns, @project) %>
-          <div class="px-2 text-sm w-full">
+          <%= render_project_logo(assigns, @project, " w-12 h-12 ") %>
+          <div class="inmini__hide px-2 text-sm w-full">
               <h4 class="font-bold"><%= @project.name %></h4>
               <p class="text-gray-500">Free Plan</p>
           </div>
@@ -57,7 +57,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
 
   def render_search(assigns) do
     ~H"""
-    <div class="w-full">
+    <div class="sidebar__search">
         <%= form_for :user, "#", [phx_submit: "submit"], fn f -> %>
             <div class="flex relative items-center text-gray-400">
                 <span class="absolute px-3">
@@ -80,10 +80,10 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
               <%= render SnownixWeb.IconsView, "notification.svg", %{} %>
               <span><%= gettext("Activity") %></span>
             </div>
-            <span class="_shortkey">
+            <div class="_shortkey">
               <%= render SnownixWeb.IconsView, "cmd.svg" , %{} %>
               <span>1</span>
-            </span>
+            </div>
           <% end %>
         </li>
         <li phx-hook="ShortCut" data-key="2" data-target-el="#nav-invoices" id="sk-nav-invoices">
@@ -92,10 +92,10 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
               <%= render SnownixWeb.IconsView, "invoices.svg", %{} %>
               <span><%= gettext("Invoices") %></span>
             </div>
-            <span class="_shortkey">
+            <div class="_shortkey">
               <%= render SnownixWeb.IconsView, "cmd.svg" , %{} %>
               <span>2</span>
-            </span>
+            </div>
           <% end %>
         </li>
         <li phx-hook="ShortCut" data-key="3" data-target-el="#nav-quotes" id="sk-nav-quotes">
@@ -104,10 +104,10 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
               <%= render SnownixWeb.IconsView, "quotes.svg", %{} %>
               <span><%= gettext("Quotes") %></span>
             </div>
-            <span class="_shortkey">
+            <div class="_shortkey">
               <%= render SnownixWeb.IconsView, "cmd.svg" , %{} %>
               <span>3</span>
-            </span>
+            </div>
           </a>
         </li>
       </ul>
@@ -116,7 +116,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
         <div class="border-b border-dark border-opacity-10 w-full"></div>
       </div>
       <div class="flex flex-col">
-        <p class="mb-2 font-semibold text-sm px-2 text-gray-400">
+        <p class="sidebar__group">
           Advanced
         </p>
         <ul class="sidebar__menu">
@@ -152,13 +152,21 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
 
   def render_settings_menu(assigns) do
     ~H"""
-    <div class="flex flex-col w-full flex-grow justify-end">
+    <div class="flex flex-col w-full flex-grow !justify-end">
       <ul class="sidebar__menu">
+          <li>
+            <a href="javascript:void(0)" class="btn__minimize">
+              <div>
+                <%= render SnownixWeb.IconsView, "minimize.svg", %{} %>
+                <span><%= gettext("Sidebar") %></span>
+              </div>
+            </a>
+          </li>
           <li>
             <%= live_redirect to: Routes.org_settings_index_path(@socket, :settings) do %>
               <div>
-              <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
-              <span><%= gettext("Settings") %></span>
+                <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
+                <span><%= gettext("Settings") %></span>
               </div>
               <% end %>
           </li>
@@ -186,11 +194,11 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
               hover:ring-4 hover:ring-offset-2 hover:ring-dark hover:ring-opacity-30 rounded-xl w-10 h-10">
             <%= render_user_avatar(assigns, @current_user) %>
           </div>
-          <div class="px-2 text-sm w-full">
+          <div class="inmini__hide px-2 text-sm w-full">
               <h4 class="font-bold"><%= get_user_fullname(@current_user) %></h4>
               <p class="text-gray-500 text-sm"><%= @current_user.email %></p>
           </div>
-          <div class="text-gray-400">
+          <div class="inmini__hide text-gray-400">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6" fill="currentColor">
                   <path
                       d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15 12 18.17z" />
@@ -204,7 +212,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
   def render_profile_nav(assigns) do
     ~H"""
     <div
-      class="absolute flex flex-col w-64 shadow px-4 py-2 space-y-2 bg-white border z-20  rounded-lg bottom-2 lg:left-72 lg:ml-2"
+      class="sidebar__profile"
       phx-click="menu_open" phx-target={@myself}>
 
       <div class="fixed inset-0 w-full h-full z-20"></div>

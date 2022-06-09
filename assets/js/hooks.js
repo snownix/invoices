@@ -2,6 +2,45 @@ import moment from 'moment';
 import Litepicker from 'litepicker';
 
 const Hooks = {
+    Sidebar : {
+        key: 'sidebar-minimized',
+        sidebar: null,
+        mounted(){
+            this.el.querySelectorAll('.btn__minimize').forEach(el=>{
+                el.addEventListener('click', () => this.toggleMinimize());
+            });
+
+            this.updateClass();
+            this.updateBtnClass();
+        },
+        updateClass(){
+            if (this.isMinimized()){
+                this.el.classList.add('mini');
+            }else{
+                this.el.classList.remove('mini');
+            }
+        },
+        updateBtnClass(){
+            this.el.querySelectorAll('.btn__minimize').forEach(el=>{
+                if (this.isMinimized()){
+                    el.classList.add('active');
+                }else{
+                    el.classList.remove('active');
+                }
+            });
+        },
+        isMinimized(){
+            return localStorage.getItem(this.key) === 'true';
+        },
+        toggleMinimize(){
+            const newState = !this.isMinimized();
+            localStorage.setItem(this.key, newState);
+
+            this.updateClass();
+            this.updateBtnClass();
+            return newState;
+        }
+    },
     Flash: {
         mounted() {
             this.el.addEventListener('click', () => {
