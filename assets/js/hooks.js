@@ -85,9 +85,8 @@ const Hooks = {
     },
     SearchSelect: {
         mounted() {
+            this.el.querySelector(".dropdown__content").style.display = "none";
             this.hidden = true;
-            const list = this.el.querySelector(".dropdown__content");
-            list.style.display = "none"
             this.addListeners()
         },
         updated() {
@@ -122,12 +121,13 @@ const Hooks = {
                 }, 400);
             })
             this.blurEvt = input.addEventListener("blur", (evt) => {
+                input.value = "";
                 list = this.el.querySelector(".dropdown__content");
-                this.hidden = true;
                 clearTimeout(this.blurTimeout);
                 this.blurTimeout = setTimeout(() => {
                     list.style.display = "none";                    
                 }, 250);
+                this.hidden = true;
             })
             this.clickEvt = toggleBtn.addEventListener("click", (evt) => {7
                 this.hidden = !this.hidden;

@@ -13,7 +13,6 @@ defmodule SnownixWeb.SharedLive.UI.SearchSelectComponent do
 
   @impl true
   def handle_event("filter", input, %{assigns: %{items: items}} = socket) do
-    IO.inspect(input)
     filtered_items =
       items
       |> Enum.filter(fn {_id, name} ->
