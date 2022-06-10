@@ -33,7 +33,7 @@
 }
 
 .sidebar__menu li a{
-  @apply  text-gray-500 py-1.5 rounded px-2 ;
+  @apply  text-gray-500 py-1.5 rounded px-2;
 }
 
 .sidebar__menu li a:hover {
@@ -62,6 +62,9 @@
   @apply rotate-90;
 }
 
+.sidebar.mini .sidebar__menu li a:hover{
+  @apply justify-center;
+}
 
 .sidebar.mini .sidebar__profile{
   @apply left-24;
