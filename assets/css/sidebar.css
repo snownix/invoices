@@ -1,5 +1,5 @@
 .sidebar {
-  @apply hidden  md:block md:flex-shrink-0 md:bg-[#f7f7f7] md:overflow-y-auto overflow-x-hidden border-r min-h-screen;
+  @apply z-20 block flex-shrink-0 bg-[#f7f7f7] md:overflow-y-auto overflow-x-hidden border-r min-h-screen;
 }
 
 .sidebar__container {
@@ -16,6 +16,10 @@
   @apply flex items-center space-x-2;
 }
 
+._shortkey span{
+  @apply flex self-end mt-[0.8px] -mb-[0.8px];
+}
+
 .sidebar__menu div{
   @apply flex w-full justify-between;
 }
@@ -29,7 +33,7 @@
 }
 
 .sidebar__menu li a{
-  @apply  text-gray-500 py-1.5 rounded px-2;
+  @apply  text-gray-500 py-1.5 rounded px-2 ;
 }
 
 .sidebar__menu li a:hover {
@@ -51,7 +55,7 @@
 /* Minimzed sidebar */
 
 .sidebar *{
-  @apply transition-all duration-300;
+  @apply transition-all duration-150;
 }
 
 .sidebar.mini .btn__minimize.active svg{
@@ -74,13 +78,12 @@
 .mini .inmini__hide, 
 .mini .sidebar__container .sidebar__menu li div
 { 
-  @apply hidden opacity-0;
+  @apply hidden opacity-0 ;
 }
 
-.mini .sidebar__group {
-  @apply opacity-0;
+.mini .sidebar__container .sidebar__menu li div {
+  @apply justify-center w-full; 
 }
-
 .mini .sidebar__container .sidebar__menu li ._shortkey{
   @apply bg-white;
 }
@@ -89,4 +92,6 @@
   @apply absolute opacity-100 flex max-w-max left-16 px-3 py-2 bg-grayDark text-light rounded-md z-30;
 }
 
-.mini .sidebar__container .sidebar__menu li div { @apply justify-center w-full; }
+.mini .sidebar__group {
+  @apply opacity-0;
+}

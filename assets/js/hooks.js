@@ -164,6 +164,8 @@ const Hooks = {
                 targetEl: document.querySelector(this.el.dataset.targetEl),
             };
 
+            this.el.querySelector('[key]').innerText = this.data.key;
+
             this.keyDown = (event) =>  {
                 if (event.altKey == this.data.altKey &&
                     event.ctrlKey == this.data.ctrlKey &&

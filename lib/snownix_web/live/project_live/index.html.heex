@@ -30,9 +30,14 @@
         <%= for project <- @projects do %>
             <%= live_redirect to: Routes.project_path(@socket, :open, project.id) do %>
                 <div class="space-y-2 w-full p-6 rounded-lg relative hover:bg-gray-50 cursor-pointer  bg-white border">
-                    <div class="flex items-center space-x-2">
-                        <img class="rounded object-cover w-6 h-5"  src={"https://flagicons.lipis.dev/flags/4x3/#{String.downcase(project.country)}.svg"}>
-                        <h3 class="font-medium"><%= project.name %></h3>
+                    <div class="flex space-x-4">
+                        <div class="relative bg-white rounded-xl bg-secondary bg-opacity-10">
+                            <%= render_project_logo(assigns, project) %>
+                            <img class="rounded-xl absolute object-cover w-5 h-5 -right-0.5 opacity-80 -bottom-0.5" src={"https://flagicons.lipis.dev/flags/4x3/#{String.downcase(project.country)}.svg"}>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <h3 class="font-medium"><%= project.name %></h3>
+                        </div>
                     </div>
                     <p class="font-medium"><%= project.email %></p>
                     <p class="font-medium"><%= project.phone %></p>

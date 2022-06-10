@@ -126,7 +126,7 @@ defmodule SnownixWeb.Org.ActivityLive.Index do
               <time phx-hook="TimeAgo" id={row.id} datetime={row.inserted_at}><%= hour_format(row.inserted_at) %></time>
               <time datetime={row.inserted_at}><%= datetime_format(row.inserted_at) %></time>
             </div>
-            <div class="_icon mt-2 flex items-center space-x-2 ">
+            <div class="_icon mt-2 flex flex-col space-y-1 lg:space-y-0 lg:flex-row lg:items-center lg:space-x-2">
                 <a class="flex items-center space-x-2">
                   <%= render_text_avatar(assigns, row.from) %>
                   <span class="font-semibold"><%= row.from %></span>
@@ -145,15 +145,15 @@ defmodule SnownixWeb.Org.ActivityLive.Index do
             </div>
 
             <%= if row.note do %>
-                <div class="_note ml-4 flex">
-                    <span class="text-dark text-opacity-50">
+                <div class="_note lg:pl-4 flex">
+                    <span class="hidden lg:block text-dark text-opacity-50">
                         <svg class="w-8" viewBox="-4 10 90 100" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-width="6"
                                 d="m2.69412,-2.13346c9.09909,113.20112 63.71794,96.63965 92.62963,98.87074"
                                 stroke="currentColor" fill="none"></path>
                         </svg>
                     </span>
-                    <p class="p-4 lg:px-6 border blrder-gray-500 rounded-lg whitespace-pre"><%= for txt <- row.note |> String.split("**") do %><%= if txt == row.name do %><strong class="font-bold"><%= txt %></strong><% else %><%= txt %><% end %><% end %></p>
+                    <p class="p-4 lg:px-6 border blrder-gray-500 rounded-lg whitespace-pre-wrap"><%= for txt <- row.note |> String.split("**") do %><%= if txt == row.name do %><strong class="font-bold"><%= txt %></strong><% else %><%= txt %><% end %><% end %></p>
                 </div>
             <% end %>
         </div>
