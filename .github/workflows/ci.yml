@@ -1,9 +1,10 @@
 on:
+  push:
+    branches:
+    - master
   pull_request:
-    types:
-      - opened
-    branches:    
-      - 'master/**'
+    branches:
+    - master
 
 jobs:
   dependencies:
