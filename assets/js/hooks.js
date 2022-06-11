@@ -193,6 +193,64 @@ const Hooks = {
             document.removeEventListener('keyup', this.keyUp);
             document.removeEventListener('keydown', this.keyDown);
         }
+    },
+    SearchSelect: {
+        mounted() {
+            this.el.querySelector(".dropdown__content").style.display = "none";
+            this.hidden = true;
+            this.addListeners()
+        },
+        updated() {
+            const list = this.el.querySelector(".dropdown__content");
+            if (this.hidden) {
+                list.style.display = "none";
+            } else {
+                list.style.display = "block";
+            }
+            this.removeListeners()
+            this.addListeners()
+        },
+        destroyed() {
+            this.removeListeners()
+        },
+        addListeners() {
+            const input = this.el.querySelector(".search__input");
+            const toggleBtn = this.el.querySelector(".toggle__btn");
+            let list = this.el.querySelector(".dropdown__content");
+
+            this.focusEvt = input.addEventListener("focus", (evt) => {
+                this.hidden = false;
+                list.style.display = "block";
+            })
+            this.keyupEvt = input.addEventListener("keyup", (evt) => {
+                this.hidden = false;
+                list.style.display = "block";
+                clearTimeout(this.keyupTimeout);
+                this.keyupTimeout = setTimeout(() => {
+                    const value = evt.target.value;
+                    this.pushEventTo(this.el.getAttribute("phx-target"), "filter", value);
+                }, 400);
+            })
+            this.blurEvt = input.addEventListener("blur", (evt) => {
+                input.value = "";
+                list = this.el.querySelector(".dropdown__content");
+                clearTimeout(this.blurTimeout);
+                this.blurTimeout = setTimeout(() => {
+                    list.style.display = "none";                    
+                }, 250);
+                this.hidden = true;
+            })
+            this.clickEvt = toggleBtn.addEventListener("click", (evt) => {7
+                this.hidden = !this.hidden;
+                list.style.display = this.hidden ? "block" : "none";
+            })
+        },
+        removeListeners() {
+            removeEventListener("focus", this.focusEvt);
+            removeEventListener("blur", this.blurEvt);
+            removeEventListener("keyup", this.keyupEvt);
+            removeEventListener("click", this.clickEvt);
+        }
     }
 }
 

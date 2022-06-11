@@ -11,16 +11,15 @@ msgid ""
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/snownix_web/live/auth_live/login.ex:7
+#: lib/snownix_web/live/auth_live/confirm.html.heex:6
+#: lib/snownix_web/live/auth_live/forgot_password.html.heex:6
+#: lib/snownix_web/live/auth_live/login.ex:11
 #: lib/snownix_web/live/auth_live/login.html.heex:3
+#: lib/snownix_web/live/auth_live/reconfirm.html.heex:6
 #: lib/snownix_web/live/auth_live/register.html.heex:6
-#: lib/snownix_web/live/shared_live/header_component.html.heex:25
+#: lib/snownix_web/live/auth_live/reset_password.html.heex:6
+#: lib/snownix_web/live/shared_live/header_component.html.heex:18
 msgid "Sign in"
-msgstr ""
-
-#, elixir-autogen, elixir-format
-#: lib/snownix_web/live/auth_live/confirm.ex:7
-msgid "Confirmation"
 msgstr ""
 
 #, elixir-autogen, elixir-format
@@ -29,42 +28,36 @@ msgid "Don’t have an account?"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/snownix_web/live/auth_live/login.html.heex:14
-msgid "Email Address"
-msgstr ""
-
-#, elixir-autogen, elixir-format
-#: lib/snownix_web/live/auth_live/forgot_password.ex:7
-msgid "Forgot password"
-msgstr ""
-
-#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/account_live/settings.html.heex:93
+#: lib/snownix_web/live/account_live/settings.html.heex:128
 #: lib/snownix_web/live/auth_live/login.html.heex:18
-#: lib/snownix_web/live/auth_live/login.html.heex:18
-#: lib/snownix_web/live/auth_live/register.html.heex:20
+#: lib/snownix_web/live/auth_live/login.html.heex:19
+#: lib/snownix_web/live/auth_live/register.html.heex:29
+#: lib/snownix_web/live/auth_live/register.html.heex:30
 msgid "Password"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/snownix_web/live/auth_live/reset_password.ex:7
+#: lib/snownix_web/live/auth_live/reset_password.ex:10
+#: lib/snownix_web/live/auth_live/reset_password.html.heex:24
 msgid "Reset Password"
 msgstr ""
 
 #, elixir-autogen, elixir-format
 #: lib/snownix_web/live/auth_live/login.html.heex:6
-#: lib/snownix_web/live/auth_live/register.ex:7
+#: lib/snownix_web/live/auth_live/register.ex:10
 #: lib/snownix_web/live/auth_live/register.html.heex:3
-#: lib/snownix_web/live/shared_live/header_component.html.heex:26
+#: lib/snownix_web/live/shared_live/header_component.html.heex:19
 msgid "Sign up"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/snownix_web/live/auth_live/login.html.heex:27
+#: lib/snownix_web/live/auth_live/login.html.heex:29
 msgid "Forgot password?"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/snownix_web/live/auth_live/login.html.heex:24
+#: lib/snownix_web/live/auth_live/login.html.heex:26
 msgid "Remember me"
 msgstr ""
 
@@ -74,41 +67,439 @@ msgid "Already have an account?"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/snownix_web/live/shared_live/header_component.html.heex:14
-msgid "Contact"
-msgstr ""
-
-#, elixir-autogen, elixir-format
-#: lib/snownix_web/live/auth_live/register.html.heex:16
+#: lib/snownix_web/live/auth_live/confirm.html.heex:13
+#: lib/snownix_web/live/auth_live/forgot_password.html.heex:14
+#: lib/snownix_web/live/auth_live/login.html.heex:15
+#: lib/snownix_web/live/auth_live/reconfirm.html.heex:13
+#: lib/snownix_web/live/auth_live/register.html.heex:25
+#: lib/snownix_web/live/auth_live/reset_password.html.heex:13
 msgid "Enter Your Email Address"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/snownix_web/live/shared_live/header_component.html.heex:6
+#: lib/snownix_web/live/index_live/index.ex:7
+#: lib/snownix_web/live/index_live/index.ex:14
 msgid "Home"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/snownix_web/live/auth_live/register.html.heex:25
+#: lib/snownix_web/live/auth_live/register.html.heex:36
 msgid "I agree to the"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/snownix_web/live/shared_live/user_menu_component.html.heex:27
+#: lib/snownix_web/live/shared_live/user_menu_component.html.heex:22
 msgid "Log out"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/snownix_web/live/auth_live/register.html.heex:29
+#: lib/snownix_web/live/auth_live/register.html.heex:39
 msgid "Register"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/snownix_web/live/shared_live/user_menu_component.html.heex:22
+#: lib/snownix_web/live/shared_live/sidebar/project_sidebar_component.ex:136
+#: lib/snownix_web/live/shared_live/sidebar/project_sidebar_component.ex:197
+#: lib/snownix_web/live/shared_live/user_menu_component.html.heex:17
 msgid "Settings"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/snownix_web/live/auth_live/register.html.heex:25
+#: lib/snownix_web/live/auth_live/register.html.heex:36
 msgid "Terms and conditions"
 msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/account_live/settings.ex:78
+msgid "Account information updated successfully."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/shared_live/sidebar/project_sidebar_component.ex:80
+msgid "Activity"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:117
+#: lib/snownix_web/live/org/settings_live/index.html.heex:118
+msgid "Address"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/category_live/index.html.heex:4
+#: lib/snownix_web/live/shared_live/sidebar/project_sidebar_component.ex:120
+msgid "Categories"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/category_live/index.html.heex:101
+msgid "Category Details"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:101
+#: lib/snownix_web/live/org/settings_live/index.html.heex:102
+msgid "City"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:74
+#: lib/snownix_web/live/org/settings_live/index.html.heex:75
+msgid "Company Name"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/confirm.ex:10
+msgid "Confirm"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/confirm.html.heex:3
+msgid "Confirm account"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/confirm.html.heex:18
+msgid "Confirm my account"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/customer_live/profile_component.ex:15
+msgid "Contact Name"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:93
+#: lib/snownix_web/live/org/settings_live/index.html.heex:94
+#: lib/snownix_web/live/project_live/new.html.heex:37
+#: lib/snownix_web/live/project_live/new.html.heex:38
+msgid "Country"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/category_live/show_component.ex:15
+#: lib/snownix_web/live/org/product_live/show_component.ex:22
+msgid "Creation Date"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/customer_live/index.html.heex:133
+msgid "Customer Details"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/customer_live/index.html.heex:4
+#: lib/snownix_web/live/shared_live/sidebar/project_sidebar_component.ex:108
+msgid "Customers"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:160
+#: lib/snownix_web/live/org/settings_live/index.html.heex:165
+msgid "Date Format"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/customer_live/addresses_component.ex:33
+msgid "Default"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:249
+msgid "Description"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/forgot_password.html.heex:5
+#: lib/snownix_web/live/auth_live/reset_password.html.heex:5
+msgid "Did you remember your password?"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:171
+msgid "Discount Per Item"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/account_live/settings.html.heex:88
+#: lib/snownix_web/live/auth_live/confirm.html.heex:12
+#: lib/snownix_web/live/auth_live/forgot_password.html.heex:13
+#: lib/snownix_web/live/auth_live/login.html.heex:14
+#: lib/snownix_web/live/auth_live/reconfirm.html.heex:12
+#: lib/snownix_web/live/auth_live/register.html.heex:24
+#: lib/snownix_web/live/auth_live/reset_password.html.heex:12
+#: lib/snownix_web/live/org/customer_live/profile_component.ex:16
+#: lib/snownix_web/live/org/settings_live/index.html.heex:88
+#: lib/snownix_web/live/org/settings_live/index.html.heex:89
+#: lib/snownix_web/live/project_live/new.html.heex:42
+#: lib/snownix_web/live/project_live/new.html.heex:43
+msgid "Email"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:172
+msgid "Enable this option if you want to add the discount to individual invoice items. By default, the discount is added directly to the invoice."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:183
+msgid "Enable this option if you want to add the tax to individual invoice items. By default, the tax is added directly to the invoice."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/project_live/new.html.heex:32
+msgid "Enter company name for invoice"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/forgot_password.html.heex:10
+msgid "Enter the email address you used to join us and we will send you instructions to reset your password."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/account_live/settings.ex:168
+#: lib/snownix_web/live/org/settings_live/index.ex:266
+msgid "File size is too large, max allowed 2MB."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/account_live/settings.html.heex:75
+#: lib/snownix_web/live/auth_live/register.html.heex:13
+#: lib/snownix_web/live/auth_live/register.html.heex:14
+msgid "First name"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:153
+msgid "Fiscal Year"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/forgot_password.ex:10
+msgid "Forgot Password"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/forgot_password.html.heex:3
+msgid "Forgot your password?"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/project_live/index.html.heex:5
+msgid "Here's list of your projects"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/reconfirm.ex:41
+msgid "If your email is in our system and it has not been confirmed yet, you will receive an email with instructions shortly"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/forgot_password.ex:41
+msgid "If your email is in our system, you will receive instructions to reset your password shortly."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/login.ex:35
+msgid "Invalid email or password"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/shared_live/sidebar/project_sidebar_component.ex:86
+msgid "Invoices"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/register.html.heex:18
+#: lib/snownix_web/live/auth_live/register.html.heex:19
+msgid "Last Name"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/account_live/settings.html.heex:81
+msgid "Last name"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/shared_live/sidebar/project_sidebar_component.ex:142
+msgid "Leave"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/login.html.heex:31
+msgid "Login"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/shared_live/sidebar/project_sidebar_component.ex:203
+msgid "Logout"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/category_live/show_component.ex:12
+#: lib/snownix_web/live/org/customer_live/profile_component.ex:12
+#: lib/snownix_web/live/org/settings_live/index.html.heex:247
+#: lib/snownix_web/live/project_live/new.html.heex:33
+msgid "Name"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/account_live/settings.html.heex:122
+#: lib/snownix_web/live/auth_live/reset_password.html.heex:18
+#: lib/snownix_web/live/auth_live/reset_password.html.heex:19
+msgid "New Password"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/project_live/index.html.heex:10
+msgid "New Project"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:148
+msgid "New currency"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:248
+msgid "Percent"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/customer_live/profile_component.ex:17
+#: lib/snownix_web/live/org/settings_live/index.html.heex:80
+#: lib/snownix_web/live/org/settings_live/index.html.heex:81
+msgid "Phone"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/customer_live/profile_component.ex:19
+msgid "Portal Access"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/product_live/index.html.heex:109
+msgid "Product Details"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/product_live/index.html.heex:4
+#: lib/snownix_web/live/shared_live/sidebar/project_sidebar_component.ex:114
+msgid "Products"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.ex:178
+msgid "Project information updated successfully."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/controllers/project_controller.ex:13
+msgid "Project not found !"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/project_live/index.html.heex:4
+msgid "Projects"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/shared_live/sidebar/project_sidebar_component.ex:92
+msgid "Quotes"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/register.ex:35
+msgid "Registration completed successfully. please check your email to verify your account."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/reconfirm.html.heex:18
+msgid "Resend"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/reconfirm.ex:10
+msgid "Resend Confirmation Instructions"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/reconfirm.html.heex:3
+msgid "Resend confirmation instructions"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/reset_password.html.heex:3
+msgid "Reset password"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/shared_live/sidebar/project_sidebar_component.ex:66
+msgid "Search ..."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/account_live/settings.ex:111
+msgid "Security information updated successfully."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/forgot_password.html.heex:18
+msgid "Send Reset Instructions"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:106
+#: lib/snownix_web/live/org/settings_live/index.html.heex:107
+msgid "State"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:182
+msgid "Tax Per Item"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.ex:135
+msgid "Tax updated successfully."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/customer_live/profile_component.ex:18
+msgid "Website"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/login.ex:29
+msgid "Welcome back %{firstname}!"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/reset_password.ex:53
+msgid "Wrong information"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/auth_live/confirm.html.heex:5
+#: lib/snownix_web/live/auth_live/reconfirm.html.heex:5
+msgid "You already confirmed your account?"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/account_live/settings.ex:172
+#: lib/snownix_web/live/org/settings_live/index.ex:270
+msgid "You have selected an unacceptable file type, only images are accepted."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/account_live/settings.ex:169
+#: lib/snownix_web/live/org/settings_live/index.ex:267
+msgid "You have selected too many files."
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/snownix_web/live/org/settings_live/index.html.heex:111
+#: lib/snownix_web/live/org/settings_live/index.html.heex:112
+msgid "Zip"
+msgstr ""
+
