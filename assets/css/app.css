@@ -9,6 +9,8 @@
 @import "./table.css";
 @import "./unstyle.css";
 
+@import "./org/activity.css";
+
 html {
   @apply text-dark;
   @apply text-[0.95rem];
@@ -254,4 +256,10 @@ main.container {
 }
 ._customer > div label:after {
   content: " :";
+}
+
+/* Project */
+.project__logo {
+  @apply flex flex-shrink-0 items-center justify-center duration-100 hover:ring-4
+     hover:ring-offset-2 hover:ring-dark hover:ring-opacity-30 rounded-xl;
 }

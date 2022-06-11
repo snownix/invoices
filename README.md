@@ -12,7 +12,7 @@ graph TD
     A[Auth] 
         -->|Login / Register| D{Project}
         --> P
-        
+            
     D -->| | Quotes
         --> | Belong to| Customers
     D -->| | Invoices
@@ -22,17 +22,30 @@ graph TD
     Invoices --> | Has One| IA(Invoice Address)
 
     D -->| | Customers
-        --> |Has many| Address
+        --> |Has many| CA(Customer Address)
     D -->| | Products
         --> |Belongs to| Categories
     D -->| | Categories
         -->|subcategory| Categories
 
+    D --> Activity
     D ---> S{Settings}
-   
+
     S --> Preferences
     S --> Notifications
     S --> Taxs
+
+    style D fill:#DBB1BC
+
+    style Activity fill:#89DAFF
+
+    style Invoices fill:#89DAFF 
+    style Products fill:#89DAFF 
+    style Categories fill:#89DAFF 
+    style Customers fill:#89DAFF 
+    style Quotes fill:#89DAFF 
+    style CA fill:#c8dc23
+    style IA fill:#c8dc23
 ```
 
 

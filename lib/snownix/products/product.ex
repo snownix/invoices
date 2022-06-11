@@ -41,4 +41,16 @@ defmodule Snownix.Products.Product do
   def change_author(changeset, author) do
     put_assoc(changeset, :author, author)
   end
+
+  def owner_changeset(item, owner) do
+    item
+    |> change()
+    |> put_assoc(:author, owner)
+  end
+
+  def project_changeset(item, project) do
+    item
+    |> change()
+    |> put_assoc(:project, project)
+  end
 end

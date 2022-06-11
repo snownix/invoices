@@ -7,10 +7,13 @@ defmodule Snownix.Products do
   import Snownix.Helpers.Sorting
 
   alias Snownix.Repo
+  alias Snownix.Projects
 
   alias Snownix.Products.Category
 
   @topic inspect(__MODULE__)
+
+  @activity_field :name
 
   def subscribe(project_id) do
     Phoenix.PubSub.subscribe(Snownix.PubSub, @topic <> "#{project_id}")
@@ -96,6 +99,9 @@ defmodule Snownix.Products do
       ** (Ecto.NoResultsError)
 
   """
+  def get_category!(id),
+    do: Repo.get!(Category, id)
+
   def get_category!(project_id, id),
     do:
       from(u in Category, where: u.project_id == ^project_id and u.id == ^id)
@@ -113,13 +119,22 @@ defmodule Snownix.Products do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_category(project, author, attrs \\ %{}) do
+
+  def create_category(attrs \\ %{}) do
+    %Category{}
+    |> Category.changeset(attrs)
+    |> Repo.insert()
+    |> notify_subscribers([:category, :created])
+  end
+
+  def create_category(project, user, attrs \\ %{}) do
     %Category{}
     |> Category.changeset(attrs)
     |> Category.project_changeset(project)
-    |> Category.owner_changeset(author)
+    |> Category.owner_changeset(user)
     |> Repo.insert()
     |> notify_subscribers([:category, :created])
+    |> Projects.log_activity(project, user, :create, @activity_field)
   end
 
   @doc """
@@ -141,6 +156,11 @@ defmodule Snownix.Products do
     |> notify_subscribers([:category, :created])
   end
 
+  def update_category(%Category{} = category, attrs, project, user) do
+    update_category(category, attrs)
+    |> Projects.log_activity(project, user, :update, @activity_field)
+  end
+
   @doc """
   Deletes a category.
 
@@ -157,6 +177,10 @@ defmodule Snownix.Products do
     Repo.delete(category)
     |> notify_subscribers([:category, :deleted])
   end
+
+  def delete_category(%Category{} = category, project, user) do
+    delete_category(category)
+    |> Projects.log_activity(project, user, :delete, @activity_field)
 
   def categories_by_ids_query(project_id, ids) do
     from u in Category,
@@ -343,6 +367,9 @@ defmodule Snownix.Products do
       ** (Ecto.NoResultsError)
 
   """
+
+  def get_product!(id), do: Repo.get!(Product, id)
+
   def get_product!(project_id, id),
     do:
       from(u in Product, where: u.project_id == ^project_id and u.id == ^id)
@@ -360,14 +387,22 @@ defmodule Snownix.Products do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_product(project, author, category, attrs \\ %{}) do
+  def create_product(attrs \\ %{}) do
     %Product{}
     |> Product.changeset(attrs)
-    |> Product.change_project(project)
-    |> Product.change_category(category)
-    |> Product.change_author(author)
     |> Repo.insert()
     |> notify_subscribers([:product, :created])
+  end
+
+  def create_product(project, user, category, attrs \\ %{}) do
+    %Product{}
+    |> Product.changeset(attrs)
+    |> Product.change_author(user)
+    |> Product.change_project(project)
+    |> Product.change_category(category)
+    |> Repo.insert()
+    |> notify_subscribers([:product, :created])
+    |> Projects.log_activity(project, user, :create, @activity_field)
   end
 
   @doc """
@@ -391,6 +426,11 @@ defmodule Snownix.Products do
     |> notify_subscribers([:product, :updated])
   end
 
+  def update_product(%Product{} = product, attrs, project, user) do
+    update_product(product, attrs)
+    |> Projects.log_activity(project, user, :update, @activity_field)
+  end
+
   @doc """
   Deletes a product.
 
@@ -406,6 +446,11 @@ defmodule Snownix.Products do
   def delete_product(%Product{} = product) do
     Repo.delete(product)
     |> notify_subscribers([:product, :deleted])
+  end
+
+  def delete_product(%Product{} = product, project, user) do
+    delete_product(product)
+    |> Projects.log_activity(project, user, :delete, @activity_field)
   end
 
   def delete_products(project_id, ids) do

@@ -12,8 +12,8 @@ defmodule Snownix.CustomersFixtures do
       attrs
       |> Enum.into(%{
         city: "some city",
-        country: "some country",
-        currency: "some currency",
+        country: "MA",
+        currency: "MAD",
         fax: "some fax",
         phone: "some phone",
         state: "some state",

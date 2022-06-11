@@ -33,10 +33,10 @@ defmodule Snownix.CustomersTest do
     test "create_address/1 with valid data creates a address" do
       valid_attrs = %{
         city: "some city",
-        country: "some country",
-        currency: "some currency",
-        fax: "some fax",
-        phone: "some phone",
+        country: "MA",
+        currency: "MAD",
+        fax: "555-000-0000",
+        phone: "0600000000",
         state: "some state",
         street: "some street",
         street_2: "some street_2",
@@ -45,10 +45,10 @@ defmodule Snownix.CustomersTest do
 
       assert {:ok, %Address{} = address} = Customers.create_address(valid_attrs)
       assert address.city == "some city"
-      assert address.country == "some country"
-      assert address.currency == "some currency"
-      assert address.fax == "some fax"
-      assert address.phone == "some phone"
+      assert address.country == "MA"
+      assert address.currency == "MAD"
+      assert address.fax == "555-000-0000"
+      assert address.phone == "0600000000"
       assert address.state == "some state"
       assert address.street == "some street"
       assert address.street_2 == "some street_2"
@@ -64,10 +64,10 @@ defmodule Snownix.CustomersTest do
 
       update_attrs = %{
         city: "some updated city",
-        country: "some updated country",
-        currency: "some updated currency",
-        fax: "some updated fax",
-        phone: "some updated phone",
+        country: "FR",
+        currency: "USD",
+        fax: "555-123-4567",
+        phone: "0699999999",
         state: "some updated state",
         street: "some updated street",
         street_2: "some updated street_2",
@@ -76,10 +76,10 @@ defmodule Snownix.CustomersTest do
 
       assert {:ok, %Address{} = address} = Customers.update_address(address, update_attrs)
       assert address.city == "some updated city"
-      assert address.country == "some updated country"
-      assert address.currency == "some updated currency"
-      assert address.fax == "some updated fax"
-      assert address.phone == "some updated phone"
+      assert address.country == "FR"
+      assert address.currency == "USD"
+      assert address.fax == "555-123-4567"
+      assert address.phone == "0699999999"
       assert address.state == "some updated state"
       assert address.street == "some updated street"
       assert address.street_2 == "some updated street_2"

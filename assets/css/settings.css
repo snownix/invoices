@@ -9,7 +9,7 @@
 }
 
 .settings__container {
-  @apply relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto;
+  @apply relative flex flex-col w-96 h-full border-r border-gray-200 bg-white overflow-y-auto;
 }
 .settings__container .tabs .tab__item {
   @apply flex space-x-2 p-4 border-b cursor-pointer hover:bg-gray-50;

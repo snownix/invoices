@@ -1,1 +1,133 @@
-Invoices list
+<main class="flex flex-col max-h-screen w-full">
+    <section class="_header flex flex-col items-center space-y-2 md:space-y-0 md:flex-row justify-between p-8 md:pt-10">
+        <div >
+            <h1 class="font-semibold"><%= gettext "Invoices" %></h1>
+            <p class="text-gray-400">
+                <%= if Enum.count(@selected_items) > 0 do %>
+                    <%= Enum.count(@selected_items) %> Selected
+                <% else %>
+                    Manage your invoices
+                <% end %>
+            </p>
+        </div>
+        <div class="flex space-x-4">
+            <%= if many_selected(assigns) do %>
+            <div class="flex space-x-2">
+                <button class="sm" phx-click="clone-selected">
+                    <%= render SnownixWeb.IconsView, "copy.svg", %{} %>
+                </button>
+                <button class="sm" phx-click="delete-selected">
+                    <%= render SnownixWeb.IconsView, "delete.svg", %{} %>
+                </button>
+            </div>
+            <% end %>
+            <div class="flex space-x-2">
+                <button class="sm" disabled>
+                    <%= render SnownixWeb.IconsView, "upload.svg", %{} %>
+                    Import
+                </button>
+                <%= live_patch to: Routes.org_invoice_index_path(@socket, :new), class: "btn sm primary" do %>
+                    <%= render SnownixWeb.IconsView, "plus.svg", %{} %>
+                    New Invoice
+                <% end %>
+            </div>
+        </div>
+    </section>
+ 
+    <div class="_table overflow-y-scroll  max-h-full h-full">
+        <.live_component id="invoices"  module={SnownixWeb.SharedLive.UI.TableComponent}>
+            <:thead>
+                <th class="w-14">
+                    <div class="big__checkbox" phx-click="select" phx-value-id="all">
+                        <input type="checkbox" checked={@all_selected} has-many={many_selected(assigns)}>
+                        <label ></label>
+                    </div>
+                </th>
+                <%= render_col(assigns, :name, "Name") %>
+                <%= render_col(assigns, :price, "Price") %>
+                <%= render_col(assigns, :tax_per_item, "Tax") %>
+                <%= render_col(assigns, :inserted_at, "Created Date") %>
+                <th class="w-14"></th>
+            </:thead>
+            <:tbody>
+                <%= for item <- @invoices do %>
+                    <tr 
+                        id={"item-#{item.id}"} 
+                        class={if (!is_nil(@invoice) and @invoice.id == item.id or item.selected), do: "active", else:  "" }
+                        phx-click="select" phx-value-id={item.id}>
+                        <td >
+                            <%= render_checkbox(assigns, item) %>
+                        </td>
+                         <td class="interactive" phx-click="show" phx-value-id={item.id}>
+                            <span class="font-medium"><%= item.name %></span>
+                            <p class=" text-sm text-gray-500 break-words"><%= item.description %></p>
+                        </td>
+                        
+                        <td><%= money_format(item) %></td>
+                        <td><%= tax_format(item.tax_per_item) %></td>
+                        <td><%= date_format(item.inserted_at) %></td>
+                        <td>
+                            <div class="flex justify-end items-center space-x-2">
+                                <%= live_patch to: Routes.org_invoice_index_path(@socket, :edit, item.id), class: "btn light  !p-1 !text-gray-500 icon" do %>
+                                    <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
+                                <% end %>
+                                <%= link to: "#", class: "btn light !p-1 !text-gray-500 icon", phx_click: "delete", phx_value_id: item.id, data: [confirm: "Are you sure?"] do %>
+                                    <%= render SnownixWeb.IconsView, "delete.svg", %{} %>
+                                <% end %>
+                            </div>
+                        </td>
+                    </tr>
+                <% end %>
+            </:tbody>
+        </.live_component>
+    </div>
+    <%= form_for :table ,"#", [phx_change: "table", class: "_footer border-t px-4 py-2 justify-between flex w-full items-center"], fn f ->%>
+        <div class="flex items-center space-x-2 ">
+            <label>Lines </label>
+            <%= select f, :limit, Enum.map(1..5, &(&1 * 5)), class: "unstyle", value: @table.limit %>
+        </div>
+        <div class="flex">
+            <a href="#" class="btn sm light" phx-click="page" phx-value-page={@pagination.prev_page}><%= render SnownixWeb.IconsView, "arrow_prev.svg", %{} %></a>
+            <div class="flex  divide-x divide-gray-300 items-center">
+            <p class="px-2">Page: <span><%= @pagination.page %> / <%= @pagination.total %></span></p>
+            <p class="px-2">Total: <span><%= if @pagination.has_next, do: @pagination.page * @pagination.per_page, else: @pagination.count %> / <%= @pagination.count %></span></p>
+            </div>
+            <a href="#" class="btn sm light" phx-click="page" phx-value-page={@pagination.next_page}><%= render SnownixWeb.IconsView, "arrow_next.svg", %{} %></a>
+        </div>
+        <div class="flex items-center space-x-2 ">
+            <label>Page </label>
+            <%= select f, :page, 1..(@pagination.total || 1), class: "unstyle", value: @table.page %>
+        </div>
+    <% end %>
+    <div class="_view">
+        <.live_component 
+            id="invoices" 
+            open={!is_nil(@invoice)}
+            prev={Routes.org_invoice_index_path(@socket,:index)}
+            module={SnownixWeb.SharedLive.UI.DetailsComponent}
+        >
+            <:title><%= gettext "Invoice Details" %></:title>
+            <:body>
+                <%= if @live_action == :show do %>
+                    <.live_component 
+                        id="profile"
+                        module={SnownixWeb.Org.InvoiceLive.ShowComponent}
+                        invoice={@invoice}
+                    />
+                <% end %>
+                <%= if @live_action in [:new, :edit] do %>
+                        <.live_component
+                        module={SnownixWeb.Org.InvoiceLive.FormComponent}
+                        id={if is_nil(@invoice.id), do: "new", else: @invoice.id}
+                        title={@page_title}
+                        action={@live_action}
+                        invoice={@invoice}
+                        project={@project}
+                        current_user={@current_user}
+                        return_to={Routes.org_invoice_index_path(@socket, :index)}
+                        />
+                <% end %>
+            </:body>
+        </.live_component>
+    </div>
+</main>

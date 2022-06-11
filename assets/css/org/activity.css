@@ -1,0 +1,17 @@
+.activity__block{
+    @apply w-full flex items-start space-x-4;
+}
+
+.activity__time time:last-child,
+.activity__time:hover time:first-child {
+    @apply hidden;
+}
+
+.activity__time time:first-child,
+.activity__time:hover time:last-child {
+    @apply block;
+}
+
+.activity__icon{
+    @apply flex flex-col space-y-1 lg:space-y-0 lg:flex-row lg:items-center lg:space-x-2;
+}

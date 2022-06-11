@@ -91,8 +91,6 @@ defmodule SnownixWeb.Org.CustomerLive.AddressesComponent do
 
   @impl true
   def update(assigns, socket) do
-    IO.inspect([assigns.project.id, assigns.customer.id])
-
     if connected?(socket),
       do: Snownix.Customers.subscribe(assigns.project.id, assigns.customer.id)
 
@@ -105,7 +103,9 @@ defmodule SnownixWeb.Org.CustomerLive.AddressesComponent do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    case Customers.delete_address(get_address(id)) do
+    %{project: project, current_user: user} = socket.assigns
+
+    case Customers.delete_address(get_address(id), project, user) do
       {:ok, _} ->
         {:noreply, socket}
 
@@ -115,8 +115,6 @@ defmodule SnownixWeb.Org.CustomerLive.AddressesComponent do
   end
 
   def handle_info({Customers, [:address, type], address}, socket) do
-    IO.inspect(address, label: "address ")
-
     handle_table_pub(
       __MODULE__,
       socket,

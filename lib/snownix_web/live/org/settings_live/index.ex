@@ -166,9 +166,9 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
 
   # save
   def handle_event("project-save", %{"project" => params}, socket) do
-    project = socket.assigns.project
+    %{current_user: user, project: project} = socket.assigns
 
-    case Organizations.update_project(project, params) do
+    case Organizations.update_project(project, params, user) do
       {:ok, project} ->
         {:noreply,
          socket
@@ -183,8 +183,10 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
 
   # tax
   def handle_event("tax-delete", %{"id" => id}, socket) do
+    %{current_user: user, project: project} = socket.assigns
+
     tax = Projects.get_tax!(id)
-    Projects.delete_tax(tax)
+    Projects.delete_tax(tax, project, user)
 
     {:noreply, socket |> assign_taxs()}
   end
@@ -193,7 +195,7 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
   def handle_event("validate", _, socket), do: {:noreply, socket}
 
   def handle_event("delete-logo", _, socket) do
-    project = socket.assigns.project
+    %{project: project} = socket.assigns
 
     if !is_nil(project.logo) do
       Snownix.Uploaders.LogoUploader.delete({project.logo, project})
@@ -208,8 +210,8 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
     end
   end
 
-  def apply_tax_action(:create, tax, project, user, params),
-    do: Projects.create_tax(tax, project, user, params)
+  def apply_tax_action(:create, _, project, user, params),
+    do: Projects.create_tax(project, user, params)
 
   def apply_tax_action(:update, tax, project, user, params),
     do: Projects.update_tax(tax, project, user, params)

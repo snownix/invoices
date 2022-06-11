@@ -7,10 +7,12 @@ defmodule Snownix.Customers do
   import Snownix.Helpers.Sorting
 
   alias Snownix.Repo
-
+  alias Snownix.Projects
   alias Snownix.Customers.User
 
   @topic inspect(__MODULE__)
+  @activity_field :contact_name
+  @activity_field_address :street
 
   def subscribe(project_id) do
     Phoenix.PubSub.subscribe(Snownix.PubSub, @topic <> "#{project_id}")
@@ -91,6 +93,11 @@ defmodule Snownix.Customers do
       ** (Ecto.NoResultsError)
 
   """
+  def get_user!(id),
+    do:
+      Repo.get!(User, id)
+      |> Repo.preload(:addresses)
+
   def get_user!(project_id, id),
     do:
       from(u in User, where: u.project_id == ^project_id and u.id == ^id)
@@ -109,13 +116,14 @@ defmodule Snownix.Customers do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user(project \\ nil, author \\ nil, attrs \\ %{}) do
+  def create_user(project \\ nil, user \\ nil, attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
     |> User.project_changeset(project)
-    |> User.owner_changeset(author)
+    |> User.owner_changeset(user)
     |> Repo.insert()
     |> notify_subscribers([:customer, :created])
+    |> Projects.log_activity(project, user, :create, @activity_field)
   end
 
   @doc """
@@ -137,6 +145,11 @@ defmodule Snownix.Customers do
     |> notify_subscribers([:customer, :updated])
   end
 
+  def update_user(%User{} = cuser, attrs, project, user) do
+    update_user(cuser, attrs)
+    |> Projects.log_activity(project, user, :update, @activity_field)
+  end
+
   @doc """
   Deletes a user.
 
@@ -149,9 +162,14 @@ defmodule Snownix.Customers do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_user(%User{} = user) do
-    Repo.delete(user)
+  def delete_user(%User{} = cuser) do
+    Repo.delete(cuser)
     |> notify_subscribers([:customer, :deleted])
+  end
+
+  def delete_user(%User{} = cuser, project, user) do
+    delete_user(cuser)
+    |> Projects.log_activity(project, user, :delete, @activity_field)
   end
 
   def delete_users(project_id, ids) do
@@ -249,6 +267,11 @@ defmodule Snownix.Customers do
     |> notify_subscribers(attrs["user_id"], [:address, :created])
   end
 
+  def create_address(attrs, project, user) do
+    create_address(attrs)
+    |> Projects.log_activity(project, user, :update, @activity_field_address)
+  end
+
   @doc """
   Updates a address.
 
@@ -268,6 +291,11 @@ defmodule Snownix.Customers do
     |> notify_subscribers(address.user_id, [:address, :updated])
   end
 
+  def update_address(%Address{} = address, attrs, project, user) do
+    update_address(address, attrs)
+    |> Projects.log_activity(project, user, :update, @activity_field_address)
+  end
+
   @doc """
   Deletes a address.
 
@@ -284,6 +312,11 @@ defmodule Snownix.Customers do
     address
     |> Repo.delete()
     |> notify_subscribers(address.user_id, [:address, :deleted])
+  end
+
+  def delete_address(%Address{} = address, project, user) do
+    delete_address(address)
+    |> Projects.log_activity(project, user, :delete, @activity_field_address)
   end
 
   @doc """

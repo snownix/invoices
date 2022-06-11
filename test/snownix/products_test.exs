@@ -130,19 +130,19 @@ defmodule Snownix.ProductsTest do
 
     test "create_product/1 with valid data creates a product" do
       valid_attrs = %{
-        currency: "some currency",
+        currency: "MAD",
         description: "some description",
         name: "some name",
-        price: 120.5,
-        tax_per_item: 120.5
+        price: 12_050,
+        tax_per_item: 12_050
       }
 
       assert {:ok, %Product{} = product} = Products.create_product(valid_attrs)
-      assert product.currency == "some currency"
+      assert product.currency == "MAD"
       assert product.description == "some description"
       assert product.name == "some name"
-      assert product.price == 120.5
-      assert product.tax_per_item == 120.5
+      assert product.price == 12_050
+      assert product.tax_per_item == 12_050
     end
 
     test "create_product/1 with invalid data returns error changeset" do
@@ -153,19 +153,19 @@ defmodule Snownix.ProductsTest do
       product = product_fixture()
 
       update_attrs = %{
-        currency: "some updated currency",
+        currency: "USD",
         description: "some updated description",
         name: "some updated name",
-        price: 456.7,
-        tax_per_item: 456.7
+        price: 45_700,
+        tax_per_item: 45_700
       }
 
       assert {:ok, %Product{} = product} = Products.update_product(product, update_attrs)
-      assert product.currency == "some updated currency"
+      assert product.currency == "USD"
       assert product.description == "some updated description"
       assert product.name == "some updated name"
-      assert product.price == 456.7
-      assert product.tax_per_item == 456.7
+      assert product.price == 45_700
+      assert product.tax_per_item == 45_700
     end
 
     test "update_product/2 with invalid data returns error changeset" do

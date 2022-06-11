@@ -31,7 +31,19 @@ defmodule Snownix.Customers.Address do
   @doc false
   def changeset(address, attrs) do
     address
-    |> cast(attrs, [:currency, :country, :city, :state, :zip, :street, :default, :street_2])
+    |> cast(attrs, [
+      :currency,
+      :country,
+      :title,
+      :city,
+      :state,
+      :zip,
+      :street,
+      :default,
+      :street_2,
+      :fax,
+      :phone
+    ])
     |> cast_assocs()
     |> validate_required([:country, :city, :state, :zip, :street])
     |> address_changeset(attrs)
@@ -52,7 +64,7 @@ defmodule Snownix.Customers.Address do
     |> cast(attrs, @address_fields)
     |> validate_length(:city, min: 0, max: 100)
     |> validate_length(:state, min: 0, max: 100)
-    |> validate_length(:zip, min: 0, max: 10)
+    |> validate_length(:zip, min: 0, max: 20)
     |> validate_length(:street, min: 0, max: 500)
     |> validate_length(:street_2, min: 0, max: 500)
     |> validate_inclusion(:country, countries())

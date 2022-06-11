@@ -59,8 +59,16 @@ defmodule SnownixWeb.Router do
           live "/:id/edit", ProductLive.Index, :edit
         end
 
-        live "/invoices", InvoiceLive.Index, :index
+        scope "/invoices" do
+          live "/", InvoiceLive.Index, :index
+          live "/new", InvoiceLive.Index, :new
+          live "/:id", InvoiceLive.Index, :show
+          live "/:id/edit", InvoiceLive.Index, :edit
+        end
+
         live "/settings", SettingsLive.Index, :settings
+
+        live "/activities", ActivityLive.Index, :index
       end
     end
   end
@@ -97,6 +105,26 @@ defmodule SnownixWeb.Router do
       # Admin
       scope "/admin", Admin, as: :admin do
         pipe_through [:require_authenticated_user]
+
+        # Invoices
+        scope "/invoices" do
+          live "/", InvoiceLive.Index, :index
+          live "/new", InvoiceLive.Index, :new
+          live "/:id/edit", InvoiceLive.Index, :edit
+
+          live "/:id", InvoiceLive.Show, :show
+          live "/:id/show/edit", InvoiceLive.Show, :edit
+        end
+
+        # Activities
+        scope "/activities" do
+          live "/", ActivityLive.Index, :index
+          live "/new", ActivityLive.Index, :new
+          live "/:id/edit", ActivityLive.Index, :edit
+
+          live "/:id", ActivityLive.Show, :show
+          live "/:id/show/edit", ActivityLive.Show, :edit
+        end
 
         # Products
         scope "/products" do

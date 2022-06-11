@@ -102,7 +102,9 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
   end
 
   def handle_event("delete", %{"id" => id}, socket) do
-    {:ok, _} = Customers.delete_user(customer_user(project_id(socket), id))
+    %{project: project, current_user: user} = socket.assigns
+
+    {:ok, _} = Customers.delete_user(customer_user(project.id, id), project, user)
 
     {:noreply, fetch(socket)}
   end

@@ -12,6 +12,7 @@ defmodule Snownix.MixProject do
       aliases: aliases(),
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
+      dialyzer: [plt_add_deps: :transitive],
       preferred_cli_env: [
         coveralls: :test,
         "coveralls.detail": :test,
@@ -72,8 +73,9 @@ defmodule Snownix.MixProject do
       {:tz_extra, "~> 0.20.1"},
       {:earmark, "~> 1.4.20"},
       {:timex, "~> 3.0"},
-      {:faker, "~> 0.17", only: :dev},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:faker, "~> 0.17", only: :dev}
     ]
   end
 

@@ -51,24 +51,24 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
          |> put_flash(:info, "product updated successfully")
          |> push_patch(to: socket.assigns.return_to)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
     end
   end
 
   defp save_product(socket, :new, %{"category" => category_id} = product_params) do
-    project = socket.assigns.project
-    author = socket.assigns.current_user
+    %{project: project, current_user: user} = socket.assigns
+
     category = Products.get_category!(project_id(socket), category_id)
 
-    case Products.create_product(project, author, category, product_params) do
+    case Products.create_product(project, user, category, product_params) do
       {:ok, _product} ->
         {:noreply,
          socket
          |> put_flash(:info, "product created successfully")
          |> push_patch(to: socket.assigns.return_to)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
