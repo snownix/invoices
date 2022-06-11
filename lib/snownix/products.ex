@@ -439,6 +439,11 @@ defmodule Snownix.Products do
     |> Projects.log_activity(project, user, :update, @activity_field)
   end
 
+  def update_product(%Product{} = product, project, user, attrs) do
+    update_product(product, attrs)
+    |> Projects.log_activity(project, user, :update, @activity_field)
+  end
+
   @doc """
   Deletes a product.
 
