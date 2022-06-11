@@ -16,7 +16,7 @@ defmodule Snownix.Customers.User do
     field :website, :string
     field :selected, :boolean, virtual: true, default: false
 
-    belongs_to :author, Snownix.Accounts.User, type: :binary_id
+    belongs_to :user, Snownix.Accounts.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
 
     has_many :addresses, Snownix.Customers.Address
@@ -41,7 +41,7 @@ defmodule Snownix.Customers.User do
   def owner_changeset(item, owner) do
     item
     |> change()
-    |> put_assoc(:author, owner)
+    |> put_assoc(:user, owner)
   end
 
   def project_changeset(item, project) do

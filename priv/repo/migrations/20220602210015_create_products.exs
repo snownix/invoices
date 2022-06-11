@@ -14,7 +14,7 @@ defmodule Snownix.Repo.Migrations.CreateProducts do
       add :category_id, references(:categories, on_delete: :nothing, type: :uuid)
       add :unit_id, references(:units, on_delete: :nothing, type: :uuid)
       add :project_id, references(:projects, on_delete: :nothing, type: :uuid)
-      add :author_id, references(:users, on_delete: :nothing, type: :uuid)
+      add :user_id, references(:users, on_delete: :nothing, type: :uuid)
 
       timestamps()
     end
@@ -22,6 +22,6 @@ defmodule Snownix.Repo.Migrations.CreateProducts do
     create index(:products, [:category_id])
     create index(:products, [:unit_id])
     create index(:products, [:project_id])
-    create index(:products, [:author_id])
+    create index(:products, [:user_id])
   end
 end

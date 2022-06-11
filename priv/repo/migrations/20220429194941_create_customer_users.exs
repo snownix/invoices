@@ -14,13 +14,13 @@ defmodule Snownix.Repo.Migrations.CreateCustomerUsers do
       add :portal, :boolean, default: false, null: false
       add :currency, :string
 
-      add :author_id, references(:users, on_delete: :nothing, type: :uuid)
+      add :user_id, references(:users, on_delete: :nothing, type: :uuid)
       add :project_id, references(:projects, on_delete: :nothing, type: :uuid)
 
       timestamps()
     end
 
     create index(:customer_users, [:project_id])
-    create index(:customer_users, [:author_id])
+    create index(:customer_users, [:user_id])
   end
 end

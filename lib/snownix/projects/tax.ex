@@ -11,7 +11,7 @@ defmodule Snownix.Projects.Tax do
     field :compound_tax, :boolean, default: false
 
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
-    belongs_to :author, Snownix.Accounts.User, type: :binary_id
+    belongs_to :user, Snownix.Accounts.User, type: :binary_id
 
     timestamps()
   end
@@ -26,10 +26,10 @@ defmodule Snownix.Projects.Tax do
     |> validate_number(:percent, greater_than_or_equal_to: 0, less_than_or_equal_to: 10_000)
   end
 
-  def owner_changeset(tax, project, author) do
+  def owner_changeset(tax, project, user) do
     tax
     |> change()
-    |> put_assoc(:author, author)
+    |> put_assoc(:user, user)
     |> put_assoc(:project, project)
   end
 end

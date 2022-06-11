@@ -113,7 +113,7 @@ defmodule Snownix.Seeds do
     %{
       name: Faker.Vehicle.make_and_model(),
       description: Faker.Vehicle.standard_specs() |> Enum.join(", "),
-      price: round(Faker.Commerce.price() * 10000),
+      price: round(Faker.Commerce.price() * 10_000),
       currency: Faker.Currency.code(),
       tax_per_item: Enum.random(1..50) * 100
     }

@@ -93,7 +93,7 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
   def handle_event("tax-edit", %{"id" => id}, socket) do
     tax =
       Projects.get_tax!(id)
-      |> Snownix.Repo.preload(:author)
+      |> Snownix.Repo.preload(:user)
       |> Snownix.Repo.preload(:project)
 
     {:noreply,

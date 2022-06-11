@@ -9,7 +9,7 @@ defmodule Snownix.Products.Unit do
 
     field :selected, :boolean, virtual: true, default: false
 
-    belongs_to :author, Snownix.Accounts.User, type: :binary_id
+    belongs_to :user, Snownix.Accounts.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
 
     timestamps()

@@ -181,6 +181,7 @@ defmodule Snownix.Products do
   def delete_category(%Category{} = category, project, user) do
     delete_category(category)
     |> Projects.log_activity(project, user, :delete, @activity_field)
+  end
 
   def categories_by_ids_query(project_id, ids) do
     from u in Category,
@@ -397,7 +398,7 @@ defmodule Snownix.Products do
   def create_product(project, user, category, attrs \\ %{}) do
     %Product{}
     |> Product.changeset(attrs)
-    |> Product.change_author(user)
+    |> Product.change_user(user)
     |> Product.change_project(project)
     |> Product.change_category(category)
     |> Repo.insert()
@@ -417,7 +418,14 @@ defmodule Snownix.Products do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_product(%Product{} = product, category, attrs) do
+  def update_product(%Product{} = product, attrs) do
+    product
+    |> Product.changeset(attrs)
+    |> Repo.update()
+    |> notify_subscribers([:product, :updated])
+  end
+
+  def update_product(%Product{} = product, %Category{} = category, attrs) do
     product
     |> Repo.preload(:category)
     |> Product.changeset(attrs)
@@ -426,8 +434,8 @@ defmodule Snownix.Products do
     |> notify_subscribers([:product, :updated])
   end
 
-  def update_product(%Product{} = product, attrs, project, user) do
-    update_product(product, attrs)
+  def update_product(%Product{} = product, project, user, %Category{} = category, attrs) do
+    update_product(product, category, attrs)
     |> Projects.log_activity(project, user, :update, @activity_field)
   end
 

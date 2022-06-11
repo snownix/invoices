@@ -7,12 +7,12 @@ defmodule Snownix.Repo.Migrations.CreateUnits do
 
       add :name, :string
       add :project_id, references(:projects, on_delete: :nothing, type: :uuid)
-      add :author_id, references(:users, on_delete: :nothing, type: :uuid)
+      add :user_id, references(:users, on_delete: :nothing, type: :uuid)
 
       timestamps()
     end
 
     create index(:units, [:project_id])
-    create index(:units, [:author_id])
+    create index(:units, [:user_id])
   end
 end

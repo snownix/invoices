@@ -8,13 +8,13 @@ defmodule Snownix.Repo.Migrations.CreateCategories do
       add :name, :string
       add :parent_id, references(:categories, on_delete: :nothing, type: :uuid)
       add :project_id, references(:projects, on_delete: :nothing, type: :uuid)
-      add :author_id, references(:users, on_delete: :nothing, type: :uuid)
+      add :user_id, references(:users, on_delete: :nothing, type: :uuid)
 
       timestamps()
     end
 
     create index(:categories, [:parent_id])
     create index(:categories, [:project_id])
-    create index(:categories, [:author_id])
+    create index(:categories, [:user_id])
   end
 end

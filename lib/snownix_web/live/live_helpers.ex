@@ -19,7 +19,7 @@ defmodule SnownixWeb.LiveHelpers do
     "twitter:title" => %{field: :page_title, default: "Snownix"},
     "twitter:site" => %{field: :page_url, default: nil},
     "twitter:image:src" => %{field: :page_image, default: nil},
-    "twitter:creator" => %{field: :page_author, default: "Snownix"},
+    "twitter:creator" => %{field: :page_user, default: "Snownix"},
     "twitter:description" => %{field: :page_desc, default: nil},
     "robots" => %{field: :page_robots, default: "index, follow"},
     "language" => %{field: :page_lang, default: "English"}

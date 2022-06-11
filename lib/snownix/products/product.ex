@@ -16,7 +16,7 @@ defmodule Snownix.Products.Product do
     field :selected, :boolean, virtual: true, default: false
 
     belongs_to :category, Snownix.Products.Category, type: :binary_id
-    belongs_to :author, Snownix.Accounts.User, type: :binary_id
+    belongs_to :user, Snownix.Accounts.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
     belongs_to :unit, Snownix.Products.Unit, type: :binary_id
 
@@ -27,7 +27,7 @@ defmodule Snownix.Products.Product do
   def changeset(product, attrs) do
     product
     |> cast(attrs, [:name, :description, :price, :tax_per_item, :currency, :unit_id])
-    |> validate_required([:name, :price, :currency, :tax_per_item, :unit_id])
+    |> validate_required([:name, :price, :currency, :tax_per_item])
   end
 
   def change_project(changeset, project) do
@@ -38,14 +38,14 @@ defmodule Snownix.Products.Product do
     put_change(changeset, :category_id, category.id)
   end
 
-  def change_author(changeset, author) do
-    put_assoc(changeset, :author, author)
+  def change_user(changeset, user) do
+    put_assoc(changeset, :user, user)
   end
 
   def owner_changeset(item, owner) do
     item
     |> change()
-    |> put_assoc(:author, owner)
+    |> put_assoc(:user, owner)
   end
 
   def project_changeset(item, project) do

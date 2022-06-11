@@ -28,7 +28,9 @@ defmodule SnownixWeb.Admin.ProductLive.FormComponent do
   end
 
   defp save_product(socket, :edit, product_params) do
-    case Products.update_product(socket.assigns.product, product_params) do
+    %{current_user: user, project: project} = socket.assigns
+
+    case Products.update_product(socket.assigns.product, project, user, product_params) do
       {:ok, _product} ->
         {:noreply,
          socket

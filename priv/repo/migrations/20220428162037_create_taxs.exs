@@ -10,13 +10,13 @@ defmodule Snownix.Repo.Migrations.CreateTaxs do
       add :description, :string
       add :compound_tax, :boolean, default: false, null: false
 
-      add :author_id, references(:users, on_delete: :nothing, type: :uuid)
+      add :user_id, references(:users, on_delete: :nothing, type: :uuid)
       add :project_id, references(:projects, on_delete: :nothing, type: :uuid)
 
       timestamps()
     end
 
     create index(:taxs, [:project_id])
-    create index(:taxs, [:author_id])
+    create index(:taxs, [:user_id])
   end
 end
