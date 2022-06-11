@@ -186,7 +186,8 @@ defmodule Snownix.Projects do
             ^project_id
       )
 
-    sort_query_by(query, orderby, order)
+    query
+    |> sort_query_by(orderby, order)
   end
 
   @doc """

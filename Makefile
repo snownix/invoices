@@ -19,3 +19,10 @@ serve:
 
 install:
 	@mix deps.get
+
+push:
+	@mix format --check-formatted
+	@mix credo --ignore readability
+	@mix dialyzer --no-check --ignore-exit-status
+	@mix test
+	@git push

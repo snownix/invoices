@@ -91,13 +91,9 @@ defmodule SnownixWeb.LiveHelpers do
   def hour_format(nil), do: nil
 
   def hour_format(naive_date) do
-    naive_date = naive_date |> DateTime.from_naive!("Etc/UTC")
-
-    if Timex.after?(Timex.now(), Timex.shift(naive_date, minutes: 59)) do
-      naive_date |> Calendar.strftime("%H:%M")
-    else
-      Timex.from_now(naive_date)
-    end
+    naive_date
+    |> DateTime.from_naive!("Etc/UTC")
+    |> Calendar.strftime("%H:%M")
   end
 
   def datetime_format(nil), do: nil

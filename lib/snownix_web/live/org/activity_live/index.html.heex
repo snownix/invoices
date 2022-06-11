@@ -1,4 +1,4 @@
-<main class="flex flex-col max-h-screen w-full overflow-y-none">
+<main class="flex flex-col max-h-screen w-full overflow-y-hidden">
     <section
         class="_header flex flex-col items-center space-y-2 md:space-y-0 md:flex-row justify-between p-8 md:pt-10 ">
         <div>
@@ -15,12 +15,24 @@
     </section>
     <section
         class="_content flex flex-col relative items-center space-y-2 md:space-y-0 md:flex-row justify-between border-t border-primary border-opacity-10 overflow-y-scroll max-h-full h-full">
-        <div class="_activities space-y-4 px-8 max-h-full h-full relative">
-            <div class="_bar fixed h-full border-r-2 border-gray-300 mx-4 -z-10"></div>
+        <div class="_activities space-y-4 w-full max-h-full h-full relative">
+            <div class="_bar pl-8 fixed h-full border-r-2 border-gray-300 mx-4 -z-10"></div>
 
             <!--  -->
-            <%= for row <- @activities do %>
-                <%= render_activity(assigns, row) %>
+            <%= for {date, items} <- @activities do %>
+            <details phx-update="prepend" id={"act-#{date}"} open>
+                <summary id={"act-h-#{date}"} class="w-full py-4 px-4 font-semibold border-b border-t bg-white ">
+                    <div class="ml-4 inline-flex items-center space-x-4">
+                        <span><%= date %></span>
+                        <div class="rounded-full bg-gray-100 w-8 h-8 align-middle flex items-center justify-center"><%= Enum.count(items) %></div>
+                    </div>
+                </summary>
+                <div id={"list-activites-#{date}"} phx-update="append">
+                <%= for {last, row} <- items do %>
+                    <%= render_activity(assigns, row, last) %>
+                <% end %>
+                </div>
+            </details>
             <% end %>
             <!--  -->
         </div>

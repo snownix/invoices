@@ -14,10 +14,11 @@ defmodule SnownixWeb.Org.ActivityLive.Index do
      |> assign(:table, %{
        filters: [],
        page: 1,
-       limit: 20,
+       limit: 100,
        order: :desc,
        order_by: :inserted_at
      })
+     |> assign(temporary_assigns: [activities: []])
      |> fetch()}
   end
 
@@ -68,7 +69,19 @@ defmodule SnownixWeb.Org.ActivityLive.Index do
 
     socket
     |> assign(:pagination, pagination)
-    |> assign(:activities, pagination.items)
+    |> assign(:activities, group_activities(pagination.items))
+  end
+
+  defp group_activities(items) do
+    items
+    |> Enum.group_by(fn e -> Timex.to_date(e.inserted_at) end, & &1)
+    |> Enum.map(fn {date, items} ->
+      {date,
+       Enum.reduce(items, %{last: nil, values: []}, fn e, acc ->
+         %{last: e, values: acc.values ++ [{acc.last && acc.last.inserted_at, e}]}
+       end).values}
+    end)
+    |> Enum.reverse()
   end
 
   defp assign_table_page(socket, page) do
@@ -112,23 +125,30 @@ defmodule SnownixWeb.Org.ActivityLive.Index do
     socket |> list_activities()
   end
 
-  def render_activity(assigns, row) do
-    ~H"""
-    <div class="_activity w-full py-2 flex items-start space-x-4">
-        <div class="_meta flex items-center space-x-2">
-            <div class="_type w-8 h-8 bg-primary text-sm rounded-full flex items-center justify-center text-white">
-                <span><%= (row.action || row.type || "") |> String.slice(0,1) %></span>
-            </div>
-        </div>
+  def render_activity(assigns, row, last_inserted_at \\ nil) do
+    same_prev_time = hour_format(last_inserted_at) === hour_format(row.inserted_at)
 
+    ~H"""
+    <div class={"activity__block px-8 " <> (if same_prev_time, do: "", else: "pt-2")} id={"activity-#{row.id}"}>
+        <div class="_meta flex items-center w-8 h-8">
+          <%= if !same_prev_time do %>
+            <div class="_type w-8 h-8 bg-primary text-sm rounded-full flex items-center justify-center text-white uppercase">
+              <span><%= (row.action || row.type || "") |> String.slice(0,1) %></span>
+            </div>
+          <% end %>
+        </div>
         <div class="_content flex flex-col">
+          <%= if !same_prev_time do %>
             <div class="activity__time">
-              <time phx-hook="TimeAgo" id={row.id} datetime={row.inserted_at}><%= hour_format(row.inserted_at) %></time>
+              <time datetime={row.inserted_at}><%= hour_format(row.inserted_at) %></time>
               <time datetime={row.inserted_at}><%= datetime_format(row.inserted_at) %></time>
             </div>
-            <div class="_icon mt-2 flex flex-col space-y-1 lg:space-y-0 lg:flex-row lg:items-center lg:space-x-2">
+          <% end %>
+          <div class={"activity__icon " <> (if same_prev_time, do: "mt-1", else: "mt-2")}>
                 <a class="flex items-center space-x-2">
-                  <%= render_text_avatar(assigns, row.from) %>
+                  <div class={(if same_prev_time, do: "hidden md:block", else: "")}>
+                    <%= render_text_avatar(assigns, row.from) %>
+                  </div>
                   <span class="font-semibold"><%= row.from %></span>
                 </a>
                 <p><%= get_emoji(row.action) %>
