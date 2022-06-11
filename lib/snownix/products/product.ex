@@ -11,7 +11,7 @@ defmodule Snownix.Products.Product do
     field :currency, :string
 
     field :price, :integer, default: 0
-    field :tax_per_item, :integer, default: 0
+    field :tax_per_item, :boolean, default: false
 
     field :selected, :boolean, virtual: true, default: false
 
@@ -27,7 +27,7 @@ defmodule Snownix.Products.Product do
   def changeset(product, attrs) do
     product
     |> cast(attrs, [:name, :description, :price, :tax_per_item, :currency, :unit_id])
-    |> validate_required([:name, :price, :currency, :tax_per_item])
+    |> validate_required([:name, :price, :currency])
   end
 
   def change_project(changeset, project) do

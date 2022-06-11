@@ -134,7 +134,7 @@ defmodule Snownix.ProductsTest do
         description: "some description",
         name: "some name",
         price: 12_050,
-        tax_per_item: 12_050
+        tax_per_item: true
       }
 
       assert {:ok, %Product{} = product} = Products.create_product(valid_attrs)
@@ -142,7 +142,7 @@ defmodule Snownix.ProductsTest do
       assert product.description == "some description"
       assert product.name == "some name"
       assert product.price == 12_050
-      assert product.tax_per_item == 12_050
+      assert product.tax_per_item == true
     end
 
     test "create_product/1 with invalid data returns error changeset" do
@@ -157,7 +157,7 @@ defmodule Snownix.ProductsTest do
         description: "some updated description",
         name: "some updated name",
         price: 45_700,
-        tax_per_item: 45_700
+        tax_per_item: false
       }
 
       assert {:ok, %Product{} = product} = Products.update_product(product, update_attrs)
@@ -165,7 +165,7 @@ defmodule Snownix.ProductsTest do
       assert product.description == "some updated description"
       assert product.name == "some updated name"
       assert product.price == 45_700
-      assert product.tax_per_item == 45_700
+      assert product.tax_per_item == false
     end
 
     test "update_product/2 with invalid data returns error changeset" do

@@ -21,7 +21,7 @@ defmodule Snownix.Organizations.Project do
     field :zip, :string
     field :street, :string
 
-    field :currency, :string, default: "us"
+    field :currency, :string, default: "USD"
 
     field :time_zone, :string, default: "Etc/UTC"
     field :date_format, :string, default: "%Y-%m-%d"
@@ -29,8 +29,8 @@ defmodule Snownix.Organizations.Project do
     field :language, :string, default: "en"
     field :fiscal_year, :string, default: "1-12"
 
-    field :tax_per_item, :boolean, default: true
-    field :discount_per_item, :boolean, default: true
+    field :tax_per_item, :boolean, default: false
+    field :discount_per_item, :boolean, default: false
 
     field :vat, :string
 

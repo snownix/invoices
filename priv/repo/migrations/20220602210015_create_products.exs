@@ -8,8 +8,8 @@ defmodule Snownix.Repo.Migrations.CreateProducts do
       add :name, :string
       add :description, :text
       add :price, :integer
-      add :tax_per_item, :integer
       add :currency, :string
+      add :tax_per_item, :boolean, default: false
 
       add :category_id, references(:categories, on_delete: :nothing, type: :uuid)
       add :unit_id, references(:units, on_delete: :nothing, type: :uuid)

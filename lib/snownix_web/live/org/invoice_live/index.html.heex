@@ -64,7 +64,7 @@
                         </td>
                         
                         <td><%= money_format(item) %></td>
-                        <td><%= tax_format(item.tax_per_item) %></td>
+                        <td><%= item.tax_per_item %></td>
                         <td><%= date_format(item.inserted_at) %></td>
                         <td>
                             <div class="flex justify-end items-center space-x-2">

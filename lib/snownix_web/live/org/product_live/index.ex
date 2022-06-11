@@ -132,9 +132,14 @@ defmodule SnownixWeb.Org.ProductLive.Index do
   end
 
   defp apply_action(socket, :new) do
+    %{project: project} = socket.assigns
+
     socket
     |> assign(:page_title, "New Product")
-    |> assign(:product, %Product{})
+    |> assign(:product, %Product{
+      currency: project.currency,
+      tax_per_item: project.tax_per_item
+    })
   end
 
   defp apply_action(socket, :show) do

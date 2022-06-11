@@ -20,10 +20,18 @@
     <%= error_tag f, :description %>
   </div>
 
-  <div class="form__group">
-    <%= label f, :price %>
-    <%= number_input f, :price %>
-    <%= error_tag f, :price %>
+  <div class="form__groups md:!space-x-2">
+    <div class="form__group md:!w-1/3">
+      <%= label f, :price %>
+      <%= number_input f, :price %>
+      <%= error_tag f, :price %>
+    </div>
+
+    <div class="form__group md:!w-2/3">
+      <%= label f, :currency %>
+      <%= select f, :currency, currencies_options(), prompt: "Choose a currency" %>
+      <%= error_tag f, :currency %>
+    </div>
   </div>
 
   <.live_component
@@ -36,17 +44,14 @@
     field={:unit_id}
     parent={@myself} />
 
-  <div class="form__group">
-    <%= label f, :tax_per_item %>
-    <%= number_input f, :tax_per_item %>
+  <label class="form__group">
+      <h4 class="font-semibold"><%= gettext("Tax Per Item") %></h4>
     <%= error_tag f, :tax_per_item %>
-  </div>    
-
-  <div class="form__group">
-    <%= label f, :currency %>
-    <%= select f, :currency, currencies_options(), prompt: "Choose a currency" %>
-    <%= error_tag f, :currency %>
-  </div>
+      <div class="switch">
+          <%= checkbox f, :tax_per_item, value: input_value(f, :tax_per_item) %>
+          <span class="slider round"></span>
+      </div>
+  </label>
 
   <div class="form__group">
     <%= label f, :category %>

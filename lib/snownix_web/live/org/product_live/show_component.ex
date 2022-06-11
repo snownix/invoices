@@ -12,7 +12,7 @@ defmodule SnownixWeb.Org.ProductLive.ShowComponent do
             <h3 class="font-bold"><%= @product.name %></h3>
             <p class="flex flex-col font-bold">
               <span><%= money_format(@product) %></span>
-              <small>Tax: <%= tax_format(@product.tax_per_item) %></small>
+              <small>Tax: <%= @product.tax_per_item %></small>
             </p>
         </div>
         <div>

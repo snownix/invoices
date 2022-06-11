@@ -10,6 +10,7 @@ defmodule Snownix.Products do
   alias Snownix.Projects
 
   alias Snownix.Products.Category
+  alias Snownix.Organizations.Project
 
   @topic inspect(__MODULE__)
 
@@ -106,6 +107,9 @@ defmodule Snownix.Products do
     do:
       from(u in Category, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
+
+  def get_category(%Project{} = project, id),
+    do: get_category!(project.id, id)
 
   @doc """
   Creates a category.

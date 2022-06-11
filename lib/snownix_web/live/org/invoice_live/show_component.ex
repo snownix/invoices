@@ -12,7 +12,7 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
             <h3 class="font-bold"><%= @invoice.name %></h3>
             <p class="flex flex-col font-bold">
               <span><%= money_format(@invoice) %></span>
-              <small>Tax: <%= tax_format(@invoice.tax_per_item) %></small>
+              <small>Tax: <%= @invoice.tax_per_item %></small>
             </p>
         </div>
         <div>
