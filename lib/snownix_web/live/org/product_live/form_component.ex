@@ -80,7 +80,7 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
 
   def put_selected_category_id(%{"category_id" => category_id} = params, categories) do
     category =
-      Enum.find(categories, fn {name, id} ->
+      Enum.find(categories, fn {_name, id} ->
         id == category_id
       end)
 

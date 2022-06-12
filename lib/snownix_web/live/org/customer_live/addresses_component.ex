@@ -97,9 +97,9 @@ defmodule SnownixWeb.Org.CustomerLive.AddressesComponent do
     case Customers.create_address(params, project, user, customer) do
       {:ok, _address} ->
         {:noreply,
-        socket
-        |> put_flash(:success, "New address has been created")
-        |> assign(action: :index)}
+         socket
+         |> put_flash(:success, "New address has been created")
+         |> assign(action: :index)}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -112,9 +112,9 @@ defmodule SnownixWeb.Org.CustomerLive.AddressesComponent do
     case Customers.update_address(address, project, user, params) do
       {:ok, _address} ->
         {:noreply,
-        socket
-        |> put_flash(:success, "Address has been updated")
-        |> assign(action: :index)}
+         socket
+         |> put_flash(:success, "Address has been updated")
+         |> assign(action: :index)}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}

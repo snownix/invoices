@@ -25,7 +25,6 @@ defmodule Snownix.Customers do
   defp notify_subscribers({:ok, result}, event) do
     project_id = result.project_id
 
-
     Phoenix.PubSub.broadcast(
       Snownix.PubSub,
       @topic <> "#{project_id}",
@@ -303,7 +302,8 @@ defmodule Snownix.Customers do
   end
 
   def change_default_address(address, project, user, addresses) do
-    old_default = Enum.find(addresses, &(&1.default))
+    old_default = Enum.find(addresses, & &1.default)
+
     address
     |> switch_default_address(old_default)
     |> notify_subscribers(address.user_id, [:address, :updated])
@@ -324,6 +324,7 @@ defmodule Snownix.Customers do
     |> case do
       {:ok, %{new: address}} ->
         {:ok, address}
+
       {:error, _, changeset, _} ->
         {:error, changeset}
     end

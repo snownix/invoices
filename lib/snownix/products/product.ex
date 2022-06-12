@@ -29,7 +29,7 @@ defmodule Snownix.Products.Product do
   def changeset(product, attrs) do
     product
     |> cast(attrs, @fields)
-    |> validate_required([:name, :price, :currency, :category_id])
+    |> validate_required([:name, :price, :currency])
   end
 
   def owner_changeset(item, project, owner) do
@@ -38,5 +38,4 @@ defmodule Snownix.Products.Product do
     |> put_assoc(:user, owner)
     |> put_assoc(:project, project)
   end
-
 end

@@ -37,7 +37,6 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
         )
 
       :address ->
-
         {:noreply, socket |> fetch_one(result.user_id)}
 
       _ ->

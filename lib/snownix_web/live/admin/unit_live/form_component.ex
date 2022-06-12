@@ -4,8 +4,8 @@ defmodule SnownixWeb.Admin.UnitLive.FormComponent do
   alias Snownix.Products
 
   @impl true
-  def update(%{unit: unit, project: project, current_user: user} = assigns, socket) do
-    changeset = Products.change_unit(unit, project, user)
+  def update(%{unit: unit} = assigns, socket) do
+    changeset = Products.change_unit(unit)
 
     {:ok,
      socket
@@ -15,11 +15,9 @@ defmodule SnownixWeb.Admin.UnitLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"unit" => unit_params}, socket) do
-    %{project: project, current_user: user} = socket.assigns
-
     changeset =
       socket.assigns.unit
-      |> Products.change_unit(project, user, unit_params)
+      |> Products.change_unit(unit_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :changeset, changeset)}
