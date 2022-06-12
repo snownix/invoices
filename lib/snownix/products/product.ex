@@ -23,34 +23,19 @@ defmodule Snownix.Products.Product do
     timestamps()
   end
 
+  @fields [:name, :description, :price, :tax_per_item, :currency, :unit_id, :category_id]
+
   @doc false
   def changeset(product, attrs) do
     product
-    |> cast(attrs, [:name, :description, :price, :tax_per_item, :currency, :unit_id])
+    |> cast(attrs, @fields)
     |> validate_required([:name, :price, :currency])
   end
 
-  def change_project(changeset, project) do
-    put_assoc(changeset, :project, project)
-  end
-
-  def change_category(changeset, category) do
-    put_change(changeset, :category_id, category.id)
-  end
-
-  def change_user(changeset, user) do
-    put_assoc(changeset, :user, user)
-  end
-
-  def owner_changeset(item, owner) do
+  def owner_changeset(item, project, owner) do
     item
     |> change()
     |> put_assoc(:user, owner)
-  end
-
-  def project_changeset(item, project) do
-    item
-    |> change()
     |> put_assoc(:project, project)
   end
 end

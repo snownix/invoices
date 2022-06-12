@@ -5,6 +5,8 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
   alias Snownix.Organizations
   alias Snownix.Projects
   alias Snownix.Projects.Tax
+  alias Snownix.Products
+  alias Snownix.Products.Unit
 
   @tabs [
     %{
@@ -32,6 +34,12 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
       icon: "tax.svg",
       description:
         "You can add or Remove Taxes as you please. We supports Taxes on Individual Items as well as on the invoice."
+    },
+    %{
+      id: "units",
+      title: "Unit",
+      icon: "unit.svg",
+      description: "Manage your project units to be used in the products."
     }
   ]
   def mount(_, _, socket) do
@@ -41,6 +49,8 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
      |> assign(:tab, select_tab())
      |> assign_taxs()
      |> assign_tax_changeset()
+     |> assign_units()
+     |> assign_unit_changeset()
      |> assign_project_changeset()
      |> allow_upload(:logo,
        accept: ~w(.jpg .jpeg .png .gif .txt),
@@ -52,24 +62,17 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
   end
 
   defp assign_project_changeset(socket, params \\ %{}) do
-    project = socket.assigns.project
+    %{project: project} = socket.assigns
 
     socket
-    |> assign(
-      :changeset,
-      project |> Organizations.change_project(params)
-    )
-    |> assign(
-      :preferences_changeset,
-      socket.assigns.project
-      |> Organizations.change_project_preferences(params)
-    )
+    |> assign(%{
+      changeset: Organizations.change_project(project, params),
+      preferences_changeset: Organizations.change_project_preferences(project, params)
+    })
   end
 
   def assign_tax_changeset(socket, params \\ %{}) do
-    tax = socket.assigns.tax
-    user = socket.assigns.current_user
-    project = socket.assigns.project
+    %{tax: tax, project: project, current_user: user} = socket.assigns
 
     socket
     |> assign(
@@ -78,11 +81,24 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
     )
   end
 
+  def assign_unit_changeset(socket, params \\ %{}) do
+    %{unit: unit} = socket.assigns
+
+    assign(socket, :unit_changeset, Products.change_unit(unit, params))
+  end
+
   defp assign_taxs(socket, tax \\ %Tax{}, action \\ :create) do
     socket
     |> assign(:tax, tax)
     |> assign(:tax_action, action)
     |> assign(:taxs, Projects.list_taxs(socket.assigns.project))
+  end
+
+  defp assign_units(socket, tax \\ %Unit{}, action \\ :create) do
+    socket
+    |> assign(:unit, tax)
+    |> assign(:unit_action, action)
+    |> assign(:units, Products.list_units(socket.assigns.project))
   end
 
   def handle_event("switch-tab", %{"tab" => tab}, socket) do
@@ -102,10 +118,49 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
      |> assign_tax_changeset()}
   end
 
+  # Unit info
+  def handle_event("unit-edit", %{"id" => id}, socket) do
+    unit =
+      Products.get_unit!(id)
+      |> Snownix.Repo.preload(:user)
+      |> Snownix.Repo.preload(:project)
+
+    {:noreply,
+     socket
+     |> assign_units(unit, :update)
+     |> assign_unit_changeset()}
+  end
+
+  def handle_event("unit-validate", %{"unit" => params}, socket) do
+    changeset =
+      socket.assigns.unit
+      |> Products.change_unit(params)
+      |> Map.put(:action, :validate)
+
+    {:noreply,
+     socket
+     |> clear_flash()
+     |> assign(:unit_changeset, changeset)}
+  end
+
+  def handle_event("unit-save", %{"unit" => params}, socket) do
+    %{unit: unit, project: project, current_user: user, unit_action: action} = socket.assigns
+
+    case apply_unit_action(action, unit, project, user, params) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> assign_units(%Unit{}, :create)
+         |> assign_unit_changeset()
+         |> put_flash(:success, gettext("Units updated successfully."))}
+
+      {:error, changeset} ->
+        {:noreply, socket |> assign(:unit_changeset, changeset)}
+    end
+  end
+
   def handle_event("tax-validate", %{"tax" => params}, socket) do
-    tax = socket.assigns.tax
-    project = socket.assigns.project
-    user = socket.assigns.current_user
+    %{tax: tax, project: project, current_user: user} = socket.assigns
 
     {:noreply,
      socket
@@ -119,11 +174,7 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
   end
 
   def handle_event("tax-save", %{"tax" => params}, socket) do
-    tax = socket.assigns.tax
-    project = socket.assigns.project
-    user = socket.assigns.current_user
-
-    action = socket.assigns.tax_action
+    %{tax: tax, project: project, current_user: user, tax_action: action} = socket.assigns
 
     case apply_tax_action(action, tax, project, user, params) do
       {:ok, _} ->
@@ -191,6 +242,16 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
     {:noreply, socket |> assign_taxs()}
   end
 
+  # Unit
+  def handle_event("unit-delete", %{"id" => id}, socket) do
+    %{current_user: user, project: project} = socket.assigns
+
+    unit = Products.get_unit!(id)
+    Products.delete_unit(unit, project, user)
+
+    {:noreply, socket |> assign_units()}
+  end
+
   # logo
   def handle_event("validate", _, socket), do: {:noreply, socket}
 
@@ -216,9 +277,15 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
   def apply_tax_action(:update, tax, project, user, params),
     do: Projects.update_tax(tax, project, user, params)
 
+  def apply_unit_action(:create, _, project, user, params),
+    do: Products.create_unit(project, user, params)
+
+  def apply_unit_action(:update, unit, project, user, params),
+    do: Products.update_unit(unit, project, user, params)
+
   defp handle_progress(:logo, entry, socket) do
     if entry.done? do
-      project = socket.assigns.project
+      %{project: project} = socket.assigns
 
       consume_uploaded_entries(socket, :logo, fn meta, entry ->
         {:ok, project} =

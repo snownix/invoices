@@ -1,0 +1,92 @@
+<section class="_addresses space-y-2">
+    <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"addresses-alerts"} />
+    <%= if @action in [:edit, :new] do %>
+        <div>
+            <div class="flex justify-between py-2 px-4 rounded bg-gray-100 font-medium text-dark">
+                <h3><%= @action == :new && "New address" || "Edit address" %></h3>
+                <button phx-click="cancel" phx-target={@myself} class="rounded p-1">
+                    <%= render SnownixWeb.IconsView, "cancel.svg",  %{size: 16} %>
+                </button>
+            </div>
+            <.form
+                let={f}
+                for={@changeset}
+                id="address-form"
+                class="space-y-2"
+                phx-target={@myself}
+                phx-change="validate"
+                phx-submit="save">
+
+                <div class="form__group">
+                    <%= label f, :street %>
+                    <%= text_input f, :street %>
+                    <%= error_tag f, :street %>
+                </div>
+
+                <div class="form__group">
+                    <%= label f, :street_2, "Street 2" %>
+                    <%= text_input f, :street_2 %>
+                    <%= error_tag f, :street_2 %>
+                </div>
+
+                <div class="form__group">
+                    <%= label f, :country %>
+                    <%= select f, :country, countries_options(), prompt: "Select a country" %>
+                    <%= error_tag f, :country %>
+                </div>
+                <div class="form__group">
+                    <%= label f, :state %>
+                    <%= text_input f, :state %>
+                    <%= error_tag f, :state %>
+                </div>
+                <div class="form__group">
+                    <%= label f, :city %>
+                    <%= text_input f, :city %>
+                    <%= error_tag f, :city %>
+                </div>
+                <div class="form__group">
+                    <%= label f, :zip %>
+                    <%= text_input f, :zip %>
+                    <%= error_tag f, :zip %>
+                </div>
+                <div>
+                    <%= submit "Save", phx_disable_with: "Saving...", class: "primary" %>
+                </div>
+            </.form>
+        </div>
+    <% else %>
+        <div class="flex justify-between py-2 px-4 rounded bg-gray-100 font-medium text-dark">
+            <h3>Addresses</h3>
+            <button phx-click="new" phx-target={@myself} class="rounded p-1">
+                <%= render SnownixWeb.IconsView, "plus.svg",  %{size: 16} %>
+            </button>
+        </div>
+        <%= for address <- @addresses do %>
+            <div class={"flex items-start w-full p-4 bg-gray-50 rounded relative "<> (address.default && "!bg-primary !bg-opacity-5 border-2 border-gray-300" || "")}>
+                <div class="flex flex-col p-2">
+                    <img class="rounded object-cover w-6 h-5"  src={"https://flagicons.lipis.dev/flags/4x3/#{String.downcase(address.country)}.svg"}>
+                </div>
+
+                <div cass="w-full">
+                    <p><%= address.city %>,
+                    <%= address.street %></p>
+                    <p><%= address.street_2 %></p>
+                    <%= if not address.default do %>
+                    <button phx-target={@myself} phx-click="select-default" phx-value-id={address.id} class="text-primary px-2 py-1 mt-2">
+                        <%= gettext "Select default" %>
+                    </button>  
+                    <% end %>
+                </div>
+                <div class="flex flex-col !ml-auto space-y-3">
+                    <button class="px-1 py-1 text-red-500 hover:!text-red-600" phx-target={@myself} phx-click="delete" phx-value-id={address.id} data={[confirm: "Are you sure?"]}>
+                        <%= render SnownixWeb.IconsView, "delete.svg", %{size: 18} %>
+                    </button>
+                    <button class="px-1 py-1"  phx-target={@myself} phx-click="edit" phx-value-id={address.id}>
+                        <%= render SnownixWeb.IconsView, "settings.svg", %{size: 18} %>
+                    </button>
+                </div>
+                
+            </div>
+        <% end %>
+    <% end %>
+</section>
