@@ -5,10 +5,7 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
 
   @impl true
   def update(%{product: product} = assigns, socket) do
-    changeset =
-      product
-      |> Map.delete(:category)
-      |> Products.change_product()
+    changeset = Products.change_product(product)
 
     {:ok,
      socket
@@ -41,12 +38,11 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
     save_product(socket, socket.assigns.action, product_params)
   end
 
-  defp save_product(socket, :edit, %{"category" => category_id} = product_params) do
-    %{project: project, current_user: user} = socket.assigns
+  defp save_product(socket, :edit, product_params) do
+    %{project: project, current_user: user, categories: categories} = socket.assigns
+    params = put_selected_category_id(product_params, categories)
 
-    category = Products.get_category!(project_id(socket), category_id)
-
-    case Products.update_product(socket.assigns.product, project, user, category, product_params) do
+    case Products.update_product(socket.assigns.product, project, user, params) do
       {:ok, _product} ->
         {:noreply,
          socket
@@ -58,12 +54,11 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
     end
   end
 
-  defp save_product(socket, :new, %{"category" => category_id} = product_params) do
-    %{project: project, current_user: user} = socket.assigns
+  defp save_product(socket, :new, product_params) do
+    %{project: project, current_user: user, categories: categories} = socket.assigns
+    params = put_selected_category_id(product_params, categories)
 
-    category = Products.get_category!(project_id(socket), category_id)
-
-    case Products.create_product(project, user, category, product_params) do
+    case Products.create_product(project, user, params) do
       {:ok, _product} ->
         {:noreply,
          socket
@@ -83,6 +78,21 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
 
   defp project_id(%{assigns: %{project: %{id: id}}}), do: id
 
+  def put_selected_category_id(%{"category_id" => category_id} = params, categories) do
+    category =
+      Enum.find(categories, fn {name, id} ->
+        id == category_id
+      end)
+
+    case category do
+      {_, id} ->
+        %{params | "category_id" => id}
+
+      nil ->
+        params
+    end
+  end
+
   def fetch_categories(socket) do
     categories =
       socket
@@ -95,7 +105,7 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
 
   def fetch_units(socket, %{unit_id: id}) do
     units =
-      Products.list_units()
+      Products.list_units(project_id(socket))
       |> Enum.map(&{&1.id, &1.name})
 
     selected_unit =
