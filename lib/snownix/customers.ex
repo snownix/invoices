@@ -9,6 +9,7 @@ defmodule Snownix.Customers do
   alias Snownix.Repo
   alias Snownix.Projects
   alias Snownix.Customers.User
+  alias Snownix.Organizations.Project
 
   @topic inspect(__MODULE__)
   @activity_field :contact_name
@@ -65,7 +66,11 @@ defmodule Snownix.Customers do
     User |> Repo.all()
   end
 
-  def list_customer_users(project_id, opts) do
+  def list_customer_users(%Project{} = project) do
+    list_customer_users(project.id, [])
+  end
+
+  def list_customer_users(project_id, opts \\ []) do
     orderby = Keyword.get(opts, :order_by)
     order = Keyword.get(opts, :order, :asc)
 

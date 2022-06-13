@@ -240,7 +240,7 @@ defmodule Snownix.AccountsTest do
     end
 
     test "does not update email if token expired", %{user: user, token: token} do
-      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
+      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00Z]])
       assert Accounts.update_user_email(user, token) == :error
       assert Repo.get!(User, user.id).email == user.email
       assert Repo.get_by(UserToken, user_id: user.id)
@@ -388,7 +388,7 @@ defmodule Snownix.AccountsTest do
     end
 
     test "does not return user for expired token", %{token: token} do
-      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
+      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00Z]])
       refute Accounts.get_user_by_session_token(token)
     end
   end
@@ -448,7 +448,7 @@ defmodule Snownix.AccountsTest do
     end
 
     test "does not confirm email if token expired", %{user: user, token: token} do
-      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
+      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00Z]])
       assert Accounts.confirm_user(token, user.email) == :error
       refute Repo.get!(User, user.id).confirmed_at
       assert Repo.get_by(UserToken, user_id: user.id)
@@ -503,7 +503,7 @@ defmodule Snownix.AccountsTest do
     end
 
     test "does not return the user if token expired", %{user: user, token: token} do
-      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
+      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00Z]])
       refute Accounts.get_user_by_reset_password_token(token)
       assert Repo.get_by(UserToken, user_id: user.id)
     end

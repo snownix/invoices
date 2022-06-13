@@ -25,6 +25,8 @@ defmodule Snownix.Repo.Migrations.CreateProjects do
       add :language, :string, default: "en"
       add :fiscal_year, :string, default: "1-12"
 
+      add :due_duration, :integer, default: 2
+
       add :tax_per_item, :boolean, default: true
       add :discount_per_item, :boolean, default: true
 

@@ -18,22 +18,22 @@ defmodule Snownix.InvoicesFixtures do
         discount_type: "some discount_type",
         discount_val: 42,
         due_amount: 42,
-        due_date: ~N[2022-06-04 14:27:00],
-        from_date: ~N[2022-06-04 14:27:00],
+        due_date: ~U[2022-06-13 00:00:00Z],
+        from_date: ~U[2022-06-13 00:00:00Z],
         invoice_number: "some invoice_number",
         note: "some note",
         paid_status: "some paid_status",
         reference_number: "some reference_number",
-        sent_email: true,
-        sent_sms: true,
+        email_sent: true,
+        sms_sent: true,
         sequence_number: 42,
         status: "some status",
         sub_total: 42,
         tax: 42,
         tax_per_item: true,
-        to_date: ~N[2022-06-04 14:27:00],
+        to_date: ~U[2022-06-13 00:00:00Z],
         total: 42,
-        viewed: 42
+        viewed: false
       })
       |> Snownix.Invoices.create_invoice()
 

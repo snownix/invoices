@@ -43,9 +43,10 @@
                         <label ></label>
                     </div>
                 </th>
-                <%= render_col(assigns, :name, "Name") %>
-                <%= render_col(assigns, :price, "Price") %>
-                <%= render_col(assigns, :tax_per_item, "Tax") %>
+                <%= render_col(assigns, :invoice_number, "N°") %>
+                <%= render_col(assigns, :customer_id, "Customer") %>
+                <%= render_col(assigns, :total, "Total") %>
+                <%= render_col(assigns, :discount_val, "Discount") %>
                 <%= render_col(assigns, :inserted_at, "Created Date") %>
                 <th class="w-14"></th>
             </:thead>
@@ -59,12 +60,20 @@
                             <%= render_checkbox(assigns, item) %>
                         </td>
                          <td class="interactive" phx-click="show" phx-value-id={item.id}>
-                            <span class="font-medium"><%= item.name %></span>
-                            <p class=" text-sm text-gray-500 break-words"><%= item.description %></p>
+                            <span class="font-medium"><%=  item.title || item.invoice_number %></span>
+                            <p class=" text-sm text-gray-500 break-words"><%= item.note %></p>
                         </td>
-                        
-                        <td><%= money_format(item) %></td>
-                        <td><%= item.tax_per_item %></td>
+                        <td class="flex items-center space-x-2">
+                            <%= if item.customer do %>
+                                <%= render_user_avatar(assigns, item.customer, "w-12 h-12") %>
+                                <div class="flex flex-col">
+                                    <span class="font-semibold"><%= item.customer.name %></span>
+                                    <span class="text-sm"><%= item.customer.contact_name %></span>
+                                </div>
+                            <% end %>
+                        </td>
+                        <td><%= money_format(item.total, item.currency) %></td>
+                        <td><%= money_format(item.discount_val, item.currency) %></td>
                         <td><%= date_format(item.inserted_at) %></td>
                         <td>
                             <div class="flex justify-end items-center space-x-2">
@@ -105,6 +114,7 @@
             open={!is_nil(@invoice)}
             prev={Routes.org_invoice_index_path(@socket,:index)}
             module={SnownixWeb.SharedLive.UI.DetailsComponent}
+            class="md:!w-3/4 lg:!w-2/4"
         >
             <:title><%= gettext "Invoice Details" %></:title>
             <:body>

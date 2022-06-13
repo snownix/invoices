@@ -3,6 +3,7 @@ defmodule Snownix.Organizations.Project do
   use Waffle.Ecto.Schema
 
   import Ecto.Changeset
+  @timestamps_opts [type: :utc_datetime]
   import Snownix.Helpers.Model
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -28,6 +29,7 @@ defmodule Snownix.Organizations.Project do
 
     field :language, :string, default: "en"
     field :fiscal_year, :string, default: "1-12"
+    field :due_duration, :integer, default: 1
 
     field :tax_per_item, :boolean, default: false
     field :discount_per_item, :boolean, default: false
@@ -71,6 +73,7 @@ defmodule Snownix.Organizations.Project do
     |> validate_length(:state, min: 0, max: 100)
     |> validate_length(:zip, min: 0, max: 10)
     |> validate_length(:street, min: 0, max: 500)
+    |> validate_number(:due_duration, greater_than_or_equal_to: 0)
     |> validate_inclusion(:country, countries())
   end
 
