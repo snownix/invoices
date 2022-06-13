@@ -22,4 +22,11 @@ defmodule Snownix.Products.Unit do
     |> cast(attrs, [:name])
     |> validate_required([:name])
   end
+
+  def owner_changeset(unit, project, user) do
+    unit
+    |> change()
+    |> put_assoc(:user, user)
+    |> put_assoc(:project, project)
+  end
 end

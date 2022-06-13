@@ -258,5 +258,52 @@
                 </.form>
             </div>
         </section>
+
+        <%# Units %>
+        <section id={Enum.at(@tabs,4).id}>
+            <div class="settings__header" >
+                <h2><%= Enum.at(@tabs,4).title %></h2>
+                <p ><%= Enum.at(@tabs,4).description %></p>
+            </div>
+
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,4).id}-alerts"} />
+            
+            <div class="w-full py-4">
+                <.form let={ft} for={@unit_changeset} phx-submit="unit-save" phx-change="unit-validate">
+                    <table>
+                        <thead>
+                            <th>Name</th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            <%= for unit <- @units do %>
+                                <tr>
+                                    <td><%= unit.name %></td>
+                                    <td class="flex justify-between cursor-pointer">
+                                        <a href="#" phx-click="unit-edit" phx-value-id={unit.id} >
+                                            <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
+                                        </a>
+                                        <span>
+                                            <%= link to: "#", phx_click: "unit-delete", phx_value_id: unit.id, data: [confirm: "Are you sure?"] do %>
+                                                <%= render SnownixWeb.IconsView, "delete.svg", %{} %>
+                                            <% end %>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <% end %>
+                            <tr>
+                                <td class="w-full"><%= text_input ft, :name, placeholder: gettext("Name"), value: input_value(ft, :name), class: tag_class_error(ft, :name) %></td>
+                                <td>
+                                    <button class="primary icon">
+                                        <!--<span><%= @unit_action == :create && "Create unit" || "Update unit" %></span>-->
+                                        <%= render SnownixWeb.IconsView, ( @unit_action == :create && "plus.svg" || "save.svg"), %{} %>
+                                    </button>
+                                 </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </.form>
+            </div>
+        </section>
     </section>
 </main>

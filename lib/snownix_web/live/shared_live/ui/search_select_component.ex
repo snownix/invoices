@@ -40,7 +40,7 @@ defmodule SnownixWeb.SharedLive.UI.SearchSelectComponent do
           </button>
         </div>
         <%= error_tag @form, @field %>
-        <div class="dropdown__content absolute -bottom-1 left-0 translate-y-full mt-2 w-full max-h-40 border rounded bg-white" style="display: none;">
+        <div class="dropdown__content z-20 absolute -bottom-1 left-0 translate-y-full mt-2 w-full max-h-40 border rounded bg-white" style="display: none;">
           <%= if @filtered_items != [] do %>
             <ul class="flex flex-col py-2">
               <%= for {id, name} <- @filtered_items do %>

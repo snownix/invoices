@@ -9,42 +9,43 @@ defmodule Snownix.Customers.Address do
   @address_fields [:country, :city, :zip, :state, :street, :street_2]
 
   schema "customer_addresses" do
-    field :title, :string
+    field(:title, :string)
 
-    field :city, :string
-    field :country, :string
-    field :currency, :string
-    field :fax, :string
-    field :phone, :string
-    field :state, :string
-    field :street, :string
-    field :street_2, :string
-    field :zip, :string
+    field(:city, :string)
+    field(:country, :string)
+    field(:currency, :string)
+    field(:fax, :string)
+    field(:phone, :string)
+    field(:state, :string)
+    field(:street, :string)
+    field(:street_2, :string)
+    field(:zip, :string)
 
-    field :default, :boolean, default: false
+    field(:default, :boolean, default: false)
 
-    belongs_to :user, Snownix.Customers.User, type: :binary_id
-    belongs_to :project, Snownix.Organizations.Project, type: :binary_id
+    belongs_to(:user, Snownix.Customers.User, type: :binary_id)
+    belongs_to(:project, Snownix.Organizations.Project, type: :binary_id)
 
     timestamps()
   end
 
+  @fields [
+    :currency,
+    :country,
+    :title,
+    :city,
+    :state,
+    :zip,
+    :street,
+    :street_2,
+    :fax,
+    :phone
+  ]
+
   @doc false
   def changeset(address, attrs) do
     address
-    |> cast(attrs, [
-      :currency,
-      :country,
-      :title,
-      :city,
-      :state,
-      :zip,
-      :street,
-      :default,
-      :street_2,
-      :fax,
-      :phone
-    ])
+    |> cast(attrs, @fields)
     |> cast_assocs()
     |> validate_required([:country, :city, :state, :zip, :street])
     |> address_changeset(attrs)

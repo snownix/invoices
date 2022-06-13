@@ -23,13 +23,7 @@ defmodule Snownix.Products.Category do
   def changeset(category, attrs) do
     category
     |> cast(attrs, [:name])
-    |> cast_assocs()
     |> validate_required([:name])
-  end
-
-  defp cast_assocs(changeset) do
-    changeset
-    |> cast_assoc(:products)
   end
 
   def owner_changeset(item, owner) do

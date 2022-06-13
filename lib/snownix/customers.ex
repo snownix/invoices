@@ -265,16 +265,21 @@ defmodule Snownix.Customers do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_address(attrs \\ %{}) do
+  def create_address(attrs, project, user, customer) do
+    %Address{}
+    |> Address.changeset(attrs)
+    |> Address.project_changeset(project)
+    |> Address.customer_changeset(customer)
+    |> Repo.insert()
+    |> notify_subscribers(attrs["user_id"], [:address, :created])
+    |> Projects.log_activity(project, user, :update, @activity_field_address)
+  end
+
+  def create_address(attrs) do
     %Address{}
     |> Address.changeset(attrs)
     |> Repo.insert()
     |> notify_subscribers(attrs["user_id"], [:address, :created])
-  end
-
-  def create_address(attrs, project, user) do
-    create_address(attrs)
-    |> Projects.log_activity(project, user, :update, @activity_field_address)
   end
 
   @doc """
@@ -296,9 +301,38 @@ defmodule Snownix.Customers do
     |> notify_subscribers(address.user_id, [:address, :updated])
   end
 
-  def update_address(%Address{} = address, attrs, project, user) do
+  def update_address(%Address{} = address, project, user, attrs) do
     update_address(address, attrs)
     |> Projects.log_activity(project, user, :update, @activity_field_address)
+  end
+
+  def change_default_address(address, project, user, addresses) do
+    old_default = Enum.find(addresses, & &1.default)
+
+    address
+    |> switch_default_address(old_default)
+    |> notify_subscribers(address.user_id, [:address, :updated])
+    |> Projects.log_activity(project, user, :update, @activity_field_address)
+  end
+
+  defp switch_default_address(new_default, nil) do
+    new_default
+    |> Ecto.Changeset.change(%{default: true})
+    |> Repo.update()
+  end
+
+  defp switch_default_address(new_default, old_default) do
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:new, Ecto.Changeset.change(new_default, %{default: true}))
+    |> Ecto.Multi.update(:old, Ecto.Changeset.change(old_default, %{default: false}))
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{new: address}} ->
+        {:ok, address}
+
+      {:error, _, changeset, _} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
