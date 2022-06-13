@@ -14,7 +14,6 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
     {:ok,
      socket
      |> assign(:table, %{
-       filters: [],
        page: 1,
        limit: 20,
        order: :desc,
@@ -70,24 +69,6 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
     {:noreply, socket |> assign_table_page(page) |> fetch()}
   end
 
-  def handle_event("period", %{"start" => st, "end" => en}, socket) do
-    try do
-      pstart = Timex.parse!(st, "{ISO:Extended}")
-      pend = Timex.parse!(en, "{ISO:Extended}")
-
-      {:noreply,
-       socket
-       |> assign_table_filter(
-         :period,
-         Timex.format!(pstart, "{YYYY}-{0M}-{D}"),
-         Timex.format!(pend, "{YYYY}-{0M}-{D}")
-       )
-       |> fetch()}
-    catch
-      _ -> {:noreply, socket}
-    end
-  end
-
   def handle_event("order", %{"order" => order}, socket) do
     {:noreply, socket |> assign_table_order(order) |> fetch()}
   end
@@ -113,10 +94,6 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
     {:noreply, fetch(socket) |> assign(selected_items: ids |> Enum.map(& &1.id))}
   end
 
-  def handle_event("delete-filter", %{"index" => index}, socket) do
-    {:noreply, socket |> delete_filter_by_index(index)}
-  end
-
   def handle_event("select", params, socket) do
     %{"id" => id} = params
 
@@ -132,14 +109,24 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
   end
 
   defp apply_action(socket, :new) do
+    %{project: project} = socket.assigns
+
     socket
     |> assign(:page_title, "New Invoice")
-    |> assign(:invoice, %Invoice{})
+    |> assign(:invoice, %Invoice{
+      invoice_number: "INV-00000000",
+      currency: project.currency,
+      tax_per_item: project.tax_per_item,
+      from_date: Timex.today(),
+      due_date: Timex.shift(Timex.today(), months: project.due_duration)
+    })
   end
 
   defp apply_action(socket, :show) do
+    %{invoice: invoice} = socket.assigns
+
     socket
-    |> assign(:page_title, socket.assigns.invoice.name)
+    |> assign(:page_title, invoice.title)
   end
 
   defp apply_action(socket, :index) do
@@ -152,9 +139,9 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
     socket |> list_invoices() |> update_selected()
   end
 
-  def fetch_one(socket, id) do
+  def fetch_one(%{assigns: %{project: project}} = socket, id) do
     socket
-    |> assign(:invoice, invoice_id(project_id(socket), id))
+    |> assign(:invoice, invoice_id(project.id, id))
   end
 
   def push_index(socket) do
@@ -162,7 +149,7 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
   end
 
   defp invoice_id(project_id, id) do
-    Invoices.get_invoice!(project_id, id)
+    Invoices.get_invoice!(project_id, id) |> Invoices.invoice_customer()
   end
 
   defp project_id(%{assigns: %{project: %{id: id}}}) do
@@ -174,12 +161,12 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
       socket.assigns
 
     pagination =
-      Invoices.list_invoices(project.id, order_by: order_by, order: order)
+      Invoices.list_invoices(project, order_by: order_by, order: order)
       |> Pagination.page(page, per_page: limit)
 
     pagination = %{
       pagination
-      | items: pagination.items
+      | items: pagination.items |> Invoices.invoice_customer()
     }
 
     socket
@@ -228,40 +215,12 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
     end
   end
 
-  defp assign_table_filter(socket, :period, st, en) do
-    %{table: table} = socket.assigns
-
-    filters = [
-      [:period, st, en]
-      | table.filters
-    ]
-
-    socket |> assign(:table, %{table | filters: filters})
-  end
-
   defp order_by_toggle(socket) do
     if socket.assigns.table.order == :asc do
       :desc
     else
       :asc
     end
-  end
-
-  defp delete_filter_by_index(socket, index) do
-    index = String.to_integer(index)
-    table = socket.assigns.table
-
-    filters =
-      table.filters
-      |> Enum.with_index()
-      |> Enum.reject(fn {_, i} -> i == index end)
-      |> Enum.map(fn {item, _} -> item end)
-
-    socket
-    |> assign(:table, %{
-      table
-      | filters: filters
-    })
   end
 
   defp select_item(socket, id) do
@@ -342,31 +301,12 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
     """
   end
 
-  def render_filter(assigns, :period, [_, st, en], index) do
-    ~H"""
-        <a class="btn !p-2 !text-xs !rounded-none m-1" id={"period" <> Integer.to_string(index)}>
-          <span><%= st %> - <%= en %></span>
-          <span class="p-x hover:text-red-500" phx-click="delete-filter" phx-value-index={index}>
-            X
-          </span>
-        </a>
-    """
-  end
-
   def render_checkbox(assigns, item) do
     ~H"""
     <div class="big__checkbox" >
         <input type="checkbox" checked={item.selected}>
         <label ></label>
     </div>
-    """
-  end
-
-  def render_filters(assigns) do
-    ~H"""
-    <%= for {filter, index} <- Enum.with_index(@table.filters) do %>
-      <%= render_filter(assigns,Enum.at(filter,0), filter, index) %>
-    <% end %>
     """
   end
 end

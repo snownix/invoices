@@ -1,6 +1,7 @@
 defmodule Snownix.Customers.Address do
   use Ecto.Schema
   import Ecto.Changeset
+  @timestamps_opts [type: :utc_datetime]
 
   import Snownix.Helpers.Model
 

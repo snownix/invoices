@@ -8,11 +8,37 @@
   phx-change="validate"
   phx-submit="save">
   
+  <div class="form__groups">
     <div class="form__group">
-      <%= label f, :name %>
-      <%= text_input f, :name %>
-      <%= error_tag f, :name %>
+      <%= label f, :invoice_number %>
+      <%= text_input f, :invoice_number, placeholder: gettext("Invoice Number") %>
+      <%= error_tag f, :invoice_number %>
     </div>
+    <div class="form__group"> 
+      <%= label f, :currency %>
+      <%= select f, :currency, currencies_options(), placeholder: gettext("Currency") , required: true, phx_debounce: "blur", value: input_value(f, :currency), class: tag_class_error(f, :currency)  %>
+      <%= error_tag f, :currency %>
+    </div>
+  </div>
+  <div class="form__groups">
+    <div class="form__group">
+      <%= label f, :from_date %>
+      <%= date_input f, :from_date %>
+      <%= error_tag f, :from_date %>
+    </div>
+    <div class="form__group">
+      <%= label f, :due_date %>
+      <%= date_input f, :due_date %>
+      <%= error_tag f, :due_date %>
+    </div>
+  </div>
+   <div class="form__group"> 
+      <%= label f, :customer_id, gettext("Customer") %>
+      <%= select f, :customer_id, customers_options(assigns), placeholder: gettext("customer_id") , required: true, phx_debounce: "blur", value: input_value(f, :customer_id), class: tag_class_error(f, :customer_id)  %>
+      <%= error_tag f, :customer_id %>
+    </div>
+
+
   <div>
     <%= submit "Save", phx_disable_with: "Saving...", class: "primary" %>
   </div>

@@ -18,7 +18,7 @@ defmodule SnownixWeb.Org.ProductLive.ShowComponent do
         <div>
           <p><%= @product.description %></p>
         </div>
-        <div class="border-t py-4">
+        <div class="border-t py-4 !mt-4">
           <label><%= gettext "Creation Date" %>: </label><%= @product.inserted_at %>
         </div>
     </div>

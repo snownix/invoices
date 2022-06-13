@@ -25,4 +25,6 @@ push:
 	@mix credo --ignore readability
 	@mix dialyzer --no-check --ignore-exit-status
 	@mix test
+	@git add .
+	@git commit
 	@git push

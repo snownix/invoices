@@ -22,8 +22,8 @@ defmodule Snownix.InvoicesTest do
       note: nil,
       paid_status: nil,
       reference_number: nil,
-      sent_email: nil,
-      sent_sms: nil,
+      email_sent: nil,
+      sms_sent: nil,
       sequence_number: nil,
       status: nil,
       sub_total: nil,
@@ -53,22 +53,22 @@ defmodule Snownix.InvoicesTest do
         discount_type: "some discount_type",
         discount_val: 42,
         due_amount: 42,
-        due_date: ~N[2022-06-04 14:27:00],
-        from_date: ~N[2022-06-04 14:27:00],
+        due_date: ~D[2020-01-01],
+        from_date: ~D[2020-01-01],
         invoice_number: "some invoice_number",
         note: "some note",
         paid_status: "some paid_status",
         reference_number: "some reference_number",
-        sent_email: true,
-        sent_sms: true,
+        email_sent: true,
+        sms_sent: true,
         sequence_number: 42,
         status: "some status",
         sub_total: 42,
         tax: 42,
         tax_per_item: true,
-        to_date: ~N[2022-06-04 14:27:00],
+        to_date: ~D[2020-01-01],
         total: 42,
-        viewed: 42
+        viewed: true
       }
 
       assert {:ok, %Invoice{} = invoice} = Invoices.create_invoice(valid_attrs)
@@ -79,22 +79,22 @@ defmodule Snownix.InvoicesTest do
       assert invoice.discount_type == "some discount_type"
       assert invoice.discount_val == 42
       assert invoice.due_amount == 42
-      assert invoice.due_date == ~N[2022-06-04 14:27:00]
-      assert invoice.from_date == ~N[2022-06-04 14:27:00]
+      assert invoice.due_date == ~D[2020-01-01]
+      assert invoice.from_date == ~D[2020-01-01]
       assert invoice.invoice_number == "some invoice_number"
       assert invoice.note == "some note"
       assert invoice.paid_status == "some paid_status"
       assert invoice.reference_number == "some reference_number"
-      assert invoice.sent_email == true
-      assert invoice.sent_sms == true
+      assert invoice.email_sent == true
+      assert invoice.sms_sent == true
       assert invoice.sequence_number == 42
       assert invoice.status == "some status"
       assert invoice.sub_total == 42
       assert invoice.tax == 42
       assert invoice.tax_per_item == true
-      assert invoice.to_date == ~N[2022-06-04 14:27:00]
+      assert invoice.to_date == ~D[2020-01-01]
       assert invoice.total == 42
-      assert invoice.viewed == 42
+      assert invoice.viewed == true
     end
 
     test "create_invoice/1 with invalid data returns error changeset" do
@@ -112,22 +112,22 @@ defmodule Snownix.InvoicesTest do
         discount_type: "some updated discount_type",
         discount_val: 43,
         due_amount: 43,
-        due_date: ~N[2022-06-05 14:27:00],
-        from_date: ~N[2022-06-05 14:27:00],
+        due_date: ~D[2020-01-01],
+        from_date: ~D[2020-01-01],
         invoice_number: "some updated invoice_number",
         note: "some updated note",
         paid_status: "some updated paid_status",
         reference_number: "some updated reference_number",
-        sent_email: false,
-        sent_sms: false,
+        email_sent: false,
+        sms_sent: false,
         sequence_number: 43,
         status: "some updated status",
         sub_total: 43,
         tax: 43,
         tax_per_item: false,
-        to_date: ~N[2022-06-05 14:27:00],
+        to_date: ~D[2020-01-01],
         total: 43,
-        viewed: 43
+        viewed: false
       }
 
       assert {:ok, %Invoice{} = invoice} = Invoices.update_invoice(invoice, update_attrs)
@@ -138,22 +138,22 @@ defmodule Snownix.InvoicesTest do
       assert invoice.discount_type == "some updated discount_type"
       assert invoice.discount_val == 43
       assert invoice.due_amount == 43
-      assert invoice.due_date == ~N[2022-06-05 14:27:00]
-      assert invoice.from_date == ~N[2022-06-05 14:27:00]
+      assert invoice.due_date == ~D[2020-01-01]
+      assert invoice.from_date == ~D[2020-01-01]
       assert invoice.invoice_number == "some updated invoice_number"
       assert invoice.note == "some updated note"
       assert invoice.paid_status == "some updated paid_status"
       assert invoice.reference_number == "some updated reference_number"
-      assert invoice.sent_email == false
-      assert invoice.sent_sms == false
+      assert invoice.email_sent == false
+      assert invoice.sms_sent == false
       assert invoice.sequence_number == 43
       assert invoice.status == "some updated status"
       assert invoice.sub_total == 43
       assert invoice.tax == 43
       assert invoice.tax_per_item == false
-      assert invoice.to_date == ~N[2022-06-05 14:27:00]
+      assert invoice.to_date == ~D[2020-01-01]
       assert invoice.total == 43
-      assert invoice.viewed == 43
+      assert invoice.viewed == false
     end
 
     test "update_invoice/2 with invalid data returns error changeset" do

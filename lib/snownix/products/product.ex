@@ -1,6 +1,7 @@
 defmodule Snownix.Products.Product do
   use Ecto.Schema
   import Ecto.Changeset
+  @timestamps_opts [type: :utc_datetime]
 
   @primary_key {:id, :binary_id, autogenerate: true}
 
