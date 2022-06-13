@@ -121,6 +121,15 @@ defmodule Snownix.Invoices do
       from(u in Invoice, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
 
+  def invoice_assign_customer(query, %Project{} = project, %{"customer_id" => customer_id}) do
+    customer = Customers.get_user!(project.id, customer_id)
+
+    query
+    |> Invoice.customer_changeset(customer)
+  end
+
+  def invoice_assign_customer(query, %Project{} = _project, _attrs), do: query
+
   @doc """
   Creates a invoice.
 
@@ -145,6 +154,7 @@ defmodule Snownix.Invoices do
     |> Invoice.changeset(attrs)
     |> Invoice.owner_changeset(user)
     |> Invoice.project_changeset(project)
+    |> invoice_assign_customer(project, attrs)
     |> Repo.insert()
     |> notify_subscribers([:invoice, :created])
     |> Projects.log_activity(project, user, :create, @activity_field)
@@ -162,12 +172,6 @@ defmodule Snownix.Invoices do
       {:error, %Ecto.Changeset{}}
 
   """
-  def invoice_assign_customer(query, %Project{} = project, %{"customer_id" => customer_id}) do
-    query
-    |> Invoice.customer_changeset(Customers.get_user!(project.id, customer_id))
-  end
-
-  def invoice_assign_customer(query, %Project{} = _project, _attrs), do: query
 
   def update_invoice(%Invoice{} = invoice, attrs) do
     invoice

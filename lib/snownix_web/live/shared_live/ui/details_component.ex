@@ -14,9 +14,9 @@ defmodule SnownixWeb.SharedLive.UI.DetailsComponent do
         <% end %>
         <section class={"fixed overflow-y-auto z-40 p-4 m-0 bg-white border-l w-full md:w-2/4 lg:!w-2/6 xl:w-1/4 h-full top-0 right-0 space-y-2 md:space-y-6 #{assigns[:class]}"}>
             <div class="_header flex justify-between items-center space-x-4">
-                <%= live_patch to: @prev, class: "btn light !p-1" do %>
-                  <%= render SnownixWeb.IconsView, "arrow_prev.svg", %{} %>
-                <% end %>
+              <a href="javascript:history.back();">
+                <%= render SnownixWeb.IconsView, "arrow_prev.svg", %{} %>
+              </a>
                 <h3 class="flex-grow"><%= render_slot(@title) %></h3>
             </div>
             <div class="_body space-y-4">

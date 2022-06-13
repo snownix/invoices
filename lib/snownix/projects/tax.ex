@@ -11,8 +11,8 @@ defmodule Snownix.Projects.Tax do
     field :description, :string
     field :compound_tax, :boolean, default: false
 
-    belongs_to :project, Snownix.Organizations.Project, type: :binary_id
     belongs_to :user, Snownix.Accounts.User, type: :binary_id
+    belongs_to :project, Snownix.Organizations.Project, type: :binary_id
 
     timestamps()
   end

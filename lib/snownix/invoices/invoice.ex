@@ -35,8 +35,8 @@ defmodule Snownix.Invoices.Invoice do
     field :discount_per_item, :boolean, default: false
 
     belongs_to :user, Snownix.Accounts.User, type: :binary_id
-    belongs_to :customer, Snownix.Customers.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
+    belongs_to :customer, Snownix.Customers.User, type: :binary_id, on_replace: :nilify
 
     field :selected, :boolean, virtual: true, default: false
     timestamps()

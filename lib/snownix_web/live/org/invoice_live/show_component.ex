@@ -9,14 +9,14 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
           <h3>Customer</h3>
         </div>
         <div class="_invoice rounded-md space-y-2 px-2 py-4">
-          <div class="flex items-center space-x-2">
-          <%= render_user_avatar(assigns, @invoice.customer, "w-12 h-12") %>
-          <div class="flex flex-col">
-                  <span class="font-semibold"><%= @invoice.customer.name %></span>
-                  <span class="text-sm"><%=  @invoice.customer.contact_name %></span>
-              </div>
+          <%= live_patch to: Routes.org_customer_index_path(@socket, :show, @invoice.customer.id), class: "flex items-center space-x-2" do %>
+            <%= render_user_avatar(assigns, @invoice.customer, "w-12 h-12") %>
+            <div class="flex flex-col">
+              <span class="font-semibold"><%= @invoice.customer.name %></span>
+              <span class="text-sm"><%=  @invoice.customer.contact_name %></span>
+            </div>
+          <% end %>
         </div>
-      </div>
       <% end %>
 
       <div class="py-2 px-6 rounded bg-gray-100 font-medium text-dark">

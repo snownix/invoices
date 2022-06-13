@@ -11,8 +11,8 @@ defmodule Snownix.Products.Category do
     field :selected, :boolean, virtual: true, default: false
 
     belongs_to :user, Snownix.Accounts.User, type: :binary_id
-    belongs_to :parent, Snownix.Products.Category, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
+    belongs_to :parent, Snownix.Products.Category, type: :binary_id, on_replace: :nilify
 
     has_many :products, Snownix.Products.Product
 

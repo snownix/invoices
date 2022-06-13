@@ -35,7 +35,9 @@ defmodule Snownix.Repo.Migrations.CreateInvoices do
 
       add :user_id, references(:users, on_delete: :nothing, type: :uuid)
       add :project_id, references(:projects, on_delete: :nothing, type: :uuid)
-      add :customer_id, references(:customer_users, on_delete: :nothing, type: :uuid)
+
+      add :customer_id,
+          references(:customer_users, on_delete: :nothing, on_replace: :update, type: :uuid)
 
       timestamps()
     end
