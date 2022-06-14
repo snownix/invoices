@@ -24,11 +24,16 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
       </div>
       <div class="_invoice rounded-md space-y-2 p-4">
           <div class="flex justify-between">
-              <h3 class="font-bold"><%= @invoice.title || @invoice.invoice_number %></h3>
-              <p class="flex flex-col font-bold">
-                <span><%= money_format(@invoice) %></span>
-                <small>Tax: <%= @invoice.tax_per_item %></small>
-              </p>
+              <div>
+                <h3 class="font-bold"><%= @invoice.title || @invoice.invoice_number %></h3>
+                <h5>Date : <%= @invoice.from_date %></h5>
+                <h5>Due : <%= @invoice.due_date %></h5>
+              </div>
+              <div class="flex flex-col">
+                <div class="flex justify-between space-x-4"><span>Total</span><span class="justify-end"><%= money_format(@invoice.total, @invoice.currency) %></span></div>
+                <div class="flex justify-between space-x-4"><small>Subtotal</small><span><%= money_format(@invoice.sub_total, @invoice.currency) %></span></div>
+                <div class="flex justify-between space-x-4"><small>Tax</small> <span><%= @invoice.tax_per_item %></span></div>
+              </div>
           </div>
           <div>
             <p><%= @invoice.note %></p>

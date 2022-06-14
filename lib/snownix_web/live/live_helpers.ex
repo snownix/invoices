@@ -85,7 +85,7 @@ defmodule SnownixWeb.LiveHelpers do
   def date_format(nil), do: nil
 
   def date_format(utc_date) do
-    utc_date |> DateTime.from_naive!("Etc/UTC") |> Calendar.strftime("%a, %B %d %Y")
+    utc_date |> Calendar.strftime("%a, %B %d %Y")
   end
 
   def hour_format(nil), do: nil

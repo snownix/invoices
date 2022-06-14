@@ -75,8 +75,8 @@
                     <%= address.street %></p>
                     <p><%= address.street_2 %></p>
                     <%= if not address.default do %>
-                    <button phx-target={@myself} phx-click="select-default" phx-value-id={address.id} class="text-primary px-2 py-1  rounded -xl mt-2">
-                        <%= gettext "Select default" %>
+                    <button phx-target={@myself} phx-click="select-default" phx-value-id={address.id} class="text-primary px-2 py-1 rounded-lg mt-2">
+                        <%= gettext "Set to default" %>
                     </button>  
                     <% end %>
                 </div>
