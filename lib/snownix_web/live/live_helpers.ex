@@ -116,11 +116,13 @@ defmodule SnownixWeb.LiveHelpers do
 
   def money_format(_), do: nil
 
-  def tax_format(nil), do: nil
+  def percentage_format(nil), do: nil
 
-  def tax_format(percent) do
+  def percentage_format(percent) do
     "#{Float.round(percent / 100)}%"
   end
+
+  def tax_format(percent), do: percentage_format(percent)
 
   @doc """
   Assign meta tags
