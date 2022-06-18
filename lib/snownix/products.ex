@@ -107,6 +107,12 @@ defmodule Snownix.Products do
       from(u in Category, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
 
+  def get_category(id),
+    do: Repo.get(Category, id)
+
+  def get_category(project_id, id),
+    do: Repo.get_by(Category, id: id, project_id: project_id)
+
   @doc """
   Creates a category.
 
@@ -425,7 +431,7 @@ defmodule Snownix.Products do
     |> notify_subscribers([:product, :updated])
   end
 
-  def update_product(%Product{} = product, %Category{} = category, attrs) do
+  def update_product(%Product{} = product, category, attrs) do
     product
     |> Repo.preload(:category)
     |> Product.changeset(attrs)
@@ -434,7 +440,7 @@ defmodule Snownix.Products do
     |> notify_subscribers([:product, :updated])
   end
 
-  def update_product(%Product{} = product, project, user, %Category{} = category, attrs) do
+  def update_product(%Product{} = product, project, user, category, attrs) do
     update_product(product, category, attrs)
     |> Projects.log_activity(project, user, :update, @activity_field)
   end

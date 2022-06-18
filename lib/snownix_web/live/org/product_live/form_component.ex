@@ -44,7 +44,12 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
   defp save_product(socket, :edit, %{"category" => category_id} = product_params) do
     %{project: project, current_user: user} = socket.assigns
 
-    category = Products.get_category!(project_id(socket), category_id)
+    category =
+      if String.length(category_id) > 0 do
+        Products.get_category(project_id(socket), category_id)
+      else
+        nil
+      end
 
     case Products.update_product(socket.assigns.product, project, user, category, product_params) do
       {:ok, _product} ->

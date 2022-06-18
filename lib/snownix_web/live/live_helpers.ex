@@ -80,6 +80,16 @@ defmodule SnownixWeb.LiveHelpers do
   end
 
   @doc """
+  Format an integer to a floating point with 2 franctional digits
+  """
+  def float_format(number) when is_integer(number) do
+    Float.round(number / 100, 2)
+    |> :erlang.float_to_binary(decimals: 2)
+  end
+
+  def float_format(_), do: nil
+
+  @doc """
   Format naive date
   """
   def date_format(nil), do: nil

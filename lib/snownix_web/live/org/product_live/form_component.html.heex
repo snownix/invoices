@@ -21,9 +21,9 @@
   </div>
 
   <div class="form__group">
-    <%= label f, :price %>
-    <%= number_input f, :price %>
-    <%= error_tag f, :price %>
+    <%= label f, :price_float, "Price" %>
+    <%= text_input f, :price_float, value: float_format(f.data.price) %>
+    <%= error_tag f, :price_float %>
   </div>
 
   <.live_component
@@ -37,10 +37,10 @@
     parent={@myself} />
 
   <div class="form__group">
-    <%= label f, :tax_per_item %>
-    <%= number_input f, :tax_per_item %>
-    <%= error_tag f, :tax_per_item %>
-  </div>    
+    <%= label f, :tax_per_item_float, "Tax per item %" %>
+    <%= text_input f, :tax_per_item_float, value: float_format(f.data.tax_per_item) %>
+    <%= error_tag f, :tax_per_item_float %>
+  </div>
 
   <div class="form__group">
     <%= label f, :currency %>
@@ -51,7 +51,7 @@
   <div class="form__group">
     <%= label f, :category %>
     <%= select f, :category, @categories, prompt: "Choose a category", value: @product.category_id %>
-    <%= error_tag f, :tax %>
+    <%= error_tag f, :category %>
   </div>    
   
   <div>
