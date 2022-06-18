@@ -88,6 +88,8 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
   end
 
   defp assign_taxs(socket, tax \\ %Tax{}, action \\ :create) do
+    tax = Map.put(tax, :percent_float, float_format(tax.percent))
+
     socket
     |> assign(:tax, tax)
     |> assign(:tax_action, action)

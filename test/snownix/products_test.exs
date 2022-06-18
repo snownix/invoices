@@ -133,7 +133,7 @@ defmodule Snownix.ProductsTest do
         currency: "MAD",
         description: "some description",
         name: "some name",
-        price: 12_050,
+        price_float: 120.50,
         tax_per_item: true
       }
 
@@ -156,7 +156,7 @@ defmodule Snownix.ProductsTest do
         currency: "USD",
         description: "some updated description",
         name: "some updated name",
-        price: 45_700,
+        price_float: 457.00,
         tax_per_item: false
       }
 

@@ -1,6 +1,8 @@
 defmodule Snownix.Products.Product do
   use Ecto.Schema
   import Ecto.Changeset
+  import Snownix.Helpers.Changeset
+
   @timestamps_opts [type: :utc_datetime]
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -12,6 +14,7 @@ defmodule Snownix.Products.Product do
     field :currency, :string
 
     field :price, :integer, default: 0
+    field :price_float, :float, virtual: true, default: 0.0, scale: 2
     field :tax_per_item, :boolean, default: false
 
     field :selected, :boolean, virtual: true, default: false
@@ -25,12 +28,22 @@ defmodule Snownix.Products.Product do
     timestamps()
   end
 
-  @fields [:name, :description, :price, :tax_per_item, :currency, :unit_id, :category_id]
+  @fields [
+    :name,
+    :description,
+    :price,
+    :price_float,
+    :tax_per_item,
+    :currency,
+    :unit_id,
+    :category_id
+  ]
 
   @doc false
   def changeset(product, attrs) do
     product
     |> cast(attrs, @fields)
+    |> cast_float_to_int(:price_float, :price)
     |> validate_required([:name, :price, :currency])
   end
 
