@@ -15,8 +15,7 @@ defmodule Snownix.Products.Product do
 
     field :price, :integer, default: 0
     field :price_float, :float, virtual: true, default: 0.0, scale: 2
-    field :tax_per_item, :integer, default: 0
-    field :tax_per_item_float, :float, default: 0.0, virtual: true
+    field :tax_per_item, :boolean, default: false
 
     field :selected, :boolean, virtual: true, default: false
 
@@ -35,7 +34,6 @@ defmodule Snownix.Products.Product do
     :price,
     :price_float,
     :tax_per_item,
-    :tax_per_item_float,
     :currency,
     :unit_id,
     :category_id
@@ -46,7 +44,7 @@ defmodule Snownix.Products.Product do
     product
     |> cast(attrs, @fields)
     |> validate_required([:name, :price, :currency])
-    |> cast_float_to_int(price_float: :price, tax_per_item_float: :tax_per_item)
+    |> cast_float_to_int(:price_float, :price)
   end
 
   def owner_changeset(item, project, owner) do

@@ -5,7 +5,10 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
 
   @impl true
   def update(%{product: product} = assigns, socket) do
-    changeset = Products.change_product(product)
+    changeset =
+      product
+      |> Map.put(:price_float, float_format(product.price))
+      |> Products.change_product()
 
     {:ok,
      socket

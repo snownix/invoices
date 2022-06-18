@@ -207,7 +207,7 @@
 
 
         
-        <%# Tax's %>
+        <%# Taxes %>
         <section id={Enum.at(@tabs,3).id}>
             <div class="settings__header" >
                 <h2><%= Enum.at(@tabs,3).title %></h2>
@@ -245,7 +245,7 @@
                             <% end %>
                             <tr>
                                 <td><%= text_input ft, :name, placeholder: gettext("Name"), value: input_value(ft, :name), class: tag_class_error(ft, :name) %></td>
-                                <td><%= number_input ft, :percent, placeholder: gettext("Percent"), value: input_value(ft, :percent), class: tag_class_error(ft, :percent), step: "0.05" %></td>
+                                <td><%= text_input ft, :percent_float, placeholder: gettext("Percent"), class: tag_class_error(ft, :percent_float), step: "0.05" %></td>
                                 <td><%= text_input ft, :description, placeholder: gettext("Description"), value: input_value(ft, :description), class: tag_class_error(ft, :description) %></td>
                                 <td>
                                     <button class="primary icon">
