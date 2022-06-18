@@ -12,13 +12,13 @@ defmodule SnownixWeb.Org.ProductLive.ShowComponent do
             <h3 class="font-bold"><%= @product.name %></h3>
             <p class="flex flex-col font-bold">
               <span><%= money_format(@product) %></span>
-              <small>Tax: <%= tax_format(@product.tax_per_item) %></small>
+              <small>Tax: <%= @product.tax_per_item %></small>
             </p>
         </div>
         <div>
           <p><%= @product.description %></p>
         </div>
-        <div class="border-t py-4">
+        <div class="border-t py-4 !mt-4">
           <label><%= gettext "Creation Date" %>: </label><%= @product.inserted_at %>
         </div>
     </div>

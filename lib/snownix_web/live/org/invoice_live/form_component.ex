@@ -1,7 +1,8 @@
 defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
   use SnownixWeb, :live_component
 
-  alias Snownix.Invoices
+  alias Snownix.{Invoices, Customers}
+  alias Snownix.Pagination
 
   @impl true
   def update(%{invoice: invoice} = assigns, socket) do
@@ -10,6 +11,7 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
+     |> assign_customers()
      |> assign(:changeset, changeset)}
   end
 
@@ -28,9 +30,9 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
   end
 
   defp save_invoice(socket, :edit, invoice_params) do
-    %{project: project, current_user: user} = socket.assigns
+    %{project: project, current_user: user, invoice: invoice} = socket.assigns
 
-    case Invoices.update_invoice(socket.assigns.invoice, invoice_params, project, user) do
+    case Invoices.update_invoice(invoice, project, user, invoice_params) do
       {:ok, _invoice} ->
         {:noreply,
          socket
@@ -45,6 +47,9 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
   defp save_invoice(socket, :new, invoice_params) do
     %{project: project, current_user: user} = socket.assigns
 
+    invoice_params =
+      Map.merge(invoice_params, %{"sequence_number" => Invoices.get_last_sequence_number()})
+
     case Invoices.create_invoice(project, user, invoice_params) do
       {:ok, _invoice} ->
         {:noreply,
@@ -55,5 +60,28 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
       {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
+  end
+
+  def currencies_options() do
+    Enum.map(Money.Currency.all(), fn {index, c} ->
+      {"#{index} - #{c.name} #{c.symbol}", index}
+    end)
+  end
+
+  defp assign_customers(socket) do
+    %{project: project} = socket.assigns
+
+    customers =
+      Customers.list_customer_users(project)
+      |> Pagination.page(1, per_page: 100)
+
+    socket |> assign(customers: customers.items)
+  end
+
+  def customers_options(assigns) do
+    assigns.customers
+    |> Enum.map(fn c ->
+      {"#{c.contact_name}", c.id}
+    end)
   end
 end

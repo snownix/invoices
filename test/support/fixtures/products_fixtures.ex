@@ -43,7 +43,7 @@ defmodule Snownix.ProductsFixtures do
         description: "some description",
         name: "some name",
         price: 12_050,
-        tax_per_item: 12_050
+        tax_per_item: Enum.random([true, false])
       })
       |> Snownix.Products.create_product()
 

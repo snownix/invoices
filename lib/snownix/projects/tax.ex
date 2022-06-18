@@ -1,6 +1,7 @@
 defmodule Snownix.Projects.Tax do
   use Ecto.Schema
   import Ecto.Changeset
+  @timestamps_opts [type: :utc_datetime]
 
   @primary_key {:id, :binary_id, autogenerate: true}
 
@@ -10,8 +11,8 @@ defmodule Snownix.Projects.Tax do
     field :description, :string
     field :compound_tax, :boolean, default: false
 
-    belongs_to :project, Snownix.Organizations.Project, type: :binary_id
     belongs_to :user, Snownix.Accounts.User, type: :binary_id
+    belongs_to :project, Snownix.Organizations.Project, type: :binary_id
 
     timestamps()
   end

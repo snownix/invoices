@@ -10,6 +10,7 @@ defmodule Snownix.Products do
   alias Snownix.Projects
 
   alias Snownix.Products.Category
+  alias Snownix.Organizations.Project
 
   @topic inspect(__MODULE__)
 
@@ -66,12 +67,21 @@ defmodule Snownix.Products do
     Repo.all(Category)
   end
 
+  def list_categories(%Project{} = project) do
+    list_categories(project.id)
+  end
+
   def list_categories(project_id) do
     query =
-      from c in Category,
+      from(c in Category,
         where: c.project_id == ^project_id
+      )
 
     Repo.all(query)
+  end
+
+  def list_categories(%Project{} = project, opts) do
+    list_categories(project.id, opts)
   end
 
   def list_categories(project_id, opts) do
@@ -79,8 +89,9 @@ defmodule Snownix.Products do
     order = Keyword.get(opts, :order, :asc)
 
     query =
-      from c in Category,
+      from(c in Category,
         where: c.project_id == ^project_id
+      )
 
     sort_query_by(query, orderby, order)
   end
@@ -107,11 +118,8 @@ defmodule Snownix.Products do
       from(u in Category, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
 
-  def get_category(id),
-    do: Repo.get(Category, id)
-
-  def get_category(project_id, id),
-    do: Repo.get_by(Category, id: id, project_id: project_id)
+  def get_category(%Project{} = project, id),
+    do: get_category!(project.id, id)
 
   @doc """
   Creates a category.
@@ -190,8 +198,9 @@ defmodule Snownix.Products do
   end
 
   def categories_by_ids_query(project_id, ids) do
-    from u in Category,
+    from(u in Category,
       where: u.project_id == ^project_id and u.id in ^ids
+    )
   end
 
   def delete_categories(project_id, ids) do
@@ -250,6 +259,19 @@ defmodule Snownix.Products do
     Repo.all(Unit)
   end
 
+  def list_units(%Project{} = project) do
+    list_units(project.id)
+  end
+
+  def list_units(project_id) do
+    query =
+      from(u in Unit,
+        where: u.project_id == ^project_id
+      )
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single unit.
 
@@ -285,6 +307,15 @@ defmodule Snownix.Products do
     |> notify_subscribers([:unit, :inserted])
   end
 
+  def create_unit(project, user, attrs \\ %{}) do
+    %Unit{}
+    |> Unit.changeset(attrs)
+    |> Unit.owner_changeset(project, user)
+    |> Repo.insert()
+    |> notify_subscribers([:unit, :inserted])
+    |> Projects.log_activity(project, user, :create, @activity_field)
+  end
+
   @doc """
   Updates a unit.
 
@@ -304,6 +335,15 @@ defmodule Snownix.Products do
     |> notify_subscribers([:unit, :updated])
   end
 
+  def update_unit(%Unit{} = unit, project, user, attrs) do
+    unit
+    |> Unit.changeset(attrs)
+    |> Unit.owner_changeset(project, user)
+    |> Repo.update()
+    |> notify_subscribers([:unit, :updated])
+    |> Projects.log_activity(project, user, :update, @activity_field)
+  end
+
   @doc """
   Deletes a unit.
 
@@ -318,7 +358,12 @@ defmodule Snownix.Products do
   """
   def delete_unit(%Unit{} = unit) do
     Repo.delete(unit)
+  end
+
+  def delete_unit(%Unit{} = unit, project, user) do
+    delete_unit(unit)
     |> notify_subscribers([:unit, :deleted])
+    |> Projects.log_activity(project, user, :delete, @activity_field)
   end
 
   @doc """
@@ -354,8 +399,9 @@ defmodule Snownix.Products do
     order = Keyword.get(opts, :order, :asc)
 
     query =
-      from c in Product,
+      from(c in Product,
         where: c.project_id == ^project_id
+      )
 
     sort_query_by(query, orderby, order)
   end
@@ -401,12 +447,10 @@ defmodule Snownix.Products do
     |> notify_subscribers([:product, :created])
   end
 
-  def create_product(project, user, category, attrs \\ %{}) do
+  def create_product(project, user, attrs \\ %{}) do
     %Product{}
     |> Product.changeset(attrs)
-    |> Product.change_user(user)
-    |> Product.change_project(project)
-    |> Product.change_category(category)
+    |> Product.owner_changeset(project, user)
     |> Repo.insert()
     |> notify_subscribers([:product, :created])
     |> Projects.log_activity(project, user, :create, @activity_field)
@@ -429,20 +473,6 @@ defmodule Snownix.Products do
     |> Product.changeset(attrs)
     |> Repo.update()
     |> notify_subscribers([:product, :updated])
-  end
-
-  def update_product(%Product{} = product, category, attrs) do
-    product
-    |> Repo.preload(:category)
-    |> Product.changeset(attrs)
-    |> Product.change_category(category)
-    |> Repo.update()
-    |> notify_subscribers([:product, :updated])
-  end
-
-  def update_product(%Product{} = product, project, user, category, attrs) do
-    update_product(product, category, attrs)
-    |> Projects.log_activity(project, user, :update, @activity_field)
   end
 
   def update_product(%Product{} = product, project, user, attrs) do
@@ -474,8 +504,9 @@ defmodule Snownix.Products do
 
   def delete_products(project_id, ids) do
     query =
-      from u in Product,
+      from(u in Product,
         where: u.project_id == ^project_id and u.id in ^ids
+      )
 
     Repo.delete_all(query)
 

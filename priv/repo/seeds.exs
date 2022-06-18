@@ -31,9 +31,9 @@ defmodule Snownix.Seeds do
         phone: "+212612345678",
         email: "jone@snownix.io",
         hashed_password: Bcrypt.hash_pwd_salt("jone@snownix.io"),
-        confirmed_at: get_naive_datetime(),
-        inserted_at: get_naive_datetime(),
-        updated_at: get_naive_datetime(1_000_000),
+        confirmed_at: get_utc_datetime(),
+        inserted_at: get_utc_datetime(),
+        updated_at: get_utc_datetime(1_000_000),
         admin: true
       }
     ])
@@ -115,7 +115,7 @@ defmodule Snownix.Seeds do
       description: Faker.Vehicle.standard_specs() |> Enum.join(", "),
       price: round(Faker.Commerce.price() * 10_000),
       currency: Faker.Currency.code(),
-      tax_per_item: Enum.random(1..50) * 100
+      tax_per_item: Enum.random([true, false])
     }
   end
 
@@ -141,12 +141,12 @@ defmodule Snownix.Seeds do
     |> List.first()
   end
 
-  defp get_naive_datetime() do
-    NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+  defp get_utc_datetime() do
+    DateTime.utc_now() |> DateTime.truncate(:second)
   end
 
-  defp get_naive_datetime(time_to_add) do
-    get_naive_datetime() |> NaiveDateTime.add(time_to_add)
+  defp get_utc_datetime(time_to_add) do
+    get_utc_datetime() |> DateTime.add(time_to_add) |> DateTime.truncate(:second)
   end
 end
 

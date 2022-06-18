@@ -1,11 +1,13 @@
 defmodule Snownix.Invoices.Invoice do
   use Ecto.Schema
   import Ecto.Changeset
+  @timestamps_opts [type: :utc_datetime]
 
   @primary_key {:id, :binary_id, autogenerate: true}
 
   schema "invoices" do
     field :note, :string
+    field :title, :string
     field :status, :string
     field :currency, :string
     field :paid_status, :string
@@ -13,29 +15,30 @@ defmodule Snownix.Invoices.Invoice do
     field :invoice_number, :string
     field :reference_number, :string
 
-    field :tax, :integer
-    field :total, :integer
-    field :viewed, :integer
-    field :discount, :integer
-    field :sub_total, :integer
-    field :due_amount, :integer
-    field :discount_val, :integer
-    field :sequence_number, :integer
+    field :tax, :integer, default: 0
+    field :total, :integer, default: 0
+    field :discount, :integer, default: 0
+    field :sub_total, :integer, default: 0
+    field :due_amount, :integer, default: 0
+    field :discount_val, :integer, default: 0
+    field :sequence_number, :integer, default: 0
 
-    field :to_date, :naive_datetime
-    field :due_date, :naive_datetime
-    field :from_date, :naive_datetime
+    field :to_date, :date
+    field :due_date, :date
+    field :from_date, :date
 
-    field :sent_sms, :boolean, default: false
-    field :sent_email, :boolean, default: false
-    field :allow_edit, :boolean, default: false
+    field :viewed, :boolean, default: false
+    field :sms_sent, :boolean, default: false
+    field :email_sent, :boolean, default: false
+    field :allow_edit, :boolean, default: true
     field :tax_per_item, :boolean, default: false
     field :discount_per_item, :boolean, default: false
 
     belongs_to :user, Snownix.Accounts.User, type: :binary_id
-    belongs_to :customer, Snownix.Customers.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
+    belongs_to :customer, Snownix.Customers.User, type: :binary_id, on_replace: :nilify
 
+    field :selected, :boolean, virtual: true, default: false
     timestamps()
   end
 
@@ -43,6 +46,7 @@ defmodule Snownix.Invoices.Invoice do
   def changeset(invoice, attrs) do
     invoice
     |> cast(attrs, [
+      :title,
       :from_date,
       :to_date,
       :due_date,
@@ -60,8 +64,8 @@ defmodule Snownix.Invoices.Invoice do
       :total,
       :tax,
       :due_amount,
-      :sent_email,
-      :sent_sms,
+      :email_sent,
+      :sms_sent,
       :viewed,
       :sequence_number,
       :currency,
@@ -69,11 +73,7 @@ defmodule Snownix.Invoices.Invoice do
     ])
     |> validate_required([
       :from_date,
-      :to_date,
-      :due_date,
       :invoice_number,
-      :reference_number,
-      :sequence_number,
       :currency
     ])
   end

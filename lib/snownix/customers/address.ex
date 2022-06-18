@@ -1,6 +1,7 @@
 defmodule Snownix.Customers.Address do
   use Ecto.Schema
   import Ecto.Changeset
+  @timestamps_opts [type: :utc_datetime]
 
   import Snownix.Helpers.Model
 
@@ -28,22 +29,23 @@ defmodule Snownix.Customers.Address do
     timestamps()
   end
 
+  @fields [
+    :currency,
+    :country,
+    :title,
+    :city,
+    :state,
+    :zip,
+    :street,
+    :street_2,
+    :fax,
+    :phone
+  ]
+
   @doc false
   def changeset(address, attrs) do
     address
-    |> cast(attrs, [
-      :currency,
-      :country,
-      :title,
-      :city,
-      :state,
-      :zip,
-      :street,
-      :default,
-      :street_2,
-      :fax,
-      :phone
-    ])
+    |> cast(attrs, @fields)
     |> cast_assocs()
     |> validate_required([:country, :city, :state, :zip, :street])
     |> address_changeset(attrs)

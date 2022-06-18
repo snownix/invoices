@@ -1,6 +1,7 @@
 defmodule Snownix.Products.Unit do
   use Ecto.Schema
   import Ecto.Changeset
+  @timestamps_opts [type: :utc_datetime]
 
   @primary_key {:id, :binary_id, autogenerate: true}
 
@@ -20,5 +21,12 @@ defmodule Snownix.Products.Unit do
     unit
     |> cast(attrs, [:name])
     |> validate_required([:name])
+  end
+
+  def owner_changeset(unit, project, user) do
+    unit
+    |> change()
+    |> put_assoc(:user, user)
+    |> put_assoc(:project, project)
   end
 end

@@ -8,10 +8,12 @@ defmodule Snownix.Invoices do
 
   alias Snownix.Repo
   alias Snownix.Projects
+  alias Snownix.Customers
+  alias Snownix.Organizations.Project
 
   @topic inspect(__MODULE__)
 
-  @activity_field :name
+  @activity_field :invoice_number
 
   def subscribe(project_id) do
     Phoenix.PubSub.subscribe(Snownix.PubSub, @topic <> "#{project_id}")
@@ -53,6 +55,19 @@ defmodule Snownix.Invoices do
 
   alias Snownix.Invoices.Invoice
 
+  def get_last_sequence_number() do
+    seq =
+      Repo.one(
+        from u in Invoice, select: u.sequence_number, order_by: [desc: :sequence_number], limit: 1
+      )
+
+    if seq do
+      seq
+    else
+      0
+    end
+  end
+
   @doc """
   Returns the list of invoices.
 
@@ -66,18 +81,19 @@ defmodule Snownix.Invoices do
     Repo.all(Invoice)
   end
 
-  def list_invoices(project_id, opts) do
+  def list_invoices(%Project{} = project, opts \\ []) do
     orderby = Keyword.get(opts, :order_by)
     order = Keyword.get(opts, :order, :asc)
 
     query =
-      from(c in Invoice,
-        where:
-          c.project_id ==
-            ^project_id
-      )
+      from i in Invoice,
+        where: i.project_id == ^project.id
 
     sort_query_by(query, orderby, order)
+  end
+
+  def invoice_customer(query) do
+    query |> Repo.preload(:customer)
   end
 
   @doc """
@@ -97,10 +113,22 @@ defmodule Snownix.Invoices do
   def get_invoice!(id),
     do: Repo.get!(Invoice, id)
 
+  def get_invoice!(%Project{} = project, id),
+    do: get_invoice!(project.id, id)
+
   def get_invoice!(project_id, id),
     do:
       from(u in Invoice, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
+
+  def invoice_assign_customer(query, %Project{} = project, %{"customer_id" => customer_id}) do
+    customer = Customers.get_user!(project.id, customer_id)
+
+    query
+    |> Invoice.customer_changeset(customer)
+  end
+
+  def invoice_assign_customer(query, %Project{} = _project, _attrs), do: query
 
   @doc """
   Creates a invoice.
@@ -124,8 +152,9 @@ defmodule Snownix.Invoices do
   def create_invoice(project, user, attrs \\ %{}) do
     %Invoice{}
     |> Invoice.changeset(attrs)
-    |> Invoice.project_changeset(project)
     |> Invoice.owner_changeset(user)
+    |> Invoice.project_changeset(project)
+    |> invoice_assign_customer(project, attrs)
     |> Repo.insert()
     |> notify_subscribers([:invoice, :created])
     |> Projects.log_activity(project, user, :create, @activity_field)
@@ -143,6 +172,7 @@ defmodule Snownix.Invoices do
       {:error, %Ecto.Changeset{}}
 
   """
+
   def update_invoice(%Invoice{} = invoice, attrs) do
     invoice
     |> Invoice.changeset(attrs)
@@ -150,8 +180,17 @@ defmodule Snownix.Invoices do
     |> notify_subscribers([:invoice, :updated])
   end
 
-  def update_invoice(%Invoice{} = invoice, attrs, project, user) do
-    update_invoice(invoice, attrs)
+  def update_invoice(%Invoice{} = invoice, %Project{} = project, attrs) do
+    invoice
+    |> Repo.preload(:customer)
+    |> Invoice.changeset(attrs)
+    |> invoice_assign_customer(project, attrs)
+    |> Repo.update()
+    |> notify_subscribers([:invoice, :updated])
+  end
+
+  def update_invoice(%Invoice{} = invoice, %Project{} = project, user, attrs) do
+    update_invoice(invoice, project, attrs)
     |> Projects.log_activity(project, user, :update, @activity_field)
   end
 
@@ -197,7 +236,7 @@ defmodule Snownix.Invoices do
       |> Enum.map(fn item ->
         Map.take(item, Invoice.__schema__(:fields))
         |> Map.delete(:id)
-        |> Map.put(:name, "Clone - #{item.name}")
+        |> Map.put(:name, "Clone - #{item.title}")
       end)
 
     result =

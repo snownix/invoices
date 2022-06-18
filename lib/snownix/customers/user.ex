@@ -1,6 +1,7 @@
 defmodule Snownix.Customers.User do
   use Ecto.Schema
   import Ecto.Changeset
+  @timestamps_opts [type: :utc_datetime]
   import Snownix.Helpers.Model
 
   @primary_key {:id, :binary_id, autogenerate: true}

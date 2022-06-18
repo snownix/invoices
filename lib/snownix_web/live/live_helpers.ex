@@ -94,25 +94,25 @@ defmodule SnownixWeb.LiveHelpers do
   """
   def date_format(nil), do: nil
 
-  def date_format(naive_date) do
-    naive_date |> DateTime.from_naive!("Etc/UTC") |> Calendar.strftime("%a, %B %d %Y")
+  def date_format(utc_date) do
+    utc_date |> DateTime.from_naive!("Etc/UTC") |> Calendar.strftime("%a, %B %d %Y")
   end
 
   def hour_format(nil), do: nil
 
-  def hour_format(naive_date) do
-    naive_date
+  def hour_format(utc_date) do
+    utc_date
     |> DateTime.from_naive!("Etc/UTC")
     |> Calendar.strftime("%H:%M")
   end
 
   def datetime_format(nil), do: nil
 
-  def datetime_format(naive_date) do
-    naive_date |> DateTime.from_naive!("Etc/UTC") |> Calendar.strftime("%a, %B %d %Y %H:%M:%S")
+  def datetime_format(utc_date) do
+    utc_date |> DateTime.from_naive!("Etc/UTC") |> Calendar.strftime("%a, %B %d %Y %H:%M:%S")
   end
 
-  def money_format(%{price: price, currency: currency}) do
+  def money_format(price, currency) do
     if !is_nil(currency) and is_integer(price) do
       Money.to_string(Money.new(price, String.to_atom(currency)))
     else
@@ -120,7 +120,13 @@ defmodule SnownixWeb.LiveHelpers do
     end
   end
 
+  def money_format(%{price: price, currency: currency}) do
+    money_format(price, currency)
+  end
+
   def money_format(_), do: nil
+
+  def tax_format(nil), do: nil
 
   def tax_format(percent) do
     "#{Float.round(percent / 100)}%"

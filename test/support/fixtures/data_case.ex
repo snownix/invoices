@@ -22,6 +22,7 @@ defmodule Snownix.DataCase do
 
       import Ecto
       import Ecto.Changeset
+      @timestamps_opts [type: :utc_datetime]
       import Ecto.Query
       import Snownix.DataCase
     end
