@@ -43,8 +43,8 @@ defmodule Snownix.Products.Product do
   def changeset(product, attrs) do
     product
     |> cast(attrs, @fields)
-    |> validate_required([:name, :price, :currency])
     |> cast_float_to_int(:price_float, :price)
+    |> validate_required([:name, :price, :currency])
   end
 
   def owner_changeset(item, project, owner) do

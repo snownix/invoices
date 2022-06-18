@@ -23,10 +23,10 @@ defmodule Snownix.Projects.Tax do
   def changeset(tax, attrs) do
     tax
     |> cast(attrs, [:name, :percent, :percent_float, :description, :compound_tax])
-    |> validate_required([:name, :percent_float])
+    |> cast_float_to_int(:percent_float, :percent)
+    |> validate_required([:name, :percent])
     |> validate_length(:name, max: 50)
     |> validate_length(:description, max: 150)
-    |> cast_float_to_int(:percent_float, :percent)
     |> validate_number(:percent, greater_than_or_equal_to: 0, less_than_or_equal_to: 10_000)
     |> validate_number(:percent_float, greater_than_or_equal_to: 0, less_than_or_equal_to: 100)
   end
