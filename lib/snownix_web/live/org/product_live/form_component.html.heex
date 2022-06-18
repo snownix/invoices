@@ -22,9 +22,9 @@
 
   <div class="form__groups md:!space-x-2">
     <div class="form__group md:!w-1/3">
-      <%= label f, :price %>
-      <%= number_input f, :price %>
-      <%= error_tag f, :price %>
+      <%= label f, :price_float, "Price" %>
+      <%= text_input f, :price_float %>
+      <%= error_tag f, :price_float %>
     </div>
 
     <div class="form__group md:!w-2/3">
