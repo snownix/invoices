@@ -1,6 +1,7 @@
 defmodule Snownix.Products.Product do
   use Ecto.Schema
   import Ecto.Changeset
+  import Snownix.Helpers.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: true}
 
@@ -11,7 +12,9 @@ defmodule Snownix.Products.Product do
     field :currency, :string
 
     field :price, :integer, default: 0
+    field :price_float, :float, virtual: true, default: 0.0, scale: 2
     field :tax_per_item, :integer, default: 0
+    field :tax_per_item_float, :float, default: 0.0, virtual: true
 
     field :selected, :boolean, virtual: true, default: false
 
@@ -23,20 +26,35 @@ defmodule Snownix.Products.Product do
     timestamps()
   end
 
+  @fields [
+    :name,
+    :description,
+    :price,
+    :price_float,
+    :tax_per_item,
+    :tax_per_item_float,
+    :currency,
+    :unit_id,
+    :category_id
+  ]
+
   @doc false
   def changeset(product, attrs) do
     product
-    |> cast(attrs, [:name, :description, :price, :tax_per_item, :currency, :unit_id])
+    |> cast(attrs, @fields)
     |> validate_required([:name, :price, :currency, :tax_per_item])
+    |> cast_float_to_int(price_float: :price, tax_per_item_float: :tax_per_item)
   end
 
   def change_project(changeset, project) do
     put_assoc(changeset, :project, project)
   end
 
-  def change_category(changeset, category) do
-    put_change(changeset, :category_id, category.id)
+  def change_category(changeset, %{id: id}) do
+    put_change(changeset, :category_id, id)
   end
+
+  def change_category(changeset, _), do: changeset
 
   def change_user(changeset, user) do
     put_assoc(changeset, :user, user)
