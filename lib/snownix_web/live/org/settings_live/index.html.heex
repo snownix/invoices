@@ -244,9 +244,9 @@
                                 </tr>
                             <% end %>
                             <tr>
-                                <td><%= text_input ft, :name, placeholder: gettext("Name"), value: input_value(ft, :name), class: tag_class_error(ft, :name) %></td>
-                                <td><%= text_input ft, :percent_float, placeholder: gettext("Percent"), class: tag_class_error(ft, :percent_float), step: "0.05" %></td>
-                                <td><%= text_input ft, :description, placeholder: gettext("Description"), value: input_value(ft, :description), class: tag_class_error(ft, :description) %></td>
+                                <td><%= text_input ft, :name, placeholder: gettext("Name"), class: tag_class_error(ft, :name) %></td>
+                                <td><%= text_input ft, :percent_float, placeholder: gettext("Percent"), class: tag_class_error(ft, :percent_float), phx_hook: "NumberInputPrecision", type: "tel" %></td>
+                                <td><%= text_input ft, :description, placeholder: gettext("Description"), class: tag_class_error(ft, :description) %></td>
                                 <td>
                                     <button class="primary icon">
                                         <%= render SnownixWeb.IconsView, ( @tax_action == :create && "plus.svg" || "save.svg"), %{} %>

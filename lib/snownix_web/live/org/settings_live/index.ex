@@ -77,7 +77,7 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
     socket
     |> assign(
       :tax_changeset,
-      Projects.change_tax(tax, project, user, params)
+      Projects.change_tax(tax, project, user, params) |> IO.inspect()
     )
   end
 
@@ -89,6 +89,7 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
 
   defp assign_taxs(socket, tax \\ %Tax{}, action \\ :create) do
     tax = Map.put(tax, :percent_float, float_format(tax.percent))
+    |> IO.inspect()
 
     socket
     |> assign(:tax, tax)

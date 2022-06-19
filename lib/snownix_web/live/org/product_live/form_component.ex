@@ -8,7 +8,9 @@ defmodule SnownixWeb.Org.ProductLive.FormComponent do
     changeset =
       product
       |> Map.put(:price_float, float_format(product.price))
+      |> IO.inspect()
       |> Products.change_product()
+      |> IO.inspect()
 
     {:ok,
      socket

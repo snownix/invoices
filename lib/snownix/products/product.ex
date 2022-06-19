@@ -14,7 +14,7 @@ defmodule Snownix.Products.Product do
     field :currency, :string
 
     field :price, :integer, default: 0
-    field :price_float, :float, virtual: true, default: 0.0, scale: 2
+    field :price_float, :float, virtual: true, default: 0.0
     field :tax_per_item, :boolean, default: false
 
     field :selected, :boolean, virtual: true, default: false
