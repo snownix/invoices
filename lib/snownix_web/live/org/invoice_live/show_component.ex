@@ -30,16 +30,15 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
                 <h5>Due : <%= @invoice.due_date %></h5>
               </div>
               <div class="flex flex-col">
-                <div class="flex justify-between space-x-4"><span>Total</span><span class="justify-end"><%= money_format(@invoice.total, @invoice.currency) %></span></div>
-                <div class="flex justify-between space-x-4"><small>Subtotal</small><span><%= money_format(@invoice.sub_total, @invoice.currency) %></span></div>
-                <div class="flex justify-between space-x-4"><small>Tax</small> <span><%= @invoice.tax_per_item %></span></div>
+                <div class="flex justify-between space-x-4"><span>Total</span><span class="justify-end font-bold"><%= money_format(@invoice.total, @invoice.currency) %></span></div>
+                <div class="flex justify-between space-x-4"><small>Tax</small> <span><%= tax_format(@invoice.tax) %></span></div>
               </div>
           </div>
           <div>
             <p><%= @invoice.note %></p>
           </div>
       </div>
-      
+
       <div class="py-2 px-6 rounded bg-gray-100 font-medium text-dark">
         <h3>Items</h3>
       </div>
@@ -57,12 +56,12 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
                   <span><%= money_format(item.price, @invoice.currency) %></span>
                 </div>
               </td>
-              <td class="w-24 text-right"><%= money_format(item.total, @invoice.currency) %></td>
+              <td class="w-24 text-right font-semibold"><%= money_format(item.total, @invoice.currency) %></td>
             </tr>
           <% end %>
         </tbody>
       </table>
-      
+
       <div class="border-t p-4 !mt-4">
         <label><%= gettext "Creation Date" %>: </label><%= @invoice.inserted_at %>
       </div>

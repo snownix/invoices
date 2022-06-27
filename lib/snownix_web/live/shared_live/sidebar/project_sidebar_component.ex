@@ -102,8 +102,8 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
             </div>
           <% end %>
         </li>
-        <li phx-hook="ShortCut" data-key="3" data-target-el="#nav-quotes" id="sk-nav-quotes">
-          <a href="/" id="nav-quotes">
+        <li phx-hook="ShortCut" data-key="3" data-target-el="#nav-quotes" disabled id="sk-nav-quotes">
+          <a href="#" id="nav-quotes">
             <span>
               <%= render SnownixWeb.IconsView, "quotes.svg", %{} %>
             </span>
@@ -126,29 +126,41 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
           <%= gettext "Advanced" %>
         </p>
         <ul class="sidebar__menu">
-          <li>
-            <%= live_patch to: Routes.org_customer_index_path(@socket, :index) do %>
+          <li phx-hook="ShortCut" data-key="4" data-target-el="#nav-customers"  id="sk-nav-customers">
+            <%= live_patch to: Routes.org_customer_index_path(@socket, :index), id: "nav-customers"  do %>
               <span><%= render SnownixWeb.IconsView, "customers.svg", %{} %></span>
-              <div>
+              <div class="_title">
                 <span><%= gettext("Customers") %></span>
+                <span class="_shortkey">
+                  <%= render SnownixWeb.IconsView, "cmd.svg" , %{} %>
+                  <span key>4</span>
+                </span>
               </div>
             <% end %>
             </li>
-          <li>
-            <%= live_patch to: Routes.org_product_index_path(@socket, :index) do %>
+          <li phx-hook="ShortCut" data-key="5" data-target-el="#nav-products"  id="sk-nav-products">
+            <%= live_patch to: Routes.org_product_index_path(@socket, :index), id: "nav-products" do %>
               <span><%= render SnownixWeb.IconsView, "products.svg", %{} %></span>
-              <div>
+              <div class="_title">
                 <span><%= gettext("Products") %></span>
+                <span class="_shortkey">
+                  <%= render SnownixWeb.IconsView, "cmd.svg" , %{} %>
+                  <span key>5</span>
+                </span>
               </div>
-              <% end %>
-            </li>
-            <li>
-            <%= live_patch to: Routes.org_category_index_path(@socket, :index) do %>
+            <% end %>
+          </li>
+          <li phx-hook="ShortCut" data-key="6" data-target-el="#nav-categories"  id="sk-nav-categories">
+            <%= live_patch to: Routes.org_category_index_path(@socket, :index), id: "nav-categories" do %>
               <span><%= render SnownixWeb.IconsView, "categories.svg", %{} %></span>
-              <div>
+              <div class="_title">
                 <span><%= gettext("Categories") %></span>
+                <span class="_shortkey">
+                  <%= render SnownixWeb.IconsView, "cmd.svg" , %{} %>
+                  <span key>6</span>
+                </span>
               </div>
-              <% end %>
+            <% end %>
           </li>
         </ul>
       </div>
