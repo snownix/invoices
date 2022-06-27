@@ -1,8 +1,9 @@
 defmodule Snownix.Invoices.Item do
   use Ecto.Schema
   import Ecto.Changeset
-  @timestamps_opts [type: :utc_datetime]
+  import Snownix.Helpers.Changeset
 
+  @timestamps_opts [type: :utc_datetime]
   @primary_key {:id, :binary_id, autogenerate: true}
 
   schema "items" do
@@ -14,6 +15,7 @@ defmodule Snownix.Invoices.Item do
 
     field :tax, :integer, default: 0
     field :price, :integer, default: 0
+    field :price_float, :float, virtual: true, default: 0.0, scale: 2
     field :total, :integer, default: 0
     field :discount, :integer, default: 0
     field :quantity, :integer, default: 0
@@ -32,7 +34,17 @@ defmodule Snownix.Invoices.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:name, :description, :price, :quantity, :unit_name, :discount, :tax, :total])
+    |> cast(attrs, [
+      :name,
+      :description,
+      :price_float,
+      :quantity,
+      :unit_name,
+      :discount,
+      :tax,
+      :total
+    ])
+    |> cast_float_to_int(:price_float, :price)
     |> validate_required([
       :name,
       :price,

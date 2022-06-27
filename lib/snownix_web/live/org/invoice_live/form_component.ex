@@ -7,30 +7,37 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
 
   @impl true
   def update(%{invoice: invoice} = assigns, socket) do
+    invoice = %{
+      invoice
+      | items: Enum.map(invoice.items, &Map.put(&1, :price_float, float_format(&1.price)))
+    }
+
     changeset = Invoices.change_invoice(invoice)
-    items = Enum.map(invoice.items, &Invoices.change_item(&1))
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign_customers()
-     |> assign(:items, items)
+     |> assign_items(invoice.items)
      |> assign(:delete_items, [])
      |> assign(:changeset, changeset)}
   end
 
   @impl true
   def handle_event("validate", %{"invoice" => invoice_params}, socket) do
-    %{changeset: changeset} = socket.assigns
+    %{changeset: changeset, items: items} = socket.assigns
 
     changeset =
       changeset
       |> Ecto.Changeset.cast(invoice_params, [])
       |> Ecto.Changeset.cast_assoc(:items, with: &Item.changeset/2)
+      |> Map.put(:action, :validate)
 
-    changeset = changeset |> Map.put(:action, :validate)
+    items = Map.get(changeset.changes, :items, items)
 
-    {:noreply, assign(socket, changeset: changeset, items: changeset.changes.items)}
+    {:noreply,
+     assign(socket, changeset: changeset)
+     |> assign_items(items)}
   end
 
   def handle_event("save", %{"invoice" => invoice_params}, socket) do
@@ -47,7 +54,10 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
       ])
 
     changeset = Ecto.Changeset.put_assoc(changeset, :items, items)
-    {:noreply, assign(socket, changeset: changeset, items: items)}
+
+    {:noreply,
+     assign(socket, changeset: changeset)
+     |> assign_items(items)}
   end
 
   def handle_event("remove-item", %{"id" => id}, socket) do
@@ -57,7 +67,10 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
     delete_items = Enum.filter(delete_items, fn %{data: x} -> x.id === id or x.temp_id == id end)
 
     changeset = Ecto.Changeset.put_assoc(changeset, :items, items)
-    {:noreply, assign(socket, changeset: changeset, items: items, delete_items: delete_items)}
+
+    {:noreply,
+     assign(socket, changeset: changeset, delete_items: delete_items)
+     |> assign_items(items)}
   end
 
   defp save_invoice(socket, :edit, invoice_params) do
@@ -104,6 +117,10 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
     Enum.map(Money.Currency.all(), fn {index, c} ->
       {"#{index} - #{c.name} #{c.symbol}", index}
     end)
+  end
+
+  defp assign_items(socket, items) do
+    socket |> assign(:items, items)
   end
 
   defp assign_customers(socket) do
