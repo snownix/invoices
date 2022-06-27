@@ -118,7 +118,10 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
       currency: project.currency,
       tax_per_item: project.tax_per_item,
       from_date: Timex.today(),
-      due_date: Timex.shift(Timex.today(), months: project.due_duration)
+      due_date: Timex.shift(Timex.today(), months: project.due_duration),
+      items: [
+        %Invoices.Item{temp_id: SnownixWeb.Org.InvoiceLive.FormComponent.get_temp_id()}
+      ]
     })
   end
 
@@ -149,7 +152,9 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
   end
 
   defp invoice_id(project_id, id) do
-    Invoices.get_invoice!(project_id, id) |> Invoices.invoice_customer()
+    Invoices.get_invoice!(project_id, id)
+    |> Invoices.invoice_customer()
+    |> Invoices.invoice_items()
   end
 
   defp project_id(%{assigns: %{project: %{id: id}}}) do

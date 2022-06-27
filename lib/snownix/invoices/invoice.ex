@@ -34,6 +34,8 @@ defmodule Snownix.Invoices.Invoice do
     field :tax_per_item, :boolean, default: false
     field :discount_per_item, :boolean, default: false
 
+    has_many :items, Snownix.Invoices.Item, on_replace: :delete
+
     belongs_to :user, Snownix.Accounts.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
     belongs_to :customer, Snownix.Customers.User, type: :binary_id, on_replace: :nilify
@@ -76,6 +78,15 @@ defmodule Snownix.Invoices.Invoice do
       :invoice_number,
       :currency
     ])
+    |> cast_assoc(:items)
+    |> maybe_update_total()
+  end
+
+  defp maybe_update_total(changeset) do
+    total = Enum.reduce(get_field(changeset, :items, []), 0, fn item, x -> x + item.total end)
+
+    changeset
+    |> put_change(:total, total)
   end
 
   def owner_changeset(item, owner) do

@@ -1,0 +1,35 @@
+.invoices__table tr {
+ @apply  border-l border-r border-gray-100;
+}
+.invoices__table th {
+    @apply px-1;
+}
+.invoices__table td {
+    @apply p-0 border-b;
+}
+.invoices__table td *{
+    @apply rounded-none border-none px-2;
+}
+
+
+/* Views */
+.invoices__table__view *{
+    @apply p-0;
+}
+
+.invoices__table__view td:first-child{
+    @apply px-5;
+}
+
+.invoices__table__view td, .invoices__table__view th{
+   @apply px-2 py-2; 
+}
+
+.invoices__table__view tr {
+    max-width: 0;
+}
+.invoices__table__view tr p{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

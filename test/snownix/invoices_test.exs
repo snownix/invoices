@@ -173,4 +173,72 @@ defmodule Snownix.InvoicesTest do
       assert %Ecto.Changeset{} = Invoices.change_invoice(invoice)
     end
   end
+
+  describe "items" do
+    alias Snownix.Invoices.Item
+
+    import Snownix.InvoicesFixtures
+
+    @invalid_attrs %{description: nil, discount: nil, name: nil, price: nil, quantity: nil, tax: nil, total: nil, unit_name: nil}
+
+    test "list_items/0 returns all items" do
+      item = item_fixture()
+      assert Invoices.list_items() == [item]
+    end
+
+    test "get_item!/1 returns the item with given id" do
+      item = item_fixture()
+      assert Invoices.get_item!(item.id) == item
+    end
+
+    test "create_item/1 with valid data creates a item" do
+      valid_attrs = %{description: "some description", discount: 42, name: "some name", price: 42, quantity: 42, tax: 42, total: 42, unit_name: "some unit_name"}
+
+      assert {:ok, %Item{} = item} = Invoices.create_item(valid_attrs)
+      assert item.description == "some description"
+      assert item.discount == 42
+      assert item.name == "some name"
+      assert item.price == 42
+      assert item.quantity == 42
+      assert item.tax == 42
+      assert item.total == 42
+      assert item.unit_name == "some unit_name"
+    end
+
+    test "create_item/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Invoices.create_item(@invalid_attrs)
+    end
+
+    test "update_item/2 with valid data updates the item" do
+      item = item_fixture()
+      update_attrs = %{description: "some updated description", discount: 43, name: "some updated name", price: 43, quantity: 43, tax: 43, total: 43, unit_name: "some updated unit_name"}
+
+      assert {:ok, %Item{} = item} = Invoices.update_item(item, update_attrs)
+      assert item.description == "some updated description"
+      assert item.discount == 43
+      assert item.name == "some updated name"
+      assert item.price == 43
+      assert item.quantity == 43
+      assert item.tax == 43
+      assert item.total == 43
+      assert item.unit_name == "some updated unit_name"
+    end
+
+    test "update_item/2 with invalid data returns error changeset" do
+      item = item_fixture()
+      assert {:error, %Ecto.Changeset{}} = Invoices.update_item(item, @invalid_attrs)
+      assert item == Invoices.get_item!(item.id)
+    end
+
+    test "delete_item/1 deletes the item" do
+      item = item_fixture()
+      assert {:ok, %Item{}} = Invoices.delete_item(item)
+      assert_raise Ecto.NoResultsError, fn -> Invoices.get_item!(item.id) end
+    end
+
+    test "change_item/1 returns a item changeset" do
+      item = item_fixture()
+      assert %Ecto.Changeset{} = Invoices.change_item(item)
+    end
+  end
 end

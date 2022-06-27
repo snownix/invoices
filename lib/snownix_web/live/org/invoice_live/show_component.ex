@@ -38,9 +38,33 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
           <div>
             <p><%= @invoice.note %></p>
           </div>
-          <div class="border-t py-4 !mt-4">
-            <label><%= gettext "Creation Date" %>: </label><%= @invoice.inserted_at %>
-          </div>
+      </div>
+      
+      <div class="py-2 px-6 rounded bg-gray-100 font-medium text-dark">
+        <h3>Items</h3>
+      </div>
+      <table class="invoices__table__view table-fixed">
+        <tbody>
+          <%= for item <- @invoice.items do %>
+            <tr>
+              <td>
+                <p><%= item.name %></p>
+              </td>
+              <td class="w-32 text-right whitespace-nowrap">
+                <div class="flex justify-between">
+                  <span><%= item.quantity %></span>
+                  <span>x</span>
+                  <span><%= money_format(item.price, @invoice.currency) %></span>
+                </div>
+              </td>
+              <td class="w-24 text-right"><%= money_format(item.total, @invoice.currency) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      
+      <div class="border-t p-4 !mt-4">
+        <label><%= gettext "Creation Date" %>: </label><%= @invoice.inserted_at %>
       </div>
     </section>
     """

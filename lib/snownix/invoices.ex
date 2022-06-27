@@ -96,6 +96,10 @@ defmodule Snownix.Invoices do
     query |> Repo.preload(:customer)
   end
 
+  def invoice_items(query) do
+    query |> Repo.preload(:items)
+  end
+
   @doc """
   Gets a single invoice.
 
@@ -120,6 +124,7 @@ defmodule Snownix.Invoices do
     do:
       from(u in Invoice, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
+      |> Repo.preload(:items)
 
   def invoice_assign_customer(query, %Project{} = project, %{"customer_id" => customer_id}) do
     customer = Customers.get_user!(project.id, customer_id)
@@ -259,5 +264,107 @@ defmodule Snownix.Invoices do
   """
   def change_invoice(%Invoice{} = invoice, attrs \\ %{}) do
     Invoice.changeset(invoice, attrs)
+  end
+
+  alias Snownix.Invoices.Item
+
+  @doc """
+  Returns the list of items.
+
+  ## Examples
+
+      iex> list_items()
+      [%Item{}, ...]
+
+  """
+  def list_items do
+    Repo.all(Item)
+  end
+
+  @doc """
+  Gets a single item.
+
+  Raises `Ecto.NoResultsError` if the Item does not exist.
+
+  ## Examples
+
+      iex> get_item!(123)
+      %Item{}
+
+      iex> get_item!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_item!(id), do: Repo.get!(Item, id)
+
+  @doc """
+  Creates a item.
+
+  ## Examples
+
+      iex> create_item(%{field: value})
+      {:ok, %Item{}}
+
+      iex> create_item(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_item(attrs \\ %{}) do
+    %Item{}
+    |> Item.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a item.
+
+  ## Examples
+
+      iex> update_item(item, %{field: new_value})
+      {:ok, %Item{}}
+
+      iex> update_item(item, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_item(%Item{} = item, attrs) do
+    item
+    |> Item.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a item.
+
+  ## Examples
+
+      iex> delete_item(item)
+      {:ok, %Item{}}
+
+      iex> delete_item(item)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_item(%Item{} = item) do
+    Repo.delete(item)
+  end
+
+  def delete_items([]), do: {:ok, nil}
+
+  def delete_items(items) do
+    Repo.delete_all(items)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking item changes.
+
+  ## Examples
+
+      iex> change_item(item)
+      %Ecto.Changeset{data: %Item{}}
+
+  """
+  def change_item(%Item{} = item, attrs \\ %{}) do
+    Item.changeset(item, attrs)
   end
 end

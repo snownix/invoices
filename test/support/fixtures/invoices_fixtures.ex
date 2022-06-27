@@ -39,4 +39,25 @@ defmodule Snownix.InvoicesFixtures do
 
     invoice
   end
+
+  @doc """
+  Generate a item.
+  """
+  def item_fixture(attrs \\ %{}) do
+    {:ok, item} =
+      attrs
+      |> Enum.into(%{
+        description: "some description",
+        discount: 42,
+        name: "some name",
+        price: 42,
+        quantity: 42,
+        tax: 42,
+        total: 42,
+        unit_name: "some unit_name"
+      })
+      |> Snownix.Invoices.create_item()
+
+    item
+  end
 end

@@ -7,6 +7,7 @@ config :snownix, Snownix.Repo,
   hostname: "localhost",
   database: "snownix_invoices_dev",
   show_sensitive_data_on_connection_error: true,
+  log: false,
   pool_size: 10
 
 # For development, we disable any cache and enable

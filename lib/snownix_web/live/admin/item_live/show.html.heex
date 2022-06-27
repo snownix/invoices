@@ -1,0 +1,61 @@
+<h1>Show Item</h1>
+
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.admin_item_show_path(@socket, :show, @item)}>
+    <.live_component
+      module={SnownixWeb.Admin.ItemLive.FormComponent}
+      id={@item.id}
+      title={@page_title}
+      action={@live_action}
+      item={@item}
+      return_to={Routes.admin_item_show_path(@socket, :show, @item)}
+    />
+  </.modal>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @item.name %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @item.description %>
+  </li>
+
+  <li>
+    <strong>Price:</strong>
+    <%= @item.price %>
+  </li>
+
+  <li>
+    <strong>Quantity:</strong>
+    <%= @item.quantity %>
+  </li>
+
+  <li>
+    <strong>Unit name:</strong>
+    <%= @item.unit_name %>
+  </li>
+
+  <li>
+    <strong>Discount:</strong>
+    <%= @item.discount %>
+  </li>
+
+  <li>
+    <strong>Tax:</strong>
+    <%= @item.tax %>
+  </li>
+
+  <li>
+    <strong>Total:</strong>
+    <%= @item.total %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.admin_item_show_path(@socket, :edit, @item), class: "button" %></span> |
+<span><%= live_redirect "Back", to: Routes.admin_item_index_path(@socket, :index) %></span>

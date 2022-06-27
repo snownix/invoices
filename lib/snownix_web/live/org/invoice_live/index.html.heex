@@ -111,10 +111,10 @@
     <div class="_view">
         <.live_component 
             id="invoices" 
+            class="md:!w-3/4 lg:!w-3/6"
             open={!is_nil(@invoice)}
             prev={Routes.org_invoice_index_path(@socket,:index)}
             module={SnownixWeb.SharedLive.UI.DetailsComponent}
-            class="md:!w-3/4 lg:!w-2/4"
         >
             <:title><%= gettext "Invoice Details" %></:title>
             <:body>
