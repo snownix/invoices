@@ -251,6 +251,24 @@ const Hooks = {
             removeEventListener("keyup", this.keyupEvt);
             removeEventListener("click", this.clickEvt);
         }
+    },
+    NumberInputPrecision: {
+        mounted() {
+            this.el.value = this.fixed_precision(this.el.value, 2);
+            console.log(this.el.value);
+            this.el.addEventListener('input', (event) => {
+                console.log(this.el.value);
+                this.el.value = this.fixed_precision(this.el.value, 2);
+            })
+        },
+        fixed_precision(input) {
+            input = this.replace_restricted_chars(input);
+            input = parseFloat(input) / 100;
+            return input.toFixed(2);
+        },
+        replace_restricted_chars(input) {
+            return input.replaceAll(/\D+/g, '');
+        }
     }
 }
 
