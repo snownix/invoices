@@ -1,6 +1,8 @@
 defmodule Snownix.Repo.Migrations.CreateItems do
   use Ecto.Migration
 
+  @discount_default "fixed"
+
   def change do
     create table(:items, primary_key: false) do
       add :id, :uuid, primary_key: true
@@ -9,11 +11,11 @@ defmodule Snownix.Repo.Migrations.CreateItems do
       add :unit_name, :string
       add :description, :text
 
-      add :tax, :integer, default: 0
-      add :total, :integer, default: 0
+      add :taxs, {:array, :map}, default: []
       add :price, :integer, default: 0
       add :discount, :integer, default: 0
       add :quantity, :integer, default: 0
+      add :discount_type, :string, default: @discount_default
 
       add :unit_id, references(:units, on_delete: :nilify_all, type: :uuid)
       add :invoice_id, references(:invoices, on_delete: :delete_all, type: :uuid)

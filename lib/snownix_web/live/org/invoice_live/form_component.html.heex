@@ -43,13 +43,15 @@
 			<table class="invoices__table">
 				<thead>
 					<th class="w-full">Items</th>
-					<th class="min-w-[4rem] text-center">Quantity</th>
-					<th class="min-w-[4rem] text-center">Price</th>
-					<th class="min-w-[4rem] text-center">Discount</th>
-					<th>Amount</th>
+					<th class="column__input">Quantity</th>
+					<th class="column__input">Price</th>
+					<%= if checkbox_value(f, :discount_per_item) do %>
+						<th class="column__input">Discount</th>
+					<% end %>
+					<th class="column__input">Amount</th>
 					<th>
-						<button type="button" phx-target={@myself} phx-click="add-item" class="xs !p-0.5 justify-self-end  border-none">
-								<%= render SnownixWeb.IconsView, "plus.svg", %{size: 25} %>	
+						<button type="button" phx-target={@myself} phx-click="new-item" class="xs !p-0.5 justify-self-end  border-none">
+							<%= render SnownixWeb.IconsView, "plus.svg", %{size: 25} %>	
 						</button>
 					</th>
 				</thead>
@@ -61,20 +63,28 @@
 								<%= error_tag v, :name %>
 							</td>
 							<td>
-								<%= text_input v, :quantity, class: "form-control" %>
+								<%= number_input v, :quantity, class: "form-control" %>
 								<%= error_tag v, :quantity %>
 							</td>
 							<td>
-								<%= text_input v, :price_float, class: "form-control" %>
+								<%= number_input v, :price_float, class: "form-control", phx_hook: "NumberInputPrecision" %>
 								<%= error_tag v, :price_float %>
 							</td>
-							<td>
-								<%= text_input v, :discount, class: "form-control" %>
-								<%= error_tag v, :discount %>
+							<%= if checkbox_value(f, :discount_per_item) do %>
+								<td>
+									<div class="flex min-w-fit">
+										<%= number_input v, :discount_float, class: "form-control price", phx_hook: "NumberInputPrecision" %>
+										<%= select v, :discount_type, Snownix.Helpers.Model.discount_types(money_symbole(input_value(f, :currency))), class: "form-control symbole" %>
+									</div>
+									<%= error_tag v, :discount_float %>
+								</td>
+							<% end %>
+							<td class="p-2 text-right">
+								<%= money_format(input_value(v, :total), input_value(f, :currency)) %>
 							</td>
-							<td class="p-2"><%= money_format(input_value(v, :total), input_value(f, :currency)) %></td>
 							<td>
-								<button type="button" phx-target={@myself} phx-click="remove-item" phx-value-id={v.data.id || v.data.temp_id} class="xs">
+								<button type="button" class="xs"
+									phx-target={@myself} phx-click="remove-item" phx-value-id={v.data.id || v.data.temp_id}>
 								<%= render SnownixWeb.IconsView, "delete.svg", %{size: 25, class: "!p-0.5"} %>
 								</button>
 							</td>
@@ -83,16 +93,62 @@
 				</tbody>
 				<tfooter>
 					<tr>
+						<td colspan={3 + col_span(checkbox_value(f, :discount_per_item))} class="text-right">
+							<span>SubTotal : </span>
+						</td>
+						<td class="text-right">
+							<%= money_format(input_value(f, :sub_total), input_value(f, :currency)) %>
+						</td>
 						<td></td>
+					</tr>
+					<tr>
+						<td colspan={3 + col_span(checkbox_value(f, :discount_per_item))} class="text-right">
+							<span>Discount : </span>
+						</td>
+						<td class="text-right">
+							<%= money_format(input_value(f, :discount_total), input_value(f, :currency)) %>
+						</td>
 						<td></td>
+					</tr>
+					<tr>
+						<td colspan={3 + col_span(checkbox_value(f, :discount_per_item))} class="text-right">
+							<span>Apply Discount : </span>
+						</td>
+						<td class="h-6 border-none">
+							<%= text_input f, :discount_float, class: "form-control", phx_hook: "NumberInputPrecision" %>
+							<%= error_tag f, :discount_float %>
+						</td>
 						<td></td>
-						<td class="text-right">Total : </td>
-						<td class="p-2"><%= money_format(input_value(f, :total), input_value(f, :currency)) %></td>
+					</tr>
+					<tr>
+						<td colspan={3 + col_span(checkbox_value(f, :discount_per_item))} class="text-right">
+							<span>Total :</span>
+						</td>
+						<td class="font-semibold text-right">
+							<%= money_format(input_value(f, :total), input_value(f, :currency)) %>
+						</td>
+						<td></td>
 					</tr>
 				</tfooter>
 			</table>
 		</div>
+		<div class="flex flex-col space-y-1 items-end">
+			<label class="flex justify-between items-center  space-x-4">
+				<h4 class="font-semibold"><%= gettext("Discount Per Item") %></h4>
+				<div class="switch sm">
+					<%= checkbox f, :discount_per_item, value: input_value(f, :discount_per_item) %>
+					<span class="slider round"></span>
+				</div>
+			</label>
 
+			<label class="flex justify-between items-center space-x-4">
+				<h4 class="font-semibold"><%= gettext("Tax Per Item") %></h4>
+				<div class="switch sm">
+					<%= checkbox f, :tax_per_item, value: input_value(f, :tax_per_item) %>
+					<span class="slider round"></span>
+				</div>
+			</label>
+		</div>
 		<div class="mt-10">
 			<%= submit "Save", phx_disable_with: "Saving...", class: "primary" %>
 		</div>

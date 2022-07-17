@@ -14,7 +14,7 @@ defmodule Snownix.InvoicesTest do
       discount: nil,
       discount_per_item: nil,
       discount_type: nil,
-      discount_val: nil,
+      discount : nil,
       due_amount: nil,
       due_date: nil,
       from_date: nil,
@@ -51,7 +51,7 @@ defmodule Snownix.InvoicesTest do
         discount: 42,
         discount_per_item: true,
         discount_type: "some discount_type",
-        discount_val: 42,
+        discount : 42,
         due_amount: 42,
         due_date: ~D[2020-01-01],
         from_date: ~D[2020-01-01],
@@ -77,7 +77,7 @@ defmodule Snownix.InvoicesTest do
       assert invoice.discount == 42
       assert invoice.discount_per_item == true
       assert invoice.discount_type == "some discount_type"
-      assert invoice.discount_val == 42
+      assert invoice.discount  == 42
       assert invoice.due_amount == 42
       assert invoice.due_date == ~D[2020-01-01]
       assert invoice.from_date == ~D[2020-01-01]
@@ -110,7 +110,7 @@ defmodule Snownix.InvoicesTest do
         discount: 43,
         discount_per_item: false,
         discount_type: "some updated discount_type",
-        discount_val: 43,
+        discount : 43,
         due_amount: 43,
         due_date: ~D[2020-01-01],
         from_date: ~D[2020-01-01],
@@ -136,7 +136,7 @@ defmodule Snownix.InvoicesTest do
       assert invoice.discount == 43
       assert invoice.discount_per_item == false
       assert invoice.discount_type == "some updated discount_type"
-      assert invoice.discount_val == 43
+      assert invoice.discount  == 43
       assert invoice.due_amount == 43
       assert invoice.due_date == ~D[2020-01-01]
       assert invoice.from_date == ~D[2020-01-01]

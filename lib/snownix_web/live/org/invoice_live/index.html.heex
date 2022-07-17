@@ -13,9 +13,6 @@
         <div class="flex space-x-4">
             <%= if many_selected(assigns) do %>
             <div class="flex space-x-2">
-                <button class="sm" phx-click="clone-selected">
-                    <%= render SnownixWeb.IconsView, "copy.svg", %{} %>
-                </button>
                 <button class="sm" phx-click="delete-selected">
                     <%= render SnownixWeb.IconsView, "delete.svg", %{} %>
                 </button>
@@ -46,7 +43,7 @@
                 <%= render_col(assigns, :invoice_number, "N°") %>
                 <%= render_col(assigns, :customer_id, "Customer") %>
                 <%= render_col(assigns, :total, "Total") %>
-                <%= render_col(assigns, :discount_val, "Discount") %>
+                <%= render_col(assigns, :discount, "Discount") %>
                 <%= render_col(assigns, :inserted_at, "Created Date") %>
                 <th class="w-14"></th>
             </:thead>
@@ -59,7 +56,7 @@
                         <td >
                             <%= render_checkbox(assigns, item) %>
                         </td>
-                         <td class="interactive" phx-click="show" phx-value-id={item.id}>
+                        <td class="interactive" phx-click="show" phx-value-id={item.id}>
                             <span class="font-medium"><%=  item.title || item.invoice_number %></span>
                             <p class=" text-sm text-gray-500 break-words"><%= item.note %></p>
                         </td>
@@ -72,11 +69,22 @@
                                 </div>
                             <% end %>
                         </td>
-                        <td><%= money_format(item.total, item.currency) %></td>
-                        <td><%= money_format(item.discount_val, item.currency) %></td>
-                        <td><%= date_format(item.inserted_at) %></td>
+                        <td>
+                            <span class="font-bold">
+                                <%= money_format(item.total, item.currency) %>
+                            </span>
+                        </td>
+                        <td>
+                            <%= money_format(item.discount_total , item.currency) %>
+                        </td>
+                        <td>
+                            <%= date_format(item.inserted_at) %>
+                        </td>
                         <td>
                             <div class="flex justify-end items-center space-x-2">
+                                <%= live_patch to: Routes.org_invoice_index_path(@socket, :show, item.id), class: "btn light  !p-1 !text-gray-500 icon" do %>
+                                    <%= render SnownixWeb.IconsView, "eye.svg", %{} %>
+                                <% end %>
                                 <%= live_patch to: Routes.org_invoice_index_path(@socket, :edit, item.id), class: "btn light  !p-1 !text-gray-500 icon" do %>
                                     <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
                                 <% end %>
@@ -111,12 +119,24 @@
     <div class="_view">
         <.live_component 
             id="invoices" 
-            class="md:!w-3/4 lg:!w-3/6"
+            class="md:!w-3/4 lg:!w-6/12"
             open={!is_nil(@invoice)}
             prev={Routes.org_invoice_index_path(@socket,:index)}
             module={SnownixWeb.SharedLive.UI.DetailsComponent}
         >
             <:title><%= gettext "Invoice Details" %></:title>
+            <:menu>
+                <div>
+                    <%= if @live_action == :show do %>
+                        <%= live_patch to: Routes.org_invoice_index_path(@socket, :edit, @invoice.id), class: "btn light  !p-1 !text-gray-500 icon" do %>
+                            <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
+                        <% end %>
+                    <% end %>
+                    <a href="javascript:history.back();" class="btn light  !p-1 !text-gray-500 icon">
+                        <%= render SnownixWeb.IconsView, "cancel.svg", %{} %>
+                    </a>
+                </div>
+            </:menu>
             <:body>
                 <%= if @live_action == :show do %>
                     <.live_component 

@@ -1,6 +1,8 @@
 defmodule SnownixWeb.LiveHelpers do
+  use Phoenix.HTML
   import Phoenix.LiveView
   import Phoenix.LiveView.Helpers
+
   import SnownixWeb.UtilsHelpers
 
   alias Phoenix.LiveView.JS
@@ -114,7 +116,7 @@ defmodule SnownixWeb.LiveHelpers do
 
   def money_format(price, currency) do
     if !is_nil(currency) and is_integer(price) do
-      Money.to_string(Money.new(price, String.to_atom(currency)))
+      Money.to_string(Money.new(price, currency))
     else
       nil
     end
@@ -126,6 +128,7 @@ defmodule SnownixWeb.LiveHelpers do
 
   def money_format(_), do: nil
 
+  def money_symbole(currency), do: Money.Currency.symbol(currency)
   def percentage_format(nil), do: nil
 
   def percentage_format(percent) do
@@ -189,6 +192,10 @@ defmodule SnownixWeb.LiveHelpers do
     else
       nil
     end
+  end
+
+  def checkbox_value(form, name) do
+    input_value(form, name) == true || input_value(form, name) == "true"
   end
 
   def render_user_avatar(assigns, user, size \\ "w-10 h-10") do

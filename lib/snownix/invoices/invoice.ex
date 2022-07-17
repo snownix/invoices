@@ -1,27 +1,37 @@
 defmodule Snownix.Invoices.Invoice do
   use Ecto.Schema
   import Ecto.Changeset
-  @timestamps_opts [type: :utc_datetime]
+  import Snownix.Helpers.Changeset
 
+  alias Snownix.Invoices.Item
+  alias Snownix.Invoices.Invoice
+
+  @timestamps_opts [type: :utc_datetime]
   @primary_key {:id, :binary_id, autogenerate: true}
+
+  @discount_default "fixed"
 
   schema "invoices" do
     field :note, :string
     field :title, :string
-    field :status, :string
     field :currency, :string
+
+    field :status, :string
     field :paid_status, :string
-    field :discount_type, :string
+
     field :invoice_number, :string
     field :reference_number, :string
+    field :sequence_number, :integer, default: 0
+
+    field :discount, :integer, default: 0
+
+    # Saved to sort it easly in data tables
+
+    field :discount_type, :string, default: @discount_default
+    field :discount_per_item, :boolean, default: false
 
     field :tax, :integer, default: 0
-    field :total, :integer, default: 0
-    field :discount, :integer, default: 0
-    field :sub_total, :integer, default: 0
-    field :due_amount, :integer, default: 0
-    field :discount_val, :integer, default: 0
-    field :sequence_number, :integer, default: 0
+    field :tax_per_item, :boolean, default: false
 
     field :to_date, :date
     field :due_date, :date
@@ -31,8 +41,14 @@ defmodule Snownix.Invoices.Invoice do
     field :sms_sent, :boolean, default: false
     field :email_sent, :boolean, default: false
     field :allow_edit, :boolean, default: true
-    field :tax_per_item, :boolean, default: false
-    field :discount_per_item, :boolean, default: false
+
+    field :total, :integer, default: 0, virtual: true
+    field :due_amount, :integer, default: 0, virtual: true
+    field :sub_total, :integer, default: 0, virtual: true
+    field :tax_total, :integer, default: 0, virtual: true
+    field :discount_total, :integer, default: 0, virtual: true
+
+    field :discount_float, :float, default: 0.0, virtual: true, scale: 2
 
     has_many :items, Snownix.Invoices.Item, on_replace: :delete
 
@@ -40,7 +56,9 @@ defmodule Snownix.Invoices.Invoice do
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
     belongs_to :customer, Snownix.Customers.User, type: :binary_id, on_replace: :nilify
 
+    field :parent_id, :binary_id, virtual: true, default: ""
     field :selected, :boolean, virtual: true, default: false
+
     timestamps()
   end
 
@@ -49,6 +67,7 @@ defmodule Snownix.Invoices.Invoice do
     invoice
     |> cast(attrs, [
       :title,
+      :note,
       :from_date,
       :to_date,
       :due_date,
@@ -57,36 +76,69 @@ defmodule Snownix.Invoices.Invoice do
       :status,
       :paid_status,
       :tax_per_item,
-      :discount_per_item,
-      :note,
       :discount_type,
-      :discount,
-      :discount_val,
-      :sub_total,
-      :total,
+      :discount_float,
+      :discount_per_item,
       :tax,
       :due_amount,
-      :email_sent,
+      :sub_total,
       :sms_sent,
       :viewed,
       :sequence_number,
       :currency,
       :allow_edit
     ])
-    |> validate_required([
-      :from_date,
-      :invoice_number,
-      :currency
+    |> cast_float_to_int([
+      {:discount_float, :discount}
     ])
-    |> cast_assoc(:items)
-    |> maybe_update_total()
+    |> validate_required([
+      :currency,
+      :from_date,
+      :invoice_number
+    ])
+    |> cast_items()
   end
 
-  defp maybe_update_total(changeset) do
-    total = Enum.reduce(get_field(changeset, :items, []), 0, fn item, x -> x + item.total end)
+  def cast_items(changeset) do
+    discount_per_item = get_field(changeset, :discount_per_item)
+
+    changeset =
+      changeset
+      |> cast_assoc(:items, with: {Item, :changeset, [[discount_per_item: discount_per_item]]})
 
     changeset
-    |> put_change(:total, total)
+  end
+
+  def update_calcs(%Invoice{} = invoice) do
+    %{
+      items: items,
+      discount_per_item: discount_per_item
+    } = invoice
+
+    items = items |> Enum.map(&Item.update_calcs(&1, discount_per_item: discount_per_item))
+
+    {total, sub_total, discount_total, tax_total} =
+      Enum.reduce(items, {0, 0, 0, 0}, fn item, {total, sub_total, discount_total, tax_total} ->
+        total = total + item.total
+        sub_total = sub_total + item.sub_total
+        discount_total = discount_total + item.discount_total
+        tax_total = tax_total + item.tax_total
+
+        {
+          total,
+          sub_total,
+          discount_total,
+          tax_total
+        }
+      end)
+
+    item =
+      invoice
+      |> Map.put(:items, items)
+      |> Map.put(:total, total)
+      |> Map.put(:sub_total, sub_total)
+      |> Map.put(:tax_total, tax_total)
+      |> Map.put(:discount_total, discount_total)
   end
 
   def owner_changeset(item, owner) do

@@ -40,8 +40,9 @@ npm-debug.log
 /assets/node_modules/
 
 # Uploads
-/priv/static/uploads/avatars/**
-!/priv/static/uploads/avatars/.gitkeep
+/priv/static/uploads/**/**
+!/priv/static/uploads/**/.gitkeep
 
 # env files
 .env
+lib/snownix_web/live/org/invoice_live/form_component.ex

@@ -1,102 +1,86 @@
 defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
   use SnownixWeb, :live_component
 
-  alias Snownix.{Invoices, Customers}
   alias Snownix.Pagination
   alias Snownix.Invoices.Item
+  alias Snownix.{Invoices, Customers}
 
   @impl true
   def update(%{invoice: invoice} = assigns, socket) do
-    invoice = %{
-      invoice
-      | items: Enum.map(invoice.items, &Map.put(&1, :price_float, float_format(&1.price)))
-    }
-
     changeset = Invoices.change_invoice(invoice)
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign_customers()
-     |> assign_items(invoice.items)
-     |> assign(:delete_items, [])
      |> assign(:changeset, changeset)}
   end
 
   @impl true
   def handle_event("validate", %{"invoice" => invoice_params}, socket) do
-    %{changeset: changeset, items: items} = socket.assigns
+    %{invoice: invoice} = socket.assigns
 
     changeset =
-      changeset
-      |> Ecto.Changeset.cast(invoice_params, [])
-      |> Ecto.Changeset.cast_assoc(:items, with: &Item.changeset/2)
+      invoice
+      |> Invoices.change_invoice(invoice_params)
       |> Map.put(:action, :validate)
 
-    items = Map.get(changeset.changes, :items, items)
-
     {:noreply,
-     assign(socket, changeset: changeset)
-     |> assign_items(items)}
+     socket
+     |> assign(changeset: changeset)}
   end
 
   def handle_event("save", %{"invoice" => invoice_params}, socket) do
     save_invoice(socket, socket.assigns.action, invoice_params)
   end
 
-  def handle_event("add-item", _, socket) do
-    %{changeset: changeset, invoice: invoice, items: items} = socket.assigns
-
-    items =
-      items
-      |> Enum.concat([
-        Invoices.change_item(%Item{temp_id: get_temp_id(), invoice: invoice})
-      ])
-
-    changeset = Ecto.Changeset.put_assoc(changeset, :items, items)
+  def handle_event("new-item", _, %{assigns: assigns} = socket) do
+    changeset = put_new_invoice_item(assigns)
 
     {:noreply,
-     assign(socket, changeset: changeset)
-     |> assign_items(items)}
+     socket
+     |> assign(changeset: changeset)}
   end
 
   def handle_event("remove-item", %{"id" => id}, socket) do
-    %{changeset: changeset, items: items, delete_items: delete_items} = socket.assigns
-
-    items = Enum.reject(items, fn %{data: x} -> x.id === id or x.temp_id == id end)
-    delete_items = Enum.filter(delete_items, fn %{data: x} -> x.id === id or x.temp_id == id end)
-
-    changeset = Ecto.Changeset.put_assoc(changeset, :items, items)
-
     {:noreply,
-     assign(socket, changeset: changeset, delete_items: delete_items)
-     |> assign_items(items)}
+     socket
+     |> remove_invoice_item(id)}
   end
 
-  defp save_invoice(socket, :edit, invoice_params) do
-    %{project: project, current_user: user, invoice: invoice, delete_items: delete_items} =
-      socket.assigns
+  defp put_new_invoice_item(%{changeset: changeset, invoice: invoice} = _assigns) do
+    items = changeset.changes[:items] || changeset.data.items
 
-    case Invoices.delete_items(delete_items) do
-      {:ok, _} ->
-        case Invoices.update_invoice(invoice, project, user, invoice_params) do
-          {:ok, _invoice} ->
-            {:noreply,
-             socket
-             |> put_flash(:info, "invoice updated successfully")
-             |> push_patch(to: socket.assigns.return_to)}
+    items =
+      items ++
+        [
+          Invoices.change_item(%Item{temp_id: get_temp_id(), invoice: invoice})
+        ]
 
-          {:error, changeset} ->
-            {:noreply, assign(socket, :changeset, changeset)}
+    changeset |> Map.update!(:changes, &Map.put(&1, :items, items))
+  end
+
+  defp remove_invoice_item(%{assigns: assigns} = socket, id) do
+    %{changeset: changeset} = assigns
+
+    items = changeset.changes[:items] || changeset.data.items
+
+    items =
+      Enum.filter(items, fn item ->
+        case item do
+          %{data: data} -> data.id !== id and data.temp_id !== id
+          data -> data.id !== id
         end
+      end)
 
-      {:error, changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
-    end
+    changeset = changeset |> Map.update!(:changes, &Map.put(&1, :items, items))
+
+    socket
+    |> assign(changeset: changeset)
   end
 
   defp save_invoice(socket, :new, invoice_params) do
-    %{project: project, current_user: user} = socket.assigns
+    %{project: project, current_user: user, return_to: return_to} = socket.assigns
 
     invoice_params =
       Map.merge(invoice_params, %{"sequence_number" => Invoices.get_last_sequence_number()})
@@ -105,22 +89,40 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
       {:ok, _invoice} ->
         {:noreply,
          socket
-         |> put_flash(:info, "invoice created successfully")
-         |> push_patch(to: socket.assigns.return_to)}
+         |> put_flash(:info, "Invoice created successfully")
+         |> push_patch(to: return_to)}
 
       {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
 
-  def currencies_options() do
-    Enum.map(Money.Currency.all(), fn {index, c} ->
-      {"#{index} - #{c.name} #{c.symbol}", index}
-    end)
+  defp save_invoice(socket, :edit, invoice_params) do
+    %{
+      project: project,
+      current_user: user,
+      invoice: invoice,
+      return_to: return_to
+    } = socket.assigns
+
+    invoice_params = invoice_params |> put_default_items()
+
+    case Invoices.update_invoice(invoice, project, user, invoice_params) do
+      {:ok, _invoice} ->
+        {
+          :noreply,
+          socket
+          |> put_flash(:info, "Invoice updated successfully")
+          |> push_patch(to: return_to)
+        }
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, :changeset, changeset)}
+    end
   end
 
-  defp assign_items(socket, items) do
-    socket |> assign(:items, items)
+  defp put_default_items(invoice_items) do
+    Map.put_new(invoice_items, "items", [])
   end
 
   defp assign_customers(socket) do
@@ -133,12 +135,20 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
     socket |> assign(customers: customers.items)
   end
 
-  def customers_options(assigns) do
-    assigns.customers
-    |> Enum.map(fn c ->
+  def customers_options(%{customers: customers} = _assigns) do
+    Enum.map(customers, fn c ->
       {"#{c.contact_name}", c.id}
     end)
   end
 
-  def get_temp_id, do: :crypto.strong_rand_bytes(10) |> Base.url_encode64() |> binary_part(0, 10)
+  def get_temp_id(),
+    do: :crypto.strong_rand_bytes(10) |> Base.url_encode64() |> binary_part(0, 10)
+
+  def col_span(val), do: (val && 1) || 0
+
+  def currencies_options() do
+    Enum.map(Money.Currency.all(), fn {index, c} ->
+      {"#{index} - #{c.name} #{c.symbol}", index}
+    end)
+  end
 end

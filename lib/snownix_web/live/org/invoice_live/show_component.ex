@@ -30,8 +30,22 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
                 <h5>Due : <%= @invoice.due_date %></h5>
               </div>
               <div class="flex flex-col">
-                <div class="flex justify-between space-x-4"><span>Total</span><span class="justify-end font-bold"><%= money_format(@invoice.total, @invoice.currency) %></span></div>
-                <div class="flex justify-between space-x-4"><small>Tax</small> <span><%= tax_format(@invoice.tax) %></span></div>
+                <div class="flex justify-between space-x-4 items-center">
+                  <span>Total</span>
+                  <span class="justify-end font-bold"><%= money_format(@invoice.total, @invoice.currency) %></span>
+                </div>
+                <div class="flex justify-between space-x-4 items-center">
+                  <small>SubTotal</small>
+                  <small class="font-semibold"><%= money_format(@invoice.sub_total, @invoice.currency) %></small>
+                </div>
+                <div class="flex justify-between space-x-4 items-center">
+                  <small>Discount</small>
+                  <small class="font-semibold"><%= money_format(@invoice.discount_total, @invoice.currency) %></small>
+                </div>
+                <div class="flex justify-between space-x-4 items-center">
+                  <small>Tax</small>
+                  <span class="text-sm"><%= tax_format(@invoice.tax_total) %></span>
+                </div>
               </div>
           </div>
           <div>
@@ -46,16 +60,27 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
         <tbody>
           <%= for item <- @invoice.items do %>
             <tr>
-              <td>
+              <td class="w-full">
                 <p><%= item.name %></p>
               </td>
-              <td class="w-32 text-right whitespace-nowrap">
+              <td class="w-40">
                 <div class="flex justify-between">
                   <span><%= item.quantity %></span>
                   <span>x</span>
                   <span><%= money_format(item.price, @invoice.currency) %></span>
                 </div>
               </td>
+              <%= if @invoice.discount_per_item do %>
+                <td class="w-32 text-right">
+                  <div class="flex flex-col">
+                    <%= if item.discount_type === "fixed" do %>
+                      -<%= money_format(item.discount_total, @invoice.currency) %>
+                    <% else %>
+                      <%= float_format(item.discount) %>%
+                    <% end %>
+                  </div>
+                </td>
+              <% end %>
               <td class="w-24 text-right font-semibold"><%= money_format(item.total, @invoice.currency) %></td>
             </tr>
           <% end %>

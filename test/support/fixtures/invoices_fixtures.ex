@@ -16,7 +16,7 @@ defmodule Snownix.InvoicesFixtures do
         discount: 42,
         discount_per_item: true,
         discount_type: "some discount_type",
-        discount_val: 42,
+        discount : 42,
         due_amount: 42,
         due_date: ~U[2022-06-13 00:00:00Z],
         from_date: ~U[2022-06-13 00:00:00Z],

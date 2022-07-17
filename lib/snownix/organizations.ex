@@ -11,6 +11,26 @@ defmodule Snownix.Organizations do
 
   @activity_field :name
 
+  @topic inspect(__MODULE__)
+
+  def subscribe(id) do
+    Phoenix.PubSub.subscribe(Snownix.PubSub, @topic <> "self:#{id}")
+  end
+
+  defp notify_subscribers({:ok, result}, event) do
+    id = result.id
+
+    Phoenix.PubSub.broadcast(
+      Snownix.PubSub,
+      @topic <> "self:#{id}",
+      {__MODULE__, event, result}
+    )
+
+    {:ok, result}
+  end
+
+  defp notify_subscribers({:error, changeset}, _event), do: {:error, changeset}
+
   @doc """
   Returns the list of projects.
 
@@ -70,6 +90,7 @@ defmodule Snownix.Organizations do
       |> Project.changeset(attrs)
       |> Project.owner_changeset(user)
       |> Repo.insert()
+      |> notify_subscribers([:project, :created])
 
     project |> Projects.log_activity(project, user, :create, @activity_field)
   end
@@ -92,6 +113,7 @@ defmodule Snownix.Organizations do
     |> Project.address_changeset(attrs)
     |> Project.preferences_changeset(attrs)
     |> Repo.update()
+    |> notify_subscribers([:project, :updated])
   end
 
   def update_project(%Project{} = project, attrs, user) do
@@ -138,6 +160,7 @@ defmodule Snownix.Organizations do
   """
   def delete_project(%Project{} = project) do
     Repo.delete(project)
+    |> notify_subscribers([:project, :deleted])
   end
 
   @doc """

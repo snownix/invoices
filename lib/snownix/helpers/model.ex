@@ -1,4 +1,7 @@
 defmodule Snownix.Helpers.Model do
+  @fixed "fixed"
+  @percentage "percentage"
+
   @date_formats ["%Y-%m-%d", "%Y-%d-%m", "%m-%d-%Y", "%Y/%m/%d", "%Y/%d/%m", "%m/%d/%Y"]
   @fiscal_years [
     %{title: "January-February", id: "1-2"},
@@ -27,4 +30,6 @@ defmodule Snownix.Helpers.Model do
   def currencies(), do: Money.Currency.all() |> Enum.map(fn {name, _} -> Atom.to_string(name) end)
 
   def timezones(), do: TzExtra.time_zone_identifiers()
+
+  def discount_types(symbole \\ "€"), do: [{symbole, @fixed}, {"%", @percentage}]
 end

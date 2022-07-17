@@ -53,6 +53,7 @@ defmodule Snownix.Invoices do
     {:ok, result}
   end
 
+  alias Snownix.Invoices.Item
   alias Snownix.Invoices.Invoice
 
   def get_last_sequence_number() do
@@ -92,12 +93,24 @@ defmodule Snownix.Invoices do
     sort_query_by(query, orderby, order)
   end
 
-  def invoice_customer(query) do
-    query |> Repo.preload(:customer)
+  def customer(query) do
+    query
+    |> Repo.preload(:customer)
   end
 
-  def invoice_items(query) do
-    query |> Repo.preload(:items)
+  def items(query) do
+    query
+    |> Repo.preload(:items)
+  end
+
+  def update_calcs(%Invoice{} = invoice) do
+    invoice
+    |> Invoice.update_calcs()
+  end
+
+  def update_calcs(invoices) when is_list(invoices) do
+    invoices
+    |> Enum.map(&update_calcs(&1))
   end
 
   @doc """
@@ -125,41 +138,60 @@ defmodule Snownix.Invoices do
       from(u in Invoice, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
       |> Repo.preload(:items)
+      |> update_calcs()
 
-  def invoice_assign_customer(query, %Project{} = project, %{"customer_id" => customer_id}) do
+  def assign_customer(query, %Project{} = project, %{"customer_id" => customer_id}) do
     customer = Customers.get_user!(project.id, customer_id)
 
     query
     |> Invoice.customer_changeset(customer)
   end
 
-  def invoice_assign_customer(query, %Project{} = _project, _attrs), do: query
+  def assign_customer(query, %Project{} = _project, _attrs), do: query
 
   @doc """
   Creates a invoice.
 
   ## Examples
 
-      iex> create_invoice(%{field: value})
+      iex> create_invoice(%Invoice{}, %{title: "Invoice X"})
       {:ok, %Invoice{}}
 
-      iex> create_invoice(%{field: bad_value})
+      iex> create_invoice(%Invoice{}, %{title: "Invoice X"})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_invoice(attrs \\ %{}) do
-    %Invoice{}
+
+  def create_invoice(%Invoice{} = invoice, attrs) do
+    invoice
     |> Invoice.changeset(attrs)
     |> Repo.insert()
     |> notify_subscribers([:invoice, :created])
   end
 
-  def create_invoice(project, user, attrs \\ %{}) do
-    %Invoice{}
+  def create_invoice(attrs \\ %{}) do
+    create_invoice(%Invoice{}, attrs)
+  end
+
+  @doc """
+  ## Examples
+
+      iex> create_invoice(%Invoice{}, %Project{}, %User{}, %{title: "Invoice Y"})
+      {:ok, %Invoice{}}
+
+      iex> create_invoice(%Invoice{}, %Project{}, %User{}, %{title: "Invoice Y"})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_invoice(%Project{} = project, user, attrs),
+    do: create_invoice(%Invoice{}, project, user, attrs)
+
+  def create_invoice(%Invoice{} = invoice, project, user, attrs \\ %{}) do
+    invoice
     |> Invoice.changeset(attrs)
     |> Invoice.owner_changeset(user)
     |> Invoice.project_changeset(project)
-    |> invoice_assign_customer(project, attrs)
+    |> assign_customer(project, attrs)
     |> Repo.insert()
     |> notify_subscribers([:invoice, :created])
     |> Projects.log_activity(project, user, :create, @activity_field)
@@ -189,7 +221,7 @@ defmodule Snownix.Invoices do
     invoice
     |> Repo.preload(:customer)
     |> Invoice.changeset(attrs)
-    |> invoice_assign_customer(project, attrs)
+    |> assign_customer(project, attrs)
     |> Repo.update()
     |> notify_subscribers([:invoice, :updated])
   end
@@ -239,15 +271,46 @@ defmodule Snownix.Invoices do
       from(u in Invoice, where: u.project_id == ^project_id and u.id in ^ids)
       |> Repo.all()
       |> Enum.map(fn item ->
-        Map.take(item, Invoice.__schema__(:fields))
+        item =
+          item
+          |> Repo.preload(:items)
+
+        # items =
+        #   item.items
+        #   |> Map.take([Item.__schema__(:fields)])
+        #   |> Enum.map(&Map.delete(&1, [:id, :invoice_id]))
+
+        item
+        |> Map.take([
+          :parent_id,
+          :customer_id,
+          :user_id,
+          :project_id | Invoice.__schema__(:fields)
+        ])
+        |> Map.put(:parent_id, item.id)
         |> Map.delete(:id)
-        |> Map.put(:name, "Clone - #{item.title}")
+        |> Map.put(:title, "#{item.title}-1")
+        |> Map.put(:reference_number, "#{item.reference_number}-1")
+
+        # |> Map.put(:items, items)
       end)
 
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.insert_all(:insert_all, Invoice, invoices, returning: [:id])
-      |> Repo.transaction()
+    result = {:ok, []}
+
+    Repo.transaction(fn ->
+      invoices
+      |> Enum.map(fn invoice ->
+        row = Repo.insert!(Invoice.changeset(%Invoice{}, invoice))
+
+        # items =
+        #   invoice
+        #   |> then(& &1.items)
+        #   |> Enum.map(&Map.drop(&1, [:id, :invoice_id]))
+
+        # Repo.update!(Invoice.items_changeset(row, items))
+        row.id
+      end)
+    end)
 
     notify_subscribers({:ok, %Invoice{project_id: project_id}}, [:invoice, :created_many])
     result
@@ -262,7 +325,7 @@ defmodule Snownix.Invoices do
       %Ecto.Changeset{data: %Invoice{}}
 
   """
-  def change_invoice(%Invoice{} = invoice, attrs \\ %{}) do
+  def change_invoice(invoice, attrs \\ %{}) do
     Invoice.changeset(invoice, attrs)
   end
 

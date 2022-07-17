@@ -2,45 +2,45 @@ import moment from 'moment';
 import Litepicker from 'litepicker';
 
 const Hooks = {
-    Sidebar : {
+    Sidebar: {
         key: 'sidebar-minimized',
-        mounted(){
-            this.el.querySelectorAll('.btn__minimize').forEach(el=>{
+        mounted() {
+            this.el.querySelectorAll('.btn__minimize').forEach(el => {
                 el.addEventListener('click', () => this.toggleMinimize());
             });
 
             this._updateUI();
         },
-        updated(){
+        updated() {
             this._updateUI();
         },
-        isMinimized(){
+        isMinimized() {
             return localStorage.getItem(this.key) === 'true';
         },
-        toggleMinimize(){
+        toggleMinimize() {
             const newState = !this.isMinimized();
             localStorage.setItem(this.key, newState);
 
             this._updateUI();
             return newState;
         },
-        _updateClass(){
-            if (this.isMinimized()){
+        _updateClass() {
+            if (this.isMinimized()) {
                 this.el.classList.add('mini');
-            }else{
+            } else {
                 this.el.classList.remove('mini');
             }
         },
-        _updateBtnClass(){
-            this.el.querySelectorAll('.btn__minimize').forEach(el=>{
-                if (this.isMinimized()){
+        _updateBtnClass() {
+            this.el.querySelectorAll('.btn__minimize').forEach(el => {
+                if (this.isMinimized()) {
                     el.classList.add('active');
-                }else{
+                } else {
                     el.classList.remove('active');
                 }
             });
         },
-        _updateUI(){
+        _updateUI() {
             this._updateClass();
             this._updateBtnClass();
         }
@@ -48,11 +48,11 @@ const Hooks = {
     Flash: {
         mounted() {
             this.el.addEventListener('click', () => {
-                this.closeFlash()
+                this.closeFlash();
             });
         },
         closeFlash() {
-            this.pushEvent("lv:clear-flash")
+            this.pushEvent("lv:clear-flash");
         }
     },
     Lang: {
@@ -96,13 +96,11 @@ const Hooks = {
                         this.pushEventTo(target, 'multiselect', data);
                     });
                 }
-            })
+            });
         }
     },
     DateRange: {
         mounted() {
-            const org = this.el.dataset.innerText;
-
             new Litepicker({
                 element: this.el,
                 singleMode: false,
@@ -118,7 +116,7 @@ const Hooks = {
 
                         this.el.innerText = `Period: ${a.format('YYYY-MM-DD')} - ${b.format('YYYY-MM-DD')}  (${b.diff(a, 'days')} days)`;
 
-                        this.pushEvent('period', { start: date1.dateInstance, end: date2.dateInstance })
+                        this.pushEvent('period', { start: date1.dateInstance, end: date2.dateInstance });
                     });
                 },
 
@@ -166,11 +164,10 @@ const Hooks = {
 
             this.el.querySelector('[key]').innerText = this.data.key;
 
-            this.keyDown = (event) =>  {
+            this.keyDown = (event) => {
                 if (event.altKey == this.data.altKey &&
                     event.ctrlKey == this.data.ctrlKey &&
-                    `${event.key}` == `${this.data.key}`) 
-                {
+                    `${event.key}` == `${this.data.key}`) {
                     if (this.data.targetEl) {
                         this.data.targetEl.classList.add('shortcut__press');
                         this.data.targetEl.click();
@@ -198,7 +195,7 @@ const Hooks = {
         mounted() {
             this.el.querySelector(".dropdown__content").style.display = "none";
             this.hidden = true;
-            this.addListeners()
+            this.addListeners();
         },
         updated() {
             const list = this.el.querySelector(".dropdown__content");
@@ -207,11 +204,11 @@ const Hooks = {
             } else {
                 list.style.display = "block";
             }
-            this.removeListeners()
-            this.addListeners()
+            this.removeListeners();
+            this.addListeners();
         },
         destroyed() {
-            this.removeListeners()
+            this.removeListeners();
         },
         addListeners() {
             const input = this.el.querySelector(".search__input");
@@ -221,7 +218,7 @@ const Hooks = {
             this.focusEvt = input.addEventListener("focus", (evt) => {
                 this.hidden = false;
                 list.style.display = "block";
-            })
+            });
             this.keyupEvt = input.addEventListener("keyup", (evt) => {
                 this.hidden = false;
                 list.style.display = "block";
@@ -230,20 +227,21 @@ const Hooks = {
                     const value = evt.target.value;
                     this.pushEventTo(this.el.getAttribute("phx-target"), "filter", value);
                 }, 400);
-            })
+            });
             this.blurEvt = input.addEventListener("blur", (evt) => {
                 input.value = "";
                 list = this.el.querySelector(".dropdown__content");
                 clearTimeout(this.blurTimeout);
                 this.blurTimeout = setTimeout(() => {
-                    list.style.display = "none";                    
+                    list.style.display = "none";
                 }, 250);
                 this.hidden = true;
-            })
-            this.clickEvt = toggleBtn.addEventListener("click", (evt) => {7
+            });
+            this.clickEvt = toggleBtn.addEventListener("click", (evt) => {
+                7
                 this.hidden = !this.hidden;
                 list.style.display = this.hidden ? "block" : "none";
-            })
+            });
         },
         removeListeners() {
             removeEventListener("focus", this.focusEvt);
@@ -252,24 +250,64 @@ const Hooks = {
             removeEventListener("click", this.clickEvt);
         }
     },
-    NumberInputPrecision: {
+    NumberInputPrecision: {},
+    XNumberInputPrecision: {
         mounted() {
-            this.el.value = this.fixed_precision(this.el.value, 2);
-            console.log(this.el.value);
+            this._updateValue();
             this.el.addEventListener('input', (event) => {
-                console.log(this.el.value);
-                this.el.value = this.fixed_precision(this.el.value, 2);
-            })
+                const { data, inputType } = event;
+                if (`${data}` === `${parseInt(data)}`){
+                    this._updateValue();
+                    return;
+                }
+
+                if (inputType === "deleteContentBackward"){
+                    this._deviseValue();
+                    return;
+                }
+
+                this._updateValue();
+            });
         },
-        fixed_precision(input) {
-            input = this.replace_restricted_chars(input);
-            input = parseFloat(input) / 100;
+        _fixed_precision(val) {
+            let input = this._replace_restricted_chars(val);
+            input = parseInt(input);
+
+            if(Math.floor(val) !== input){
+                input = input / 100;
+            }
+
             return input.toFixed(2);
         },
-        replace_restricted_chars(input) {
+        _replace_restricted_chars(input) {
             return input.replaceAll(/\D+/g, '');
+        },
+        _updateValue(){
+            this.el.value = this._fixed_precision(this.el.value);
+        },
+        _deviseValue(){
+            this.el.value = this._fixed_precision(this.el.value);
         }
-    }
+    },
+    ActivePath: {
+        mounted() {
+            const { pathname } = window.location;
+            if (pathname === this.el.getAttribute('href')) {
+                this._addActive();
+            } else {
+                this._removeActive();
+            }
+        },
+        destroyed() {
+            this._removeActive();
+        },
+        _addActive() {
+            this.el.classList.add('active');
+        },
+        _removeActive() {
+            this.el.classList.remove('active');
+        }
+    },
 }
 
 

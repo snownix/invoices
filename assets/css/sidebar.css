@@ -32,11 +32,16 @@
   @apply bg-opacity-20;
 }
 
+.sidebar__menu li {
+  @apply mt-0.5;
+}
 .sidebar__menu li a{
   @apply  text-gray-500 py-1.5 rounded px-2;
 }
 
-.sidebar__menu li a:hover {
+.sidebar__menu li a.active,
+.sidebar__menu li a:hover
+ {
   @apply bg-grayDark bg-opacity-5 text-grayDark;
 }
 
@@ -62,7 +67,9 @@
   @apply rotate-90;
 }
 
-.sidebar.mini .sidebar__menu li a:hover{
+.sidebar.mini .sidebar__menu li a.active,
+.sidebar.mini .sidebar__menu li a:hover
+{
   @apply justify-center;
 }
 

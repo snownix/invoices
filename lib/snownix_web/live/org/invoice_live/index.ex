@@ -5,11 +5,17 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
   alias Snownix.Pagination
 
   alias Snownix.Invoices
+  alias Snownix.Organizations
+
+  alias Snownix.Invoices.Item
   alias Snownix.Invoices.Invoice
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Snownix.Invoices.subscribe(project_id(socket))
+    if connected?(socket) do
+      Invoices.subscribe(project_id(socket))
+      Organizations.subscribe(project_id(socket))
+    end
 
     {:ok,
      socket
@@ -32,6 +38,10 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
       :invoice,
       {Invoices, [:invoice, type], result}
     )
+  end
+
+  def handle_info({Organizations, [:project, _], project}, socket) do
+    {:noreply, assign(socket, project: project)}
   end
 
   @impl true
@@ -76,7 +86,7 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
   def handle_event("delete", %{"id" => id}, socket) do
     %{project: project, current_user: user} = socket.assigns
 
-    {:ok, _} = Invoices.delete_invoice(invoice_id(project.id, id), project, user)
+    {:ok, _} = Invoices.delete_invoice(get_invoice_by_id(project.id, id), project, user)
 
     {:noreply, fetch(socket)}
   end
@@ -88,8 +98,7 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
   end
 
   def handle_event("clone-selected", _, socket) do
-    {:ok, %{insert_all: {_, ids}}} =
-      Invoices.clone_invoices(project_id(socket), socket.assigns.selected_items)
+    {:ok, ids} = Invoices.clone_invoices(project_id(socket), socket.assigns.selected_items)
 
     {:noreply, fetch(socket) |> assign(selected_items: ids |> Enum.map(& &1.id))}
   end
@@ -111,18 +120,32 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
   defp apply_action(socket, :new) do
     %{project: project} = socket.assigns
 
+    seq = Invoices.get_last_sequence_number() + 1
+
+    %{currency: currency, tax_per_item: tax_per_item, discount_per_item: discount_per_item} =
+      project
+
+    invoice =
+      %Invoice{
+        currency: currency,
+        sequence_number: seq,
+        tax_per_item: tax_per_item,
+        discount_per_item: discount_per_item,
+        from_date: Timex.today(),
+        due_date: Timex.shift(Timex.today(), months: project.due_duration),
+        items: [
+          %Item{
+            temp_id: SnownixWeb.Org.InvoiceLive.FormComponent.get_temp_id(),
+            quantity: 1
+          }
+        ],
+        invoice_number: "INV-#{String.pad_leading("#{seq}", 6, "0000000000")}"
+      }
+      |> Invoices.update_calcs()
+
     socket
     |> assign(:page_title, "New Invoice")
-    |> assign(:invoice, %Invoice{
-      invoice_number: "INV-00000000",
-      currency: project.currency,
-      tax_per_item: project.tax_per_item,
-      from_date: Timex.today(),
-      due_date: Timex.shift(Timex.today(), months: project.due_duration),
-      items: [
-        %Invoices.Item{temp_id: SnownixWeb.Org.InvoiceLive.FormComponent.get_temp_id()}
-      ]
-    })
+    |> assign(:invoice, invoice)
   end
 
   defp apply_action(socket, :show) do
@@ -144,17 +167,17 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
 
   def fetch_one(%{assigns: %{project: project}} = socket, id) do
     socket
-    |> assign(:invoice, invoice_id(project.id, id))
+    |> assign(:invoice, get_invoice_by_id(project.id, id))
   end
 
   def push_index(socket) do
     socket |> push_patch(to: Routes.org_invoice_index_path(socket, :index))
   end
 
-  defp invoice_id(project_id, id) do
+  defp get_invoice_by_id(project_id, id) do
     Invoices.get_invoice!(project_id, id)
-    |> Invoices.invoice_customer()
-    |> Invoices.invoice_items()
+    |> Invoices.customer()
+    |> Invoices.items()
   end
 
   defp project_id(%{assigns: %{project: %{id: id}}}) do
@@ -171,7 +194,11 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
 
     pagination = %{
       pagination
-      | items: pagination.items |> Invoices.invoice_customer()
+      | items:
+          pagination.items
+          |> Invoices.customer()
+          |> Invoices.items()
+          |> Invoices.update_calcs()
     }
 
     socket

@@ -75,7 +75,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
     <div class="flex flex-col w-full space-y-6">
       <ul class="sidebar__menu">
         <li phx-hook="ShortCut" data-key="1" data-target-el="#nav-activity" id="sk-nav-activity">
-          <%= live_patch to: Routes.org_activity_index_path(@socket, :index), id: "nav-activity" do %>
+          <%= live_patch to: Routes.org_activity_index_path(@socket, :index), phx_hook: "ActivePath", id: "nav-activity" do %>
             <span>
               <%= render SnownixWeb.IconsView, "notification.svg", %{} %>
             </span>
@@ -89,7 +89,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
           <% end %>
         </li>
         <li phx-hook="ShortCut" data-key="2" data-target-el="#nav-invoices" id="sk-nav-invoices">
-          <%= live_patch to: Routes.org_invoice_index_path(@socket, :index), id: "nav-invoices" do %>
+          <%= live_patch to: Routes.org_invoice_index_path(@socket, :index), phx_hook: "ActivePath", id: "nav-invoices" do %>
             <span>
               <%= render SnownixWeb.IconsView, "invoices.svg", %{} %>
             </span>
@@ -127,7 +127,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
         </p>
         <ul class="sidebar__menu">
           <li phx-hook="ShortCut" data-key="4" data-target-el="#nav-customers"  id="sk-nav-customers">
-            <%= live_patch to: Routes.org_customer_index_path(@socket, :index), id: "nav-customers"  do %>
+            <%= live_patch to: Routes.org_customer_index_path(@socket, :index), phx_hook: "ActivePath", id: "nav-customers"  do %>
               <span><%= render SnownixWeb.IconsView, "customers.svg", %{} %></span>
               <div class="_title">
                 <span><%= gettext("Customers") %></span>
@@ -139,7 +139,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
             <% end %>
             </li>
           <li phx-hook="ShortCut" data-key="5" data-target-el="#nav-products"  id="sk-nav-products">
-            <%= live_patch to: Routes.org_product_index_path(@socket, :index), id: "nav-products" do %>
+            <%= live_patch to: Routes.org_product_index_path(@socket, :index), phx_hook: "ActivePath", id: "nav-products" do %>
               <span><%= render SnownixWeb.IconsView, "products.svg", %{} %></span>
               <div class="_title">
                 <span><%= gettext("Products") %></span>
@@ -151,7 +151,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
             <% end %>
           </li>
           <li phx-hook="ShortCut" data-key="6" data-target-el="#nav-categories"  id="sk-nav-categories">
-            <%= live_patch to: Routes.org_category_index_path(@socket, :index), id: "nav-categories" do %>
+            <%= live_patch to: Routes.org_category_index_path(@socket, :index), phx_hook: "ActivePath", id: "nav-categories" do %>
               <span><%= render SnownixWeb.IconsView, "categories.svg", %{} %></span>
               <div class="_title">
                 <span><%= gettext("Categories") %></span>
@@ -187,7 +187,7 @@ defmodule SnownixWeb.SharedLive.Sidebar.ProjectSidebarComponent do
           </a>
         </li>
         <li>
-          <%= live_redirect to: Routes.org_settings_index_path(@socket, :settings) do %>
+          <%= live_redirect to: Routes.org_settings_index_path(@socket, :settings), phx_hook: "ActivePath", id: "project-settings" do %>
             <span><%= render SnownixWeb.IconsView, "settings.svg", %{} %></span>
             <div>
               <span><%= gettext("Settings") %></span>

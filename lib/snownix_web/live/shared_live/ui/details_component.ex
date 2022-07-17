@@ -17,7 +17,10 @@ defmodule SnownixWeb.SharedLive.UI.DetailsComponent do
               <a href="javascript:history.back();">
                 <%= render SnownixWeb.IconsView, "arrow_prev.svg", %{} %>
               </a>
-                <h3 class="flex-grow"><%= render_slot(@title) %></h3>
+              <h3 class="flex-grow"><%= render_slot(@title) %></h3>
+              <%= if assigns[:menu] do%>
+                <%= render_slot(@menu) %>
+              <% end %>
             </div>
             <div class="_body space-y-4">
               <%= render_slot(@body) %>
