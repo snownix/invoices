@@ -14,6 +14,7 @@ defmodule Snownix.Invoices do
   @topic inspect(__MODULE__)
 
   @activity_field :invoice_number
+  @activity_group_field :name
 
   def subscribe(project_id) do
     Phoenix.PubSub.subscribe(Snownix.PubSub, @topic <> "#{project_id}")
@@ -103,14 +104,14 @@ defmodule Snownix.Invoices do
     |> Repo.preload(:items)
   end
 
-  def update_calcs(%Invoice{} = invoice) do
+  def invoice_calcs(%Invoice{} = invoice) do
     invoice
     |> Invoice.update_calcs()
   end
 
-  def update_calcs(invoices) when is_list(invoices) do
+  def invoice_calcs(invoices) when is_list(invoices) do
     invoices
-    |> Enum.map(&update_calcs(&1))
+    |> Enum.map(&invoice_calcs(&1))
   end
 
   @doc """
@@ -138,7 +139,7 @@ defmodule Snownix.Invoices do
       from(u in Invoice, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
       |> Repo.preload(:items)
-      |> update_calcs()
+      |> invoice_calcs()
 
   def assign_customer(query, %Project{} = project, %{"customer_id" => customer_id}) do
     customer = Customers.get_user!(project.id, customer_id)
@@ -430,4 +431,188 @@ defmodule Snownix.Invoices do
   def change_item(%Item{} = item, attrs \\ %{}) do
     Item.changeset(item, attrs)
   end
+
+  alias Snownix.Invoices.Group
+
+  @doc """
+  Returns the list of groups.
+
+  ## Examples
+
+      iex> list_groups()
+      [%Group{}, ...]
+
+  """
+  def list_groups() do
+    Repo.all(Group)
+  end
+
+  def list_groups(%Project{} = project) do
+    from(i in Group,
+      where:
+        i.project_id ==
+          ^project.id
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a single group.
+
+  Raises `Ecto.NoResultsError` if the Group does not exist.
+
+  ## Examples
+
+      iex> get_group!(123)
+      %Group{}
+
+      iex> get_group!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_group!(id), do: Repo.get!(Group, id)
+
+  def get_group!(%Project{} = project, id),
+    do: get_group!(project.id, id)
+
+  def get_group!(project_id, id),
+    do:
+      from(u in Group, where: u.project_id == ^project_id and u.id == ^id)
+      |> Repo.one!()
+
+  @doc """
+  Creates a group.
+
+  ## Examples
+
+      iex> create_group(%{field: value})
+      {:ok, %Group{}}
+
+      iex> create_group(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_group(attrs \\ %{}) do
+    %Group{}
+    |> Group.changeset(attrs)
+    |> Repo.insert()
+    |> notify_subscribers([:group, :inserted])
+  end
+
+  def create_group(project, user, attrs \\ %{}) do
+    %Group{}
+    |> Group.changeset(attrs)
+    |> Group.owner_changeset(project, user)
+    |> Repo.insert()
+    |> notify_subscribers([:group, :inserted])
+    |> Projects.log_activity(project, user, :create, @activity_group_field)
+  end
+
+  @doc """
+  Updates a group.
+
+  ## Examples
+
+      iex> update_group(group, %{field: new_value})
+      {:ok, %Group{}}
+
+      iex> update_group(group, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_unit(%Group{} = group, attrs) do
+    group
+    |> Group.changeset(attrs)
+    |> Repo.update()
+    |> notify_subscribers([:group, :updated])
+  end
+
+  def update_group(%Group{} = group, project, user, attrs) do
+    group
+    |> Group.changeset(attrs)
+    |> Group.owner_changeset(project, user)
+    |> Repo.update()
+    |> notify_subscribers([:group, :updated])
+    |> Projects.log_activity(project, user, :update, @activity_group_field)
+  end
+
+  @doc """
+  Deletes a group.
+
+  ## Examples
+
+      iex> delete_group(group)
+      {:ok, %Group{}}
+
+      iex> delete_group(group)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_group(%Group{} = group) do
+    Repo.delete(group)
+    |> notify_subscribers([:group, :deleted])
+  end
+
+  def delete_group(%Group{} = group, project, user) do
+    delete_group(group)
+    |> Projects.log_activity(project, user, :delete, @activity_group_field)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking group changes.
+
+  ## Examples
+
+      iex> change_group(group)
+      %Ecto.Changeset{data: %Group{}}
+
+  """
+  def change_group(%Group{} = group, attrs \\ %{}) do
+    Group.changeset(group, attrs)
+  end
+
+  @doc """
+  Identifier Format
+
+    {{ID}} Next ID
+    {{Y}} Year
+    {{M}} Month
+    {{D}} Day
+    {{NAME}} Name
+  """
+  def identifier_format(format, data \\ %{}) do
+    %{year: year, month: month, day: day} = Date.utc_today()
+
+    fields =
+      Map.merge(
+        %{
+          y: year,
+          m: month,
+          d: day,
+          name: "",
+          left_pad: 0,
+          next_id: 0
+        },
+        data
+      )
+
+    [
+      {"Y", fields.y},
+      {"M", fields.m},
+      {"D", fields.d},
+      {"NAME", fields.name},
+      {"ID",
+       "#{fields.next_id}"
+       |> String.pad_leading(cast_str_to_int(fields.left_pad), "0")}
+    ]
+    |> Enum.reduce(
+      "#{format}",
+      fn {field, value}, acc ->
+        acc |> String.replace("\{\{#{field}\}\}", "#{value}")
+      end
+    )
+  end
+
+  defp cast_str_to_int(val),
+    do: if(is_number(val), do: val, else: String.to_integer(val))
 end

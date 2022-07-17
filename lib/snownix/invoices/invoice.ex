@@ -54,6 +54,7 @@ defmodule Snownix.Invoices.Invoice do
 
     belongs_to :user, Snownix.Accounts.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
+    # belongs_to :group, Snownix.Organizations.Group, type: :binary_id
     belongs_to :customer, Snownix.Customers.User, type: :binary_id, on_replace: :nilify
 
     field :parent_id, :binary_id, virtual: true, default: ""
@@ -132,13 +133,12 @@ defmodule Snownix.Invoices.Invoice do
         }
       end)
 
-    item =
-      invoice
-      |> Map.put(:items, items)
-      |> Map.put(:total, total)
-      |> Map.put(:sub_total, sub_total)
-      |> Map.put(:tax_total, tax_total)
-      |> Map.put(:discount_total, discount_total)
+    invoice
+    |> Map.put(:items, items)
+    |> Map.put(:total, total)
+    |> Map.put(:sub_total, sub_total)
+    |> Map.put(:tax_total, tax_total)
+    |> Map.put(:discount_total, discount_total)
   end
 
   def owner_changeset(item, owner) do
@@ -157,5 +157,11 @@ defmodule Snownix.Invoices.Invoice do
     item
     |> change()
     |> put_assoc(:customer, customer)
+  end
+
+  def group_changeset(item, group) do
+    item
+    |> change()
+    |> put_assoc(:group, group)
   end
 end

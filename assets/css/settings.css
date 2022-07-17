@@ -45,7 +45,9 @@
 .settings__header p {
   @apply text-gray-500;
 }
-
+.settings__header code {
+  @apply bg-gray-200 text-sm text-dark p-1 rounded-lg;
+}
 .settings__tabs form {
   @apply flex flex-col w-full space-y-4;
 }

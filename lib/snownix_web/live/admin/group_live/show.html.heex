@@ -1,0 +1,41 @@
+<h1>Show Group</h1>
+
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.admin_group_show_path(@socket, :show, @group)}>
+    <.live_component
+      module={SnownixWeb.Admin.GroupLive.FormComponent}
+      id={@group.id}
+      title={@page_title}
+      action={@live_action}
+      group={@group}
+      return_to={Routes.admin_group_show_path(@socket, :show, @group)}
+    />
+  </.modal>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @group.name %>
+  </li>
+
+  <li>
+    <strong>Next:</strong>
+    <%= @group.next_id %>
+  </li>
+
+  <li>
+    <strong>Identifier format:</strong>
+    <%= @group.identifier_format %>
+  </li>
+
+  <li>
+    <strong>Left pad:</strong>
+    <%= @group.left_pad %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.admin_group_show_path(@socket, :edit, @group), class: "button" %></span> |
+<span><%= live_redirect "Back", to: Routes.admin_group_index_path(@socket, :index) %></span>

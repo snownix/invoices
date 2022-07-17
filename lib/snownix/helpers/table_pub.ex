@@ -27,7 +27,7 @@ defmodule Snownix.Helpers.TablePub do
          )
 
        _ ->
-         socket |> module.fetch
+         socket |> module.fetch()
      end}
   end
 end

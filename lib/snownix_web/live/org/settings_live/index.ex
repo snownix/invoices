@@ -7,6 +7,8 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
   alias Snownix.Projects.Tax
   alias Snownix.Products
   alias Snownix.Products.Unit
+  alias Snownix.Invoices
+  alias Snownix.Invoices.Group
 
   @tabs [
     %{
@@ -23,10 +25,10 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
       description: "Advanced preferences for the billing system, formats, currency etc."
     },
     %{
-      id: "notifications",
-      title: "Notifications",
-      icon: "notification.svg",
-      description: "Which email notifications would you like to receive when something changes"
+      id: "groups",
+      title: "Groups",
+      icon: "groups.svg",
+      description: "Manage invoices & quotes groups, identifiers formatting."
     },
     %{
       id: "taxs",
@@ -40,6 +42,12 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
       title: "Unit",
       icon: "unit.svg",
       description: "Manage your project units to be used in the products."
+    },
+    %{
+      id: "notifications",
+      title: "Notifications",
+      icon: "notification.svg",
+      description: "Which email notifications would you like to receive when something changes"
     }
   ]
   def mount(_, _, socket) do
@@ -51,6 +59,8 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
      |> assign_tax_changeset()
      |> assign_units()
      |> assign_unit_changeset()
+     |> assign_groups()
+     |> assign_group_changeset()
      |> assign_project_changeset()
      |> allow_upload(:logo,
        accept: ~w(.jpg .jpeg .png .gif .txt),
@@ -87,20 +97,33 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
     assign(socket, :unit_changeset, Products.change_unit(unit, params))
   end
 
-  defp assign_taxs(socket, tax \\ %Tax{}, action \\ :create) do
-    tax = Map.put(tax, :percent_float, float_format(tax.percent))
+  def assign_group_changeset(socket, params \\ %{}) do
+    %{group: group} = socket.assigns
+
+    assign(socket, :group_changeset, Invoices.change_group(group, params))
+  end
+
+  defp assign_taxs(socket, item \\ %Tax{}, action \\ :create) do
+    item = Map.put(item, :percent_float, float_format(item.percent))
 
     socket
-    |> assign(:tax, tax)
+    |> assign(:tax, item)
     |> assign(:tax_action, action)
     |> assign(:taxs, Projects.list_taxs(socket.assigns.project))
   end
 
-  defp assign_units(socket, tax \\ %Unit{}, action \\ :create) do
+  defp assign_units(socket, item \\ %Unit{}, action \\ :create) do
     socket
-    |> assign(:unit, tax)
+    |> assign(:unit, item)
     |> assign(:unit_action, action)
     |> assign(:units, Products.list_units(socket.assigns.project))
+  end
+
+  defp assign_groups(socket, item \\ %Group{}, action \\ :create) do
+    socket
+    |> assign(:group, item)
+    |> assign(:group_action, action)
+    |> assign(:groups, Invoices.list_groups(socket.assigns.project))
   end
 
   def handle_event("switch-tab", %{"tab" => tab}, socket) do
@@ -158,6 +181,47 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
 
       {:error, changeset} ->
         {:noreply, socket |> assign(:unit_changeset, changeset)}
+    end
+  end
+
+  # group info
+  def handle_event("group-edit", %{"id" => id}, socket) do
+    group =
+      Invoices.get_group!(id)
+      |> Snownix.Repo.preload(:user)
+      |> Snownix.Repo.preload(:project)
+
+    {:noreply,
+     socket
+     |> assign_groups(group, :update)
+     |> assign_group_changeset()}
+  end
+
+  def handle_event("group-validate", %{"group" => params}, socket) do
+    changeset =
+      socket.assigns.group
+      |> Invoices.change_group(params)
+      |> Map.put(:action, :validate)
+
+    {:noreply,
+     socket
+     |> clear_flash()
+     |> assign(:group_changeset, changeset)}
+  end
+
+  def handle_event("group-save", %{"group" => params}, socket) do
+    %{group: group, project: project, current_user: user, group_action: action} = socket.assigns
+
+    case apply_group_action(action, group, project, user, params) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> assign_groups(%Group{}, :create)
+         |> assign_group_changeset()
+         |> put_flash(:success, gettext("groups updated successfully."))}
+
+      {:error, changeset} ->
+        {:noreply, socket |> assign(:group_changeset, changeset)}
     end
   end
 
@@ -234,6 +298,16 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
     end
   end
 
+  # group
+  def handle_event("group-delete", %{"id" => id}, socket) do
+    %{current_user: user, project: project} = socket.assigns
+
+    group = Invoices.get_group!(project, id)
+    Invoices.delete_group(group, project, user)
+
+    {:noreply, socket |> assign_groups()}
+  end
+
   # tax
   def handle_event("tax-delete", %{"id" => id}, socket) do
     %{current_user: user, project: project} = socket.assigns
@@ -285,6 +359,12 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
   def apply_unit_action(:update, unit, project, user, params),
     do: Products.update_unit(unit, project, user, params)
 
+  def apply_group_action(:create, _, project, user, params),
+    do: Invoices.create_group(project, user, params)
+
+  def apply_group_action(:update, item, project, user, params),
+    do: Invoices.update_group(item, project, user, params)
+
   defp handle_progress(:logo, entry, socket) do
     if entry.done? do
       %{project: project} = socket.assigns
@@ -331,6 +411,8 @@ defmodule SnownixWeb.Org.SettingsLive.Index do
   end
 
   def time_zone_options(), do: Snownix.Helpers.Model.timezones()
+
+  def tab(tabs, id), do: Enum.find(tabs, &(&1.id === id))
 
   # Upload messages
   defp error_to_string(:too_large), do: gettext("File size is too large, max allowed 2MB.")

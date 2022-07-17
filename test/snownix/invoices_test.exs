@@ -241,4 +241,64 @@ defmodule Snownix.InvoicesTest do
       assert %Ecto.Changeset{} = Invoices.change_item(item)
     end
   end
+
+  describe "groups" do
+    alias Snownix.Invoices.Group
+
+    import Snownix.InvoicesFixtures
+
+    @invalid_attrs %{identifier_format: nil, left_pad: nil, name: nil, next_id: nil}
+
+    test "list_groups/0 returns all groups" do
+      group = group_fixture()
+      assert Invoices.list_groups() == [group]
+    end
+
+    test "get_group!/1 returns the group with given id" do
+      group = group_fixture()
+      assert Invoices.get_group!(group.id) == group
+    end
+
+    test "create_group/1 with valid data creates a group" do
+      valid_attrs = %{identifier_format: "some identifier_format", left_pad: 42, name: "some name", next_id: 42}
+
+      assert {:ok, %Group{} = group} = Invoices.create_group(valid_attrs)
+      assert group.identifier_format == "some identifier_format"
+      assert group.left_pad == 42
+      assert group.name == "some name"
+      assert group.next_id == 42
+    end
+
+    test "create_group/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Invoices.create_group(@invalid_attrs)
+    end
+
+    test "update_group/2 with valid data updates the group" do
+      group = group_fixture()
+      update_attrs = %{identifier_format: "some updated identifier_format", left_pad: 43, name: "some updated name", next_id: 43}
+
+      assert {:ok, %Group{} = group} = Invoices.update_group(group, update_attrs)
+      assert group.identifier_format == "some updated identifier_format"
+      assert group.left_pad == 43
+      assert group.name == "some updated name"
+      assert group.next_id == 43
+    end
+
+    test "update_group/2 with invalid data returns error changeset" do
+      group = group_fixture()
+      assert {:error, %Ecto.Changeset{}} = Invoices.update_group(group, @invalid_attrs)
+      assert group == Invoices.get_group!(group.id)
+    end
+
+    test "delete_group/1 deletes the group" do
+      group = group_fixture()
+      assert {:ok, %Group{}} = Invoices.delete_group(group)
+      assert_raise Ecto.NoResultsError, fn -> Invoices.get_group!(group.id) end
+    end
+
+    test "change_group/1 returns a group changeset" do
+      group = group_fixture()
+      assert %Ecto.Changeset{} = Invoices.change_group(group)
+    end
+  end
 end

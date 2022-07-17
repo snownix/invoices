@@ -141,7 +141,7 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
         ],
         invoice_number: "INV-#{String.pad_leading("#{seq}", 6, "0000000000")}"
       }
-      |> Invoices.update_calcs()
+      |> Invoices.invoice_calcs()
 
     socket
     |> assign(:page_title, "New Invoice")
@@ -198,7 +198,7 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
           pagination.items
           |> Invoices.customer()
           |> Invoices.items()
-          |> Invoices.update_calcs()
+          |> Invoices.invoice_calcs()
     }
 
     socket

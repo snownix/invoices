@@ -228,4 +228,8 @@ defmodule SnownixWeb.LiveHelpers do
       </div>
     """
   end
+
+  def identifier_format(format, params) do
+    Snownix.Invoices.identifier_format(format, params)
+  end
 end

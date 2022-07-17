@@ -18,7 +18,6 @@ defmodule SnownixWeb.Org.ActivityLive.Index do
        order: :desc,
        order_by: :inserted_at
      })
-     |> assign(temporary_assigns: [activities: []])
      |> fetch()}
   end
 

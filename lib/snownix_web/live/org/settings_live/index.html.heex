@@ -30,13 +30,13 @@
         class="settings__tabs">
 
         <%# Project %>
-        <section id={Enum.at(@tabs,0).id}>
+        <section id={tab(@tabs,"project").id}>
             <div class="settings__header" >
-                <h2><%= Enum.at(@tabs,0).title %></h2>
-                <p ><%= Enum.at(@tabs,0).description %></p>
+                <h2><%= tab(@tabs,"project").title %></h2>
+                <p ><%= tab(@tabs,"project").description %></p>
             </div>
 
-            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,0).id}-alerts"} />
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{tab(@tabs,"project").id}-alerts"} />
 
             <%= for entry <- @uploads.logo.entries do %>
                 <%= for err <- upload_errors(@uploads.logo, entry) do %>
@@ -132,13 +132,13 @@
 
 
         <%# Preferences %>
-        <section id={Enum.at(@tabs,1).id}>
+        <section id={tab(@tabs,"preferences").id}>
             <div class="settings__header" >
-                <h2><%= Enum.at(@tabs,1).title %></h2>
-                <p ><%= Enum.at(@tabs,1).description %></p>
+                <h2><%= tab(@tabs,"preferences").title %></h2>
+                <p ><%= tab(@tabs,"preferences").description %></p>
             </div>
 
-            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,1).id}-alerts"} />
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{tab(@tabs,"preferences").id}-alerts"} />
 
             <.form let={fr} for={@preferences_changeset} phx-submit="project-save" phx-change="preferences-validate">
                 <div >
@@ -195,26 +195,95 @@
             </.form>
         </section>
 
-        <%# Notifications %>
-        <section id={Enum.at(@tabs,2).id}>
+        <%# groups %>
+        <section id={tab(@tabs,"groups").id}>
             <div class="settings__header" >
-                <h2><%= Enum.at(@tabs,2).title %></h2>
-                <p ><%= Enum.at(@tabs,2).description %></p>
+                <h2><%= tab(@tabs,"groups").title %></h2>
+                <p ><%= tab(@tabs,"groups").description %></p>
+                <div class="flex space-x-6">
+                    <span><code>{{ID}}</code> Next ID</span>
+                    <span><code>{{NAME}}</code> Name</span>
+                    <span></span>
+                    <span></span>
+                    <span><code>{{Y}}</code> Year</span>
+                    <span><code>{{M}}</code> Month</span>
+                    <span><code>{{D}}</code> Day</span>
+                </div>
             </div>
 
-            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,2).id}-alerts"} />
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{tab(@tabs,"groups").id}-alerts"} />
+            
+            <div class="w-full py-4">
+                <.form let={ft} for={@group_changeset} phx-submit="group-save" phx-change="group-validate">
+                    <table>
+                        <thead>
+                            <th><%= gettext "Name" %></th>
+                            <th><%= gettext "Identifier Format" %></th>
+                            <th><%= gettext "Next ID" %></th>
+                            <th><%= gettext "Zeros" %></th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            <%= for group <- @groups do %>
+                                <tr>
+                                    <td><%= group.name %></td>
+                                    <td><%= identifier_format(group.identifier_format, group) %></td>
+                                    <td><%= group.next_id %></td>
+                                    <td><%= group.left_pad %></td>
+                                    <td class="flex justify-between cursor-pointer">
+                                        <a href="#" phx-click="group-edit" phx-value-id={group.id} >
+                                            <%= render SnownixWeb.IconsView, "settings.svg", %{} %>
+                                        </a>
+                                        <span>
+                                            <%= link to: "#", phx_click: "group-delete", phx_value_id: group.id, data: [confirm: "Are you sure?"] do %>
+                                                <%= render SnownixWeb.IconsView, "delete.svg", %{} %>
+                                            <% end %>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <% end %>
+                            <tr>
+                                <td class="w-full">
+                                    <%= text_input ft, :name, placeholder: gettext("Name"), value: input_value(ft, :name), class: tag_class_error(ft, :name) %>
+                                </td>
+                                <td class="w-full min-w-[12rem]">
+                                    <%= text_input ft, :identifier_format, placeholder: gettext("INV-{{ID}}"), value: input_value(ft, :identifier_format), class: tag_class_error(ft, :identifier_format) %>
+                                    <span><%= identifier_format(
+                                        input_value(ft, :identifier_format), 
+                                        %{
+                                            name: input_value(ft, :name), 
+                                            next_id: input_value(ft, :next_id), 
+                                            left_pad: input_value(ft, :left_pad)
+                                        }) %>
+                                    </span>
+                                </td>
+                                <td class="min-w-[8rem]">
+                                    <%= number_input ft,  :next_id, min: 0, step: 1, placeholder: gettext("Next ID"), value: input_value(ft, :next_id), class: tag_class_error(ft, :next_id) %>
+                                </td>
+                                <td class="min-w-[8rem]">
+                                    <%= number_input ft,  :left_pad, min: 0, step: 1, placeholder: gettext("Left Pad"), value: input_value(ft, :left_pad), class: tag_class_error(ft, :left_pad) %>
+                                </td>
+                                <td>
+                                    <button class="primary icon">
+                                        <!--<span><%= @group_action == :create && "Create group" || "Update group" %></span>-->
+                                        <%= render SnownixWeb.IconsView, ( @group_action == :create && "plus.svg" || "save.svg"), %{} %>
+                                    </button>
+                                 </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </.form>
+            </div>
         </section>
 
-
-        
         <%# Taxes %>
-        <section id={Enum.at(@tabs,3).id}>
+        <section id={tab(@tabs,"taxs").id}>
             <div class="settings__header" >
-                <h2><%= Enum.at(@tabs,3).title %></h2>
-                <p ><%= Enum.at(@tabs,3).description %></p>
+                <h2><%= tab(@tabs,"taxs").title %></h2>
+                <p ><%= tab(@tabs,"taxs").description %></p>
             </div>
 
-            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,3).id}-alerts"} />
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{tab(@tabs,"taxs").id}-alerts"} />
             
             <div class="w-full py-4">
                 <.form let={ft} for={@tax_changeset} phx-submit="tax-save" phx-change="tax-validate">
@@ -260,13 +329,13 @@
         </section>
 
         <%# Units %>
-        <section id={Enum.at(@tabs,4).id}>
+        <section id={tab(@tabs,"units").id}>
             <div class="settings__header" >
-                <h2><%= Enum.at(@tabs,4).title %></h2>
-                <p ><%= Enum.at(@tabs,4).description %></p>
+                <h2><%= tab(@tabs,"units").title %></h2>
+                <p ><%= tab(@tabs,"units").description %></p>
             </div>
 
-            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{Enum.at(@tabs,4).id}-alerts"} />
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{tab(@tabs,"units").id}-alerts"} />
             
             <div class="w-full py-4">
                 <.form let={ft} for={@unit_changeset} phx-submit="unit-save" phx-change="unit-validate">
@@ -305,5 +374,16 @@
                 </.form>
             </div>
         </section>
+
+        <%# Notifications %>
+        <section id={tab(@tabs, "notifications").id}>
+            <div class="settings__header" >
+                <h2><%= tab(@tabs,"notifications").title %></h2>
+                <p ><%= tab(@tabs,"notifications").description %></p>
+            </div>
+
+            <.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} id={"#{tab(@tabs,"notifications").id}-alerts"} />
+        </section>
     </section>
+
 </main>

@@ -60,4 +60,21 @@ defmodule Snownix.InvoicesFixtures do
 
     item
   end
+
+  @doc """
+  Generate a group.
+  """
+  def group_fixture(attrs \\ %{}) do
+    {:ok, group} =
+      attrs
+      |> Enum.into(%{
+        identifier_format: "some identifier_format",
+        left_pad: 42,
+        name: "some name",
+        next_id: 42
+      })
+      |> Snownix.Invoices.create_group()
+
+    group
+  end
 end
