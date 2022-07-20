@@ -98,22 +98,22 @@ defmodule Snownix.Invoices.Invoice do
       :invoice_number
     ])
     |> cast_items()
+    |> update_calcs()
   end
 
   def cast_items(changeset) do
     discount_per_item = get_field(changeset, :discount_per_item)
 
-    changeset =
-      changeset
-      |> cast_assoc(:items, with: {Item, :changeset, [[discount_per_item: discount_per_item]]})
-
     changeset
+    |> cast_assoc(:items, with: {Item, :changeset, [[discount_per_item: discount_per_item]]})
   end
 
   def update_calcs(%Invoice{} = invoice) do
     %{
       items: items,
-      discount_per_item: discount_per_item
+      discount_per_item: discount_per_item,
+      discount: discount,
+      discount_type: discount_type
     } = invoice
 
     items = items |> Enum.map(&Item.update_calcs(&1, discount_per_item: discount_per_item))
@@ -133,12 +133,47 @@ defmodule Snownix.Invoices.Invoice do
         }
       end)
 
+    discount_total = discount_total + calc_discount(discount_type, total, discount)
+    total = apply_discount(discount_type, total, discount)
+
     invoice
     |> Map.put(:items, items)
     |> Map.put(:total, total)
     |> Map.put(:sub_total, sub_total)
     |> Map.put(:tax_total, tax_total)
     |> Map.put(:discount_total, discount_total)
+  end
+
+  def update_calcs(%Ecto.Changeset{} = changeset) do
+    items = get_field(changeset, :items, [])
+
+    {total, sub_total, discount_total, tax_total} =
+      Enum.reduce(items, {0, 0, 0, 0}, fn item, {total, sub_total, discount_total, tax_total} ->
+        total = total + item.total
+        sub_total = sub_total + item.sub_total
+        discount_total = discount_total + item.discount_total
+        tax_total = tax_total + item.tax_total
+
+        {
+          total,
+          sub_total,
+          discount_total,
+          tax_total
+        }
+      end)
+
+    discount = get_field(changeset, :discount, 0)
+    discount_type = get_field(changeset, :discount_type, "fixed")
+
+    discount_total = discount_total + calc_discount(discount_type, total, discount)
+
+    total = apply_discount(discount_type, total, discount)
+
+    changeset
+    |> put_change(:total, total)
+    |> put_change(:sub_total, sub_total)
+    |> put_change(:tax_total, tax_total)
+    |> put_change(:discount_total, discount_total)
   end
 
   def owner_changeset(item, owner) do

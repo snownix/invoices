@@ -73,11 +73,10 @@ defmodule Snownix.Invoices.Item do
     |> validate_number(:price, greater_than_or_equal_to: 0)
     |> validate_number(:quantity, greater_than_or_equal_to: 0)
     |> validate_number(:discount, greater_than_or_equal_to: 0)
-    |> calcs(opts)
+    |> update_calcs(opts)
   end
 
-  # works fine
-  def calcs(%Ecto.Changeset{} = changeset, opts \\ []) do
+  def update_calcs(%Ecto.Changeset{} = changeset, opts) do
     tax_per_item = Keyword.get(opts, :tax_per_item, get_field(changeset, :tax_per_item, false))
 
     discount_per_item =
@@ -99,7 +98,7 @@ defmodule Snownix.Invoices.Item do
     |> put_change(:discount_total, discount_total)
   end
 
-  def update_calcs(%Item{} = item, opts \\ []) do
+  def update_calcs(%Item{} = item, opts) do
     %{
       price: price,
       quantity: quantity,

@@ -73,8 +73,8 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
               <%= if @invoice.discount_per_item do %>
                 <td class="w-32 text-right">
                   <div class="flex flex-col">
-                    <%= if item.discount_type === "fixed" do %>
-                      -<%= money_format(item.discount_total, @invoice.currency) %>
+                    -<%= if item.discount_type === "fixed" do %>
+                      <%= money_format(item.discount_total, @invoice.currency) %>
                     <% else %>
                       <%= float_format(item.discount) %>%
                     <% end %>
