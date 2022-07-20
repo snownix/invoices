@@ -42,6 +42,7 @@ defmodule Snownix.Repo.Migrations.CreateInvoices do
       # add :discount_total, :integer, default: 0, virtual: true
 
       add :user_id, references(:users, on_delete: :nothing, type: :uuid)
+      add :group_id, references(:groups, on_delete: :nilify_all, type: :uuid)
       add :project_id, references(:projects, on_delete: :nothing, type: :uuid)
 
       add :customer_id,
@@ -52,6 +53,7 @@ defmodule Snownix.Repo.Migrations.CreateInvoices do
 
     create index(:invoices, [:user_id])
     create index(:invoices, [:project_id])
+    create index(:invoices, [:group_id])
     create index(:invoices, [:customer_id])
   end
 end

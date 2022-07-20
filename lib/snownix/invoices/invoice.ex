@@ -54,7 +54,7 @@ defmodule Snownix.Invoices.Invoice do
 
     belongs_to :user, Snownix.Accounts.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
-    # belongs_to :group, Snownix.Organizations.Group, type: :binary_id
+    belongs_to :group, Snownix.Organizations.Group, type: :binary_id
     belongs_to :customer, Snownix.Customers.User, type: :binary_id, on_replace: :nilify
 
     field :parent_id, :binary_id, virtual: true, default: ""
