@@ -1,11 +1,11 @@
 defmodule SnownixWeb.Admin.AddressLive.FormComponent do
   use SnownixWeb, :live_component
 
-  alias Snownix.Customers
+  alias Snownix.Invoices
 
   @impl true
   def update(%{address: address} = assigns, socket) do
-    changeset = Customers.change_address(address)
+    changeset = Invoices.change_address(address)
 
     {:ok,
      socket
@@ -17,7 +17,7 @@ defmodule SnownixWeb.Admin.AddressLive.FormComponent do
   def handle_event("validate", %{"address" => address_params}, socket) do
     changeset =
       socket.assigns.address
-      |> Customers.change_address(address_params)
+      |> Invoices.change_address(address_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :changeset, changeset)}
@@ -28,7 +28,7 @@ defmodule SnownixWeb.Admin.AddressLive.FormComponent do
   end
 
   defp save_address(socket, :edit, address_params) do
-    case Customers.update_address(socket.assigns.address, address_params) do
+    case Invoices.update_address(socket.assigns.address, address_params) do
       {:ok, _address} ->
         {:noreply,
          socket
@@ -41,7 +41,7 @@ defmodule SnownixWeb.Admin.AddressLive.FormComponent do
   end
 
   defp save_address(socket, :new, address_params) do
-    case Customers.create_address(address_params) do
+    case Invoices.create_address(address_params) do
       {:ok, _address} ->
         {:noreply,
          socket

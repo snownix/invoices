@@ -1,12 +1,12 @@
 defmodule SnownixWeb.Admin.AddressLive.Index do
   use SnownixWeb, :live_view
 
-  alias Snownix.Customers
-  alias Snownix.Customers.Address
+  alias Snownix.Invoices
+  alias Snownix.Invoices.Address
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :addresses, list_addresses())}
+    {:ok, assign(socket, :invoice_addresses, list_invoice_addresses())}
   end
 
   @impl true
@@ -17,7 +17,7 @@ defmodule SnownixWeb.Admin.AddressLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Address")
-    |> assign(:address, Customers.get_address!(id))
+    |> assign(:address, Invoices.get_address!(id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -28,19 +28,19 @@ defmodule SnownixWeb.Admin.AddressLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Addresses")
+    |> assign(:page_title, "Listing Invoice addresses")
     |> assign(:address, nil)
   end
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    address = Customers.get_address!(id)
-    {:ok, _} = Customers.delete_address(address)
+    address = Invoices.get_address!(id)
+    {:ok, _} = Invoices.delete_address(address)
 
-    {:noreply, assign(socket, :addresses, list_addresses())}
+    {:noreply, assign(socket, :invoice_addresses, list_invoice_addresses())}
   end
 
-  defp list_addresses do
-    Customers.list_addresses()
+  defp list_invoice_addresses do
+    Invoices.list_invoice_addresses()
   end
 end

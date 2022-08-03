@@ -9,25 +9,29 @@
     phx-change="validate"
     phx-submit="save">
   
+    <%= label f, :city %>
+    <%= text_input f, :city %>
+    <%= error_tag f, :city %>
+  
     <%= label f, :country %>
     <%= text_input f, :country %>
     <%= error_tag f, :country %>
   
-    <%= label f, :city %>
-    <%= text_input f, :city %>
-    <%= error_tag f, :city %>
+    <%= label f, :currency %>
+    <%= text_input f, :currency %>
+    <%= error_tag f, :currency %>
   
     <%= label f, :fax %>
     <%= text_input f, :fax %>
     <%= error_tag f, :fax %>
   
+    <%= label f, :phone %>
+    <%= text_input f, :phone %>
+    <%= error_tag f, :phone %>
+  
     <%= label f, :state %>
     <%= text_input f, :state %>
     <%= error_tag f, :state %>
-  
-    <%= label f, :zip %>
-    <%= text_input f, :zip %>
-    <%= error_tag f, :zip %>
   
     <%= label f, :street %>
     <%= text_input f, :street %>
@@ -37,13 +41,9 @@
     <%= text_input f, :street_2 %>
     <%= error_tag f, :street_2 %>
   
-    <%= label f, :phone %>
-    <%= text_input f, :phone %>
-    <%= error_tag f, :phone %>
-  
-    <%= label f, :currency %>
-    <%= text_input f, :currency %>
-    <%= error_tag f, :currency %>
+    <%= label f, :zip %>
+    <%= text_input f, :zip %>
+    <%= error_tag f, :zip %>
   
     <div>
       <%= submit "Save", phx_disable_with: "Saving..." %>

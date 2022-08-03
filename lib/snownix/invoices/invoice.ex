@@ -57,6 +57,9 @@ defmodule Snownix.Invoices.Invoice do
     belongs_to :group, Snownix.Organizations.Group, type: :binary_id
     belongs_to :customer, Snownix.Customers.User, type: :binary_id, on_replace: :nilify
 
+    belongs_to :billing_address, Snownix.Invoices.Address, type: :binary_id
+    belongs_to :shipping_address, Snownix.Invoices.Address, type: :binary_id
+
     field :parent_id, :binary_id, virtual: true, default: ""
     field :selected, :boolean, virtual: true, default: false
 
@@ -97,8 +100,16 @@ defmodule Snownix.Invoices.Invoice do
       :from_date,
       :invoice_number
     ])
+    |> cast_assocs()
     |> cast_items()
     |> update_calcs()
+  end
+
+  defp cast_assocs(changeset) do
+    changeset
+    |> cast_assoc(:customer)
+    |> cast_assoc(:billing_address)
+    |> cast_assoc(:shipping_address)
   end
 
   def cast_items(changeset) do

@@ -93,7 +93,7 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
          |> push_patch(to: return_to)}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, handle_changeset_state(socket, changeset)}
     end
   end
 
@@ -117,8 +117,16 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
         }
 
       {:error, changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, handle_changeset_state(socket, changeset)}
     end
+  end
+
+  defp handle_changeset_state(socket, changeset) do
+    IO.inspect(changeset)
+
+    socket
+    |> put_changeset_errors(changeset)
+    |> assign(:changeset, changeset)
   end
 
   defp put_default_items(invoice_items) do

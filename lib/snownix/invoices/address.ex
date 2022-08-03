@@ -1,4 +1,4 @@
-defmodule Snownix.Customers.Address do
+defmodule Snownix.Invoices.Address do
   use Ecto.Schema
   import Ecto.Changeset
   @timestamps_opts [type: :utc_datetime]
@@ -7,14 +7,11 @@ defmodule Snownix.Customers.Address do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @address_fields [:country, :city, :zip, :state, :street, :street_2]
-  @fields [:currency, :country, :title, :city, :state, :zip, :street, :street_2, :fax, :phone]
+  @fields [:country, :city, :state, :zip, :street, :street_2, :fax, :phone]
 
-  schema "customer_addresses" do
-    field :title, :string
-
+  schema "invoice_addresses" do
     field :city, :string
     field :country, :string
-    field :currency, :string
     field :fax, :string
     field :phone, :string
     field :state, :string
@@ -22,9 +19,10 @@ defmodule Snownix.Customers.Address do
     field :street_2, :string
     field :zip, :string
 
-    field :default, :boolean, default: false
+    belongs_to :address, Snownix.Customers.Address, type: :binary_id
+    belongs_to :invoice, Snownix.Invoices.Invoice, type: :binary_id
 
-    belongs_to :user, Snownix.Customers.User, type: :binary_id
+    belongs_to :user, Snownix.Accounts.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
 
     timestamps()
@@ -39,14 +37,14 @@ defmodule Snownix.Customers.Address do
     |> address_changeset(attrs)
     |> validate_length(:fax, min: 0, max: 15)
     |> validate_length(:phone, min: 0, max: 15)
-    |> validate_length(:title, min: 0, max: 200)
-    |> validate_inclusion(:currency, currencies())
   end
 
   defp cast_assocs(changeset) do
     changeset
     |> cast_assoc(:user)
     |> cast_assoc(:project)
+    |> cast_assoc(:address)
+    |> cast_assoc(:invoice)
   end
 
   def address_changeset(item, attrs) do
@@ -60,7 +58,13 @@ defmodule Snownix.Customers.Address do
     |> validate_inclusion(:country, countries())
   end
 
-  def customer_changeset(item, user) do
+  def invoice_changeset(item, invoice) do
+    item
+    |> change()
+    |> put_assoc(:invoice, invoice)
+  end
+
+  def user_changeset(item, user) do
     item
     |> change()
     |> put_assoc(:user, user)

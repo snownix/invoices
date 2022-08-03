@@ -1,4 +1,4 @@
-<h1>Listing Addresses</h1>
+<h1>Listing Invoice addresses</h1>
 
 <%= if @live_action in [:new, :edit] do %>
   <.modal return_to={Routes.admin_address_index_path(@socket, :index)}>
@@ -16,31 +16,31 @@
 <table>
   <thead>
     <tr>
-      <th>Country</th>
       <th>City</th>
-      <th>Fax</th>
-      <th>State</th>
-      <th>Zip</th>
-      <th>Street 1</th>
-      <th>Street 2</th>
-      <th>Phone</th>
+      <th>Country</th>
       <th>Currency</th>
+      <th>Fax</th>
+      <th>Phone</th>
+      <th>State</th>
+      <th>Street</th>
+      <th>Street 2</th>
+      <th>Zip</th>
 
       <th></th>
     </tr>
   </thead>
-  <tbody id="addresses">
-    <%= for address <- @addresses do %>
+  <tbody id="invoice_addresses">
+    <%= for address <- @invoice_addresses do %>
       <tr id={"address-#{address.id}"}>
-        <td><%= address.country %></td>
         <td><%= address.city %></td>
+        <td><%= address.country %></td>
+        <td><%= address.currency %></td>
         <td><%= address.fax %></td>
+        <td><%= address.phone %></td>
         <td><%= address.state %></td>
-        <td><%= address.zip %></td>
         <td><%= address.street %></td>
         <td><%= address.street_2 %></td>
-        <td><%= address.phone %></td>
-        <td><%= address.currency %></td>
+        <td><%= address.zip %></td>
 
         <td>
           <span><%= live_redirect "Show", to: Routes.admin_address_show_path(@socket, :show, address) %></span>

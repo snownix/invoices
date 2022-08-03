@@ -1,7 +1,7 @@
 defmodule SnownixWeb.Admin.AddressLive.Show do
   use SnownixWeb, :live_view
 
-  alias Snownix.Customers
+  alias Snownix.Invoices
 
   @impl true
   def mount(_params, _session, socket) do
@@ -13,7 +13,7 @@ defmodule SnownixWeb.Admin.AddressLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:address, Customers.get_address!(id))}
+     |> assign(:address, Invoices.get_address!(id))}
   end
 
   defp page_title(:show), do: "Show Address"

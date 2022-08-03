@@ -77,4 +77,26 @@ defmodule Snownix.InvoicesFixtures do
 
     group
   end
+
+  @doc """
+  Generate a address.
+  """
+  def address_fixture(attrs \\ %{}) do
+    {:ok, address} =
+      attrs
+      |> Enum.into(%{
+        city: "some city",
+        country: "some country",
+        currency: "some currency",
+        fax: "some fax",
+        phone: "some phone",
+        state: "some state",
+        street: "some street",
+        street_2: "some street_2",
+        zip: "some zip"
+      })
+      |> Snownix.Invoices.create_address()
+
+    address
+  end
 end

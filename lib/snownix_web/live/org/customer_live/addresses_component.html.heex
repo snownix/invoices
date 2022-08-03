@@ -4,9 +4,18 @@
         <div>
             <div class="flex justify-between py-2 px-4 rounded bg-gray-100 font-medium text-dark">
                 <h3><%= @action == :new && "New address" || "Edit address" %></h3>
-                <button phx-click="cancel" phx-target={@myself} class="rounded p-1">
-                    <%= render SnownixWeb.IconsView, "cancel.svg",  %{size: 16} %>
-                </button>
+                
+                <div class="flex space-x-1">
+                    <%= if @address.id do %>
+                    <button class="px-1 py-1 text-red-500 hover:!text-red-600" phx-target={@myself} phx-click="delete" phx-value-id={@address.id} data={[confirm: "Are you sure?"]}>
+                            <%= render SnownixWeb.IconsView, "delete.svg", %{size: 18} %>
+                    </button>
+                    <% end %>
+                    
+                    <button phx-click="cancel" phx-target={@myself} class=" p-1">
+                        <%= render SnownixWeb.IconsView, "cancel.svg",  %{size: 16} %>
+                    </button>
+                </div>
             </div>
             <.form
                 let={f}
@@ -81,9 +90,6 @@
                     <% end %>
                 </div>
                 <div class="self-end ml-auto space-y-1">
-                    <button class="px-1 py-1 text-red-500 hover:!text-red-600" phx-target={@myself} phx-click="delete" phx-value-id={address.id} data={[confirm: "Are you sure?"]}>
-                        <%= render SnownixWeb.IconsView, "delete.svg", %{size: 18} %>
-                    </button>
                     <button class="px-1 py-1"  phx-target={@myself} phx-click="edit" phx-value-id={address.id}>
                         <%= render SnownixWeb.IconsView, "settings.svg", %{size: 18} %>
                     </button>
