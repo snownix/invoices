@@ -10,6 +10,7 @@ defmodule Snownix.Customers do
   alias Snownix.Projects
   alias Snownix.Customers.User
   alias Snownix.Organizations.Project
+  alias Snownix.Customers.Address
 
   @topic inspect(__MODULE__)
   @activity_field :contact_name
@@ -84,6 +85,53 @@ defmodule Snownix.Customers do
     sort_query_by(query, orderby, order)
   end
 
+  def list_customers(%Project{} = project, search_term)
+      when is_binary(search_term) and not is_nil(search_term) and bit_size(search_term) > 0 do
+    IO.inspect(">>>searching lis")
+
+    search_customers(project, search_term)
+    |> Repo.all()
+    |> Enum.map(& &1.row)
+  end
+
+  def list_customers(%Project{} = project, _) do
+    IO.inspect(">>>normal list")
+
+    from(r in User,
+      where: r.project_id == ^project.id
+    )
+    |> Repo.all()
+  end
+
+  defp search_customers(%Project{} = project, search_term, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 10)
+
+    from(
+      # normally these even have joins
+      row in User,
+      select: %{
+        row: row,
+        rank:
+          fragment(
+            "GREATEST(similarity(?, ?), similarity(?, ?), similarity(?, ?)) AS rank",
+            row.email,
+            ^search_term,
+            row.contact_name,
+            ^search_term,
+            row.name,
+            ^search_term
+          )
+      },
+      where:
+        row.project_id == ^project.id and
+          (fragment("similarity(?, ?)", row.contact_name, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.name, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.email, ^search_term) > 0.1),
+      order_by: fragment("rank DESC"),
+      limit: ^limit
+    )
+  end
+
   @doc """
   Gets a single user.
 
@@ -103,11 +151,16 @@ defmodule Snownix.Customers do
       Repo.get!(User, id)
       |> Repo.preload(:addresses)
 
+  def get_user!(%Project{} = project, id), do: get_user!(project.id, id)
+
   def get_user!(project_id, id),
     do:
       from(u in User, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
       |> Repo.preload(:addresses)
+
+  def get_id_from_customer_changeset(changeset),
+    do: changeset |> Ecto.Changeset.get_field(:customer_id)
 
   @doc """
   Creates a user.
@@ -222,8 +275,6 @@ defmodule Snownix.Customers do
     User.changeset(user, attrs)
   end
 
-  alias Snownix.Customers.Address
-
   @doc """
   Returns the list of addresses.
 
@@ -233,8 +284,40 @@ defmodule Snownix.Customers do
       [%Address{}, ...]
 
   """
-  def list_addresses do
-    Repo.all(Address)
+  def list_addresses() do
+    User |> Repo.all()
+  end
+
+  def list_addresses(%Project{} = project) do
+    list_addresses(project.id, [])
+  end
+
+  def list_addresses(project_id, opts \\ []) do
+    orderby = Keyword.get(opts, :order_by)
+    order = Keyword.get(opts, :order, :asc)
+
+    query =
+      from(r in Address,
+        where:
+          r.project_id ==
+            ^project_id
+      )
+
+    sort_query_by(query, orderby, order)
+  end
+
+  def list_customer_addresses(%{id: project_id}, %{id: customer_id})
+      when not is_nil(customer_id) do
+    from(r in Address,
+      where:
+        r.project_id == ^project_id and
+          r.customer_id == ^customer_id
+    )
+    |> Repo.all()
+  end
+
+  def list_customer_addresses(%{id: _project_id}, _customer) do
+    []
   end
 
   @doc """

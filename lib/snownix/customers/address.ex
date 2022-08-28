@@ -24,7 +24,9 @@ defmodule Snownix.Customers.Address do
 
     field :default, :boolean, default: false
 
-    belongs_to :user, Snownix.Customers.User, type: :binary_id
+    belongs_to :customer, Snownix.Customers.User, type: :binary_id
+
+    belongs_to :user, Snownix.Accounts.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
 
     timestamps()
@@ -47,6 +49,7 @@ defmodule Snownix.Customers.Address do
     changeset
     |> cast_assoc(:user)
     |> cast_assoc(:project)
+    |> cast_assoc(:customer)
   end
 
   def address_changeset(item, attrs) do
@@ -60,10 +63,10 @@ defmodule Snownix.Customers.Address do
     |> validate_inclusion(:country, countries())
   end
 
-  def customer_changeset(item, user) do
+  def customer_changeset(item, customer) do
     item
     |> change()
-    |> put_assoc(:user, user)
+    |> put_assoc(:customer, customer)
   end
 
   def project_changeset(item, project) do

@@ -225,7 +225,7 @@ const Hooks = {
                 clearTimeout(this.keyupTimeout);
                 this.keyupTimeout = setTimeout(() => {
                     const value = evt.target.value;
-                    this.pushEventTo(this.el.getAttribute("phx-target"), "filter", value);
+                    this.pushEventTo(this.el.getAttribute("phx-target"), "search-filter-items", value);
                 }, 400);
             });
             this.blurEvt = input.addEventListener("blur", (evt) => {

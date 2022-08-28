@@ -21,7 +21,7 @@ defmodule Snownix.Customers.User do
     belongs_to :user, Snownix.Accounts.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
 
-    has_many :addresses, Snownix.Customers.Address
+    has_many :addresses, Snownix.Customers.Address, foreign_key: :customer_id
 
     timestamps()
   end

@@ -139,7 +139,9 @@ defmodule Snownix.Invoices do
       from(u in Invoice, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
       |> Repo.preload(:items)
+      |> Repo.preload(:customer)
       |> Repo.preload(:billing_address)
+      |> Repo.preload(:shipping_address)
       |> invoice_calcs()
 
   def assign_customer(query, %Project{} = project, %{"customer_id" => customer_id}) do

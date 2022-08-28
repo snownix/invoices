@@ -90,7 +90,8 @@ defmodule Snownix.Invoices.Invoice do
       :viewed,
       :sequence_number,
       :currency,
-      :allow_edit
+      :allow_edit,
+      :customer_id
     ])
     |> cast_float_to_int([
       {:discount_float, :discount}

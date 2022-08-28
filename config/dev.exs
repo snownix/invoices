@@ -5,7 +5,7 @@ config :snownix, Snownix.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  database: "snownix_invoices_dev",
+  database: "invoices_postgres",
   show_sensitive_data_on_connection_error: true,
   log: false,
   pool_size: 10

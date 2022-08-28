@@ -33,32 +33,18 @@
 			</div>
 		</div>
 		<div class="form__group"> 
-			<%= label f, :customer_id, gettext("Customer") %>
-			<%= select f, :customer_id, customers_options(assigns), placeholder: gettext("customer_id") , required: true, phx_debounce: "blur", value: input_value(f, :customer_id), class: tag_class_error(f, :customer_id)  %>
+			<.live_component
+				id="customer-search-select"
+				type="customer"
+				module={SnownixWeb.SharedLive.UI.BigSearchSelectComponent}
+				items={@customers}
+				selected_item={@selected_customer}
+				form={f}
+				field={:customer_id}
+				parent={@myself}
+			/>
 			<%= error_tag f, :customer_id %>
 		</div>
-
-		<details class="w-full space-y-2">
-			<summary>
-				Addresses
-			</summary>
-			<div class="flex space-x-4">
-				<.live_component
-					id="billing"
-					name="billing"
-					form={f}
-					field_name={:billing_address}
-					module={SnownixWeb.Org.InvoiceLive.Addresses.FormComponent}
-				/>
-				<.live_component
-					id="shipping"
-					name="shipping"
-					form={f}
-					field_name={:shipping_address}
-					module={SnownixWeb.Org.InvoiceLive.Addresses.FormComponent}
-				/>
-			</div>
-		</details>
 
 		<%# Items %>
 		<div class="!my-8">

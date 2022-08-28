@@ -139,7 +139,8 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
             quantity: 1
           }
         ],
-        invoice_number: "INV-#{String.pad_leading("#{seq}", 6, "0000000000")}"
+        invoice_number: "INV-#{String.pad_leading("#{seq}", 6, "0000000000")}",
+        customer: nil
       }
       |> Invoices.invoice_calcs()
 
