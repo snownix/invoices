@@ -87,16 +87,12 @@ defmodule Snownix.Customers do
 
   def list_customers(%Project{} = project, search_term)
       when is_binary(search_term) and not is_nil(search_term) and bit_size(search_term) > 0 do
-    IO.inspect(">>>searching lis")
-
     search_customers(project, search_term)
     |> Repo.all()
     |> Enum.map(& &1.row)
   end
 
   def list_customers(%Project{} = project, _) do
-    IO.inspect(">>>normal list")
-
     from(r in User,
       where: r.project_id == ^project.id
     )
@@ -158,9 +154,6 @@ defmodule Snownix.Customers do
       from(u in User, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
       |> Repo.preload(:addresses)
-
-  def get_id_from_customer_changeset(changeset),
-    do: changeset |> Ecto.Changeset.get_field(:customer_id)
 
   @doc """
   Creates a user.
@@ -306,18 +299,61 @@ defmodule Snownix.Customers do
     sort_query_by(query, orderby, order)
   end
 
-  def list_customer_addresses(%{id: project_id}, %{id: customer_id})
-      when not is_nil(customer_id) do
+  def list_customer_addresses(%Project{} = project, %User{} = customer, search_term)
+      when is_binary(search_term) and not is_nil(search_term) and bit_size(search_term) > 0 do
+    search_customer_addresses(project.id, customer.id, search_term)
+    |> Repo.all()
+    |> Enum.map(& &1.row)
+  end
+
+  def list_customer_addresses(%Project{} = project, %User{} = customer, _) do
     from(r in Address,
       where:
-        r.project_id == ^project_id and
-          r.customer_id == ^customer_id
+        r.project_id == ^project.id and
+          r.customer_id == ^customer.id
     )
     |> Repo.all()
   end
 
-  def list_customer_addresses(%{id: _project_id}, _customer) do
-    []
+  def list_customer_addresses(%Project{} = _project, %User{} = _customer, _), do: []
+
+  defp search_customer_addresses(project_id, customer_id, search_term, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 10)
+
+    from(
+      # normally these even have joins
+      row in Address,
+      select: %{
+        row: row,
+        rank:
+          fragment(
+            "GREATEST(similarity(?, ?), similarity(?, ?), similarity(?, ?), similarity(?, ?), similarity(?, ?), similarity(?, ?)) AS rank",
+            row.street,
+            ^search_term,
+            row.street_2,
+            ^search_term,
+            row.city,
+            ^search_term,
+            row.country,
+            ^search_term,
+            row.state,
+            ^search_term,
+            row.zip,
+            ^search_term
+          )
+      },
+      where:
+        row.project_id == ^project_id and
+          row.customer_id == ^customer_id and
+          (fragment("similarity(?, ?)", row.street, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.street_2, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.city, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.country, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.state, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.zip, ^search_term) > 0.1),
+      order_by: fragment("rank DESC"),
+      limit: ^limit
+    )
   end
 
   @doc """
@@ -334,7 +370,15 @@ defmodule Snownix.Customers do
       ** (Ecto.NoResultsError)
 
   """
-  def get_address!(id), do: Repo.get!(Address, id)
+  def get_address!(id),
+    do: Repo.get!(Address, id)
+
+  def get_address!(%Project{} = project, id), do: get_address!(project.id, id)
+
+  def get_address!(project_id, id),
+    do:
+      from(u in Address, where: u.project_id == ^project_id and u.id == ^id)
+      |> Repo.one!()
 
   @doc """
   Creates a address.

@@ -17,14 +17,20 @@ defmodule SnownixWeb.SharedLive.UI.BigSearchSelectComponent do
       <div id={@id} phx-target={@parent} phx-hook="SearchSelect" class="w-full relative">
         <%= label @form, @field %>
 
-        <div class="flex relative">
+        <div class="flex space-x-2">
+          <div class="flex relative w-full">
           <%= hidden_input @form, @field, value: current_value(@selected_item) %>
-          <input class={item_input_class(@selected_item)} phx-change="ignore" placeholder={input_placeholder(@type, @selected_item)} type="text" />
-          <button type="button" class="toggle__btn absolute top-3 right-3 p-0 border-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-            </svg>
-          </button>
+            <input class={item_input_class(@selected_item)} phx-change="ignore" placeholder={input_placeholder(@type, @selected_item)} type="text" />
+            <button type="button" class="toggle__btn absolute top-3 right-3 p-0 border-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+              </svg>
+            </button>
+          </div>
+
+          <%= if assigns[:inner_block] do %>
+            <%= render_slot(@inner_block) %>
+          <% end %>
         </div>
 
         <%= error_tag @form, @field %>

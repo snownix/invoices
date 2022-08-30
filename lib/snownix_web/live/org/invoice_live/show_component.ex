@@ -1,22 +1,48 @@
 defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
   use SnownixWeb, :live_component
 
+  def render_address(assigns, label, address) do
+    ~H"""
+    <div class="flex flex-col">
+      <h4 class="font-semibold"><%= label %></h4>
+      <ul>
+        <li  class="flex space-x-2 items-center">
+         <img src={"https://flagicons.lipis.dev/flags/4x3/" <> String.downcase(address.country) <> ".svg"} class="w-6 h-4 rounded object-cover" />
+          <span><%= address.street %>, <%= address.street_2 %></span>
+        </li>
+        <li>
+         <%= address.city %> -  <%= address.state %> <%= address.zip %>
+        </li>
+      </ul>
+    </div>
+    """
+  end
+
   def render(assigns) do
     ~H"""
     <section class="_profile space-y-2 p-0">
-        <%= if @invoice.customer do %>
+      <%= if @invoice.customer do %>
         <div class="py-2 px-6 rounded bg-gray-100 font-medium text-dark">
-          <h3>Customer</h3>
-        </div>
-        <div class="_invoice rounded-md space-y-2 px-2 py-4">
-          <%= live_patch to: Routes.org_customer_index_path(@socket, :show, @invoice.customer.id), class: "flex items-center space-x-2" do %>
-            <%= render_user_avatar(assigns, @invoice.customer, "w-12 h-12") %>
-            <div class="flex flex-col">
-              <span class="font-semibold"><%= @invoice.customer.name %></span>
-              <span class="text-sm"><%=  @invoice.customer.contact_name %></span>
+            <h3>Customer</h3>
+          </div>
+          <div class="_invoice flex flex-col md:flex-row justify-between items-start rounded-md space-y-2 px-2 py-4">
+            <%= live_patch to: Routes.org_customer_index_path(@socket, :show, @invoice.customer.id), class: "flex items-center space-x-2 w-full" do %>
+              <%= render_user_avatar(assigns, @invoice.customer, "w-12 h-12") %>
+              <div class="flex flex-col">
+                <span class="font-semibold"><%= @invoice.customer.name %></span>
+                <span class="text-sm"><%=  @invoice.customer.contact_name %></span>
+              </div>
+            <% end %>
+
+            <div class="flex flex-row justify-between w-full">
+            <%= if @invoice.billing_address_id do %>
+              <%= render_address(assigns, "Billing Address", @invoice.billing_address) %>
+            <% end %>
+            <%= if @invoice.shipping_address_id do %>
+              <%= render_address(assigns, "Shipping Address", @invoice.shipping_address) %>
+            <% end %>
             </div>
-          <% end %>
-        </div>
+          </div>
       <% end %>
 
       <div class="py-2 px-6 rounded bg-gray-100 font-medium text-dark">

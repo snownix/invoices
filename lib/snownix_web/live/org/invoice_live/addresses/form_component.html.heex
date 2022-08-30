@@ -1,7 +1,18 @@
 <section>
-    <h3 class="capitalize"><%= @name %></h3>
-
-    <div class="space-y-2">
+    <.live_component
+        id={"#{@field_name}-search-select"}
+        type={@field_name}
+        form={@form}
+        parent={@parent}
+        items={@addresses}
+        field={@field_name}
+        selected_item={@selected_item}
+        module={SnownixWeb.SharedLive.UI.BigSearchSelectComponent}
+    >
+    <button type="button" phx-target={@myself} id={"display-#{@field_name}"} phx-click="toggle-display" class="primary">Edit</button>
+    </.live_component>
+    
+    <div phx-update="ignore" class={"space-y-2 " <> (if @display, do: "", else: "hidden") }>
         <%= inputs_for @form, @field_name, fn f -> %>
             <div class="form__group">
                 <%= text_input f, :street, placeholder: "Street" %>

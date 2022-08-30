@@ -648,7 +648,18 @@ defmodule Snownix.Invoices do
       ** (Ecto.NoResultsError)
 
   """
-  def get_address!(id), do: Repo.get!(Address, id)
+  def get_address!(id),
+    do:
+      Repo.get!(Address, id)
+      |> Repo.preload(:addresses)
+
+  def get_address!(%Project{} = project, id), do: get_address!(project.id, id)
+
+  def get_address!(project_id, id),
+    do:
+      from(u in Address, where: u.project_id == ^project_id and u.id == ^id)
+      |> Repo.one!()
+      |> Repo.preload(:addresses)
 
   @doc """
   Creates a address.

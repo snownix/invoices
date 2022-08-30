@@ -22,12 +22,12 @@
 		</div>
 		<div class="form__groups">
 			<div class="form__group">
-				<%= label f, :from_date %>
+				<div class="flex justify-between"><%= label f, :from_date %> <time phx-hook="TimeAgo" id="from_date" datetime={"#{input_value(f, :from_date)} 24:00:00"}></time></div>
 				<%= date_input f, :from_date %>
 				<%= error_tag f, :from_date %>
 			</div>
 			<div class="form__group">
-				<%= label f, :due_date %>
+				<div class="flex justify-between"><%= label f, :due_date %> <time phx-hook="TimeAgo" id="due_date" datetime={"#{input_value(f, :due_date)} 24:00:00"}></time></div>
 				<%= date_input f, :due_date %>
 				<%= error_tag f, :due_date %>
 			</div>
@@ -36,14 +36,45 @@
 			<.live_component
 				id="customer-search-select"
 				type="customer"
-				module={SnownixWeb.SharedLive.UI.BigSearchSelectComponent}
-				items={@customers}
-				selected_item={@selected_customer}
 				form={f}
-				field={:customer_id}
 				parent={@myself}
+				items={@customers}
+				field={:customer_id}
+				selected_item={@selected_customer}
+				module={SnownixWeb.SharedLive.UI.BigSearchSelectComponent}
 			/>
 			<%= error_tag f, :customer_id %>
+		</div>
+
+		<div class="flex md:flex-row md:space-x-4 w-full md:flex-between"> 
+			<div class="form__group w-full"> 
+				<.live_component
+					form={f}
+					id="billing_address"
+					name="Billing Address"
+					display={true}
+					field_name={:billing_address}
+					parent={@myself}
+					addresses={@addresses}
+					selected_item={@selected_billing_address}
+					module={SnownixWeb.Org.InvoiceLive.Addresses.FormComponent}
+				/>
+				<%= error_tag f, :billing_address %>
+			</div>
+			<div class="form__group w-full"> 
+				<.live_component
+					form={f}
+					id="shipping_address"
+					name="Billing Address"
+					display={true}
+					field_name={:shipping_address}
+					parent={@myself}
+					addresses={@addresses}
+					selected_item={@selected_shipping_address}
+					module={SnownixWeb.Org.InvoiceLive.Addresses.FormComponent}
+				/>
+				<%= error_tag f, :shipping_address %>
+			</div>
 		</div>
 
 		<%# Items %>

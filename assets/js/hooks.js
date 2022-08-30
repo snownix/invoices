@@ -134,6 +134,11 @@ const Hooks = {
         destroyed() {
             clearTimeout(this.timer);
         },
+        updated(){
+            this.date = moment.utc(this.el.getAttribute('datetime'));
+            clearTimeout(this.timer);
+            this.updateTime();
+        },
         updateTime() {
             let nextUpdate = moment.utc().local().diff(this.date) / 1000;
 
