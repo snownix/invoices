@@ -22,7 +22,8 @@ defmodule Snownix.Customers.Address do
     field :street_2, :string
     field :zip, :string
 
-    field :default, :boolean, default: false
+    field :billing_default, :boolean, default: false
+    field :shipping_default, :boolean, default: false
 
     belongs_to :customer, Snownix.Customers.User, type: :binary_id
 

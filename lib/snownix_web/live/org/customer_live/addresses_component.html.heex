@@ -71,10 +71,17 @@
             </button>
         </div>
         <%= for address <- @addresses do %>
-            <div class={"flex items-start w-full p-4 bg-gray-50 rounded relative "<> (address.default && "!bg-primary !bg-opacity-5 border-2 border-gray-300" || "border border-gray-200")}>
-                <%= if address.default do  %>
-                    <div class="inset-1 w-4 h-4 rounded bg-primary bg-opacity-20 absolute"></div>
-                <% end %>
+            <div 
+                class={
+                    "flex items-start w-full p-4 bg-gray-50 rounded relative "<>
+                    ((address.shipping_default && address.billing_default) && " !bg-green-500 !bg-opacity-10 border-2 border-gray-300" || ( (
+                        address.billing_default  && " !bg-blue-500 !bg-opacity-10 border-2 border-gray-300" || "border border-gray-200"
+                    )
+                    <> (
+                        address.shipping_default  && " bg-cyan-500 !bg-opacity-10 border-2 border-gray-300" || "border border-gray-200"
+                    )))
+                }
+                >
                 <div class="flex flex-col p-2">
                     <img class="rounded object-cover w-6 h-5"  src={"https://flagicons.lipis.dev/flags/4x3/#{String.downcase(address.country)}.svg"}>
                 </div>
@@ -83,10 +90,19 @@
                     <p><%= address.city %>,
                     <%= address.street %></p>
                     <p><%= address.street_2 %></p>
-                    <%= if not address.default do %>
-                    <button phx-target={@myself} phx-click="select-default" phx-value-id={address.id} class="text-primary px-2 py-1 rounded-lg mt-2">
-                        <%= gettext "Set to default" %>
-                    </button>  
+                    <%= if not address.billing_default do %>
+                        <button phx-target={@myself} phx-click="select-default" phx-value-type="billing_address" phx-value-id={address.id} class="text-primary px-2 py-1 rounded-lg mt-2">
+                            <%= gettext "Set as Billing Default" %>
+                        </button>
+                    <% else %>
+                        <button disabled class="text-white bg-dark px-2 py-1 rounded-lg mt-2">Billing Default</button>  
+                    <% end %>
+                    <%= if not address.shipping_default do %>
+                        <button phx-target={@myself} phx-click="select-default" phx-value-type="shipping_address" phx-value-id={address.id} class="text-primary px-2 py-1 rounded-lg mt-2">
+                            <%= gettext "Set as Shipping Default" %>
+                        </button> 
+                    <% else %>
+                        <button disabled class="text-white bg-dark px-2 py-1 rounded-lg mt-2">Shipping Default</button>   
                     <% end %>
                 </div>
                 <div class="self-end ml-auto space-y-1">

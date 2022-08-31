@@ -4,25 +4,16 @@ defmodule SnownixWeb.Org.InvoiceLive.Addresses.FormComponent do
   @impl true
   def update(
         %{
-          form: form,
-          name: name,
-          field_name: field_name,
-          selected_item: selected_item,
-          addresses: addresses,
-          parent: parent
+          form: _form,
+          name: _name,
+          parent: _parent,
+          field_name: _field_name,
+          selected_item: _selected_item,
+          addresses: _addresses
         } = assigns,
         socket
       ) do
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign(name: name)
-     |> assign(form: form)
-     |> assign(parent: parent)
-     |> assign(display: assigns[:display] || false)
-     |> assign(addresses: addresses)
-     |> assign(selected_item: selected_item)
-     |> assign(field_name: field_name)}
+    {:ok, socket |> assign(assigns)}
   end
 
   def countries_options() do

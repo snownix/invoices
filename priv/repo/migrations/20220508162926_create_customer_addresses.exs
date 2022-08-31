@@ -17,7 +17,8 @@ defmodule Snownix.Repo.Migrations.CreateCustomerAddresses do
       add :phone, :string
       add :currency, :string
 
-      add :default, :boolean, default: false
+      add :billing_default, :boolean, default: false
+      add :shipping_default, :boolean, default: false
 
       add :customer_id, references(:customer_users, on_delete: :delete_all, type: :uuid)
 

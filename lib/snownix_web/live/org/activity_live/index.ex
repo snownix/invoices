@@ -157,7 +157,11 @@ defmodule SnownixWeb.Org.ActivityLive.Index do
 
                   <%= for txt <- row.title |> String.split("**") do %>
                     <%= if txt == row.name do %>
+                    <%= if row.link do %>
                       <%= live_patch txt, to: row.link, class: "font-bold" %>
+                    <% else %>
+                      <i><%= txt %></i>
+                    <% end %>
                     <% else %>
                     <%= txt %>
                     <% end %>

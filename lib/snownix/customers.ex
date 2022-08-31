@@ -149,7 +149,7 @@ defmodule Snownix.Customers do
 
   def get_user!(%Project{} = project, id), do: get_user!(project.id, id)
 
-  def get_user!(project_id, id),
+  def get_user!(project_id, id) when byte_size(id) > 0,
     do:
       from(u in User, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
@@ -433,25 +433,37 @@ defmodule Snownix.Customers do
     |> Projects.log_activity(project, user, :update, @activity_field_address)
   end
 
-  def change_default_address(address, project, user, addresses) do
-    old_default = Enum.find(addresses, & &1.default)
+  def change_default_address(field_name, address, project, user, addresses)
+      when field_name in [:shipping_address, :billing_address] do
+    default_field =
+      if field_name == :shipping_address, do: :shipping_default, else: :billing_default
 
-    address
-    |> switch_default_address(old_default)
+    old_default = Enum.find(addresses, &Map.get(&1, default_field))
+
+    default_field
+    |> switch_default_address(address, old_default)
     |> notify_subscribers(address.user_id, [:address, :updated])
     |> Projects.log_activity(project, user, :update, @activity_field_address)
   end
 
-  defp switch_default_address(new_default, nil) do
+  def switch_default_address(default_field, new_default, nil)
+      when default_field in [:shipping_default, :billing_default] do
     new_default
-    |> Ecto.Changeset.change(%{default: true})
+    |> Ecto.Changeset.change(Map.put(%{}, default_field, true))
     |> Repo.update()
   end
 
-  defp switch_default_address(new_default, old_default) do
+  def switch_default_address(default_field, new_default, old_default)
+      when default_field in [:shipping_default, :billing_default] do
     Ecto.Multi.new()
-    |> Ecto.Multi.update(:new, Ecto.Changeset.change(new_default, %{default: true}))
-    |> Ecto.Multi.update(:old, Ecto.Changeset.change(old_default, %{default: false}))
+    |> Ecto.Multi.update(
+      :new,
+      Ecto.Changeset.change(new_default, Map.put(%{}, default_field, true))
+    )
+    |> Ecto.Multi.update(
+      :old,
+      Ecto.Changeset.change(old_default, Map.put(%{}, default_field, false))
+    )
     |> Repo.transaction()
     |> case do
       {:ok, %{new: address}} ->

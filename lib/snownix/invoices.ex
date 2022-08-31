@@ -144,7 +144,8 @@ defmodule Snownix.Invoices do
       |> Repo.preload(:shipping_address)
       |> invoice_calcs()
 
-  def assign_customer(query, %Project{} = project, %{"customer_id" => customer_id}) do
+  def assign_customer(query, %Project{} = project, %{"customer_id" => customer_id})
+      when byte_size(customer_id) > 0 do
     customer = Customers.get_user!(project.id, customer_id)
 
     query
@@ -724,5 +725,22 @@ defmodule Snownix.Invoices do
   """
   def change_address(%Address{} = address, attrs \\ %{}) do
     Address.changeset(address, attrs)
+  end
+
+  def change_invoice_address(changeset, field_name, address) do
+    changeset_address =
+      Ecto.Changeset.get_field(changeset, field_name) ||
+        %Address{}
+
+    changeset_address = change_address(changeset_address)
+
+    changeset_address =
+      [:street, :street_2, :city, :state, :zip, :country]
+      |> Enum.reduce(changeset_address, fn field, acc ->
+        Ecto.Changeset.put_change(acc, field, Map.get(address, field))
+      end)
+
+    changeset
+    |> Ecto.Changeset.put_change(field_name, changeset_address)
   end
 end

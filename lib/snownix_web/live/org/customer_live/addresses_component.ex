@@ -68,11 +68,11 @@ defmodule SnownixWeb.Org.CustomerLive.AddressesComponent do
   end
 
   @impl true
-  def handle_event("select-default", %{"id" => id}, socket) do
+  def handle_event("select-default", %{"id" => id, "type" => type}, socket) do
     %{project: project, current_user: user, addresses: addresses} = socket.assigns
     address = get_address(id)
 
-    case Customers.change_default_address(address, project, user, addresses) do
+    case Customers.change_default_address(String.to_atom(type), address, project, user, addresses) do
       {:ok, _address} ->
         {:noreply, put_flash(socket, :success, "Address has been selected as default")}
 

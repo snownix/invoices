@@ -52,7 +52,7 @@
 					form={f}
 					id="billing_address"
 					name="Billing Address"
-					display={true}
+					display={@billing_address_display}
 					field_name={:billing_address}
 					parent={@myself}
 					addresses={@addresses}
@@ -61,12 +61,13 @@
 				/>
 				<%= error_tag f, :billing_address %>
 			</div>
+			
 			<div class="form__group w-full"> 
 				<.live_component
 					form={f}
 					id="shipping_address"
 					name="Billing Address"
-					display={true}
+					display={@shipping_address_display}
 					field_name={:shipping_address}
 					parent={@myself}
 					addresses={@addresses}

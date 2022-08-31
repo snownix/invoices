@@ -4,10 +4,13 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
   def render_address(assigns, label, address) do
     ~H"""
     <div class="flex flex-col">
-      <h4 class="font-semibold"><%= label %></h4>
+      <h4 class="flex space-x-2 items-center font-semibold">
+        <img src={"https://flagicons.lipis.dev/flags/4x3/" <> String.downcase(address.country) <> ".svg"} class="w-6 h-4 rounded object-cover mt-1" />
+        <span><%= label %></span>
+      </h4>
       <ul>
-        <li  class="flex space-x-2 items-center">
-         <img src={"https://flagicons.lipis.dev/flags/4x3/" <> String.downcase(address.country) <> ".svg"} class="w-6 h-4 rounded object-cover" />
+        <li class="flex space-x-2">
+
           <span><%= address.street %>, <%= address.street_2 %></span>
         </li>
         <li>
