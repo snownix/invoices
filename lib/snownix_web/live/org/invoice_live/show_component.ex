@@ -5,12 +5,13 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
     ~H"""
     <div class="flex flex-col">
       <h4 class="flex space-x-2 items-center font-semibold">
+        <%= if address.country do %>
         <img src={"https://flagicons.lipis.dev/flags/4x3/" <> String.downcase(address.country) <> ".svg"} class="w-6 h-4 rounded object-cover mt-1" />
+        <% end %>
         <span><%= label %></span>
       </h4>
       <ul>
         <li class="flex space-x-2">
-
           <span><%= address.street %>, <%= address.street_2 %></span>
         </li>
         <li>
@@ -28,8 +29,8 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
         <div class="py-2 px-6 rounded bg-gray-100 font-medium text-dark">
             <h3>Customer</h3>
           </div>
-          <div class="_invoice flex flex-col md:flex-row justify-between items-start rounded-md space-y-2 px-2 py-4">
-            <%= live_patch to: Routes.org_customer_index_path(@socket, :show, @invoice.customer.id), class: "flex items-center space-x-2 w-full" do %>
+          <div class="_invoice flex flex-col md:flex-row justify-between items-center rounded-md space-y-2">
+            <%= live_patch to: Routes.org_customer_index_path(@socket, :show, @invoice.customer.id), class: "flex items-center space-x-2 flex-shrink-0" do %>
               <%= render_user_avatar(assigns, @invoice.customer, "w-12 h-12") %>
               <div class="flex flex-col">
                 <span class="font-semibold"><%= @invoice.customer.name %></span>
@@ -37,11 +38,11 @@ defmodule SnownixWeb.Org.InvoiceLive.ShowComponent do
               </div>
             <% end %>
 
-            <div class="flex flex-row justify-between w-full">
-            <%= if @invoice.billing_address_id do %>
+            <div class="flex flex-row justify-between w-2/3">
+            <%= if @invoice.billing_address do %>
               <%= render_address(assigns, "Billing Address", @invoice.billing_address) %>
             <% end %>
-            <%= if @invoice.shipping_address_id do %>
+            <%= if @invoice.shipping_address do %>
               <%= render_address(assigns, "Shipping Address", @invoice.shipping_address) %>
             <% end %>
             </div>

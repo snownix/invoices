@@ -2,12 +2,10 @@ defmodule SnownixWeb.SharedLive.UI.BigSearchSelectComponent do
   use SnownixWeb, :live_component
 
   def update(assigns, socket) do
-    socket =
-      socket
-      |> assign(:items, [])
-      |> assign(assigns)
-
-    {:ok, socket}
+    {:ok,
+     socket
+     |> assign(:items, [])
+     |> assign(assigns)}
   end
 
   def render(assigns) do
@@ -20,7 +18,7 @@ defmodule SnownixWeb.SharedLive.UI.BigSearchSelectComponent do
         <div class="flex space-x-2">
           <div class="flex relative w-full">
           <%= hidden_input @form, @field, value: current_value(@selected_item) %>
-            <input class={item_input_class(@selected_item)} phx-change="ignore" placeholder={input_placeholder(@type, @selected_item)} type="text" />
+            <input class={item_input_class(@selected_item)} phx-change="ignore" placeholder={input_placeholder(@title, @selected_item)} type="text" />
             <button type="button" class="toggle__btn absolute top-3 right-3 p-0 border-0">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
@@ -39,17 +37,17 @@ defmodule SnownixWeb.SharedLive.UI.BigSearchSelectComponent do
           <%= if @items != [] do %>
             <ul class="block py-2 overflow-y-scroll h-full">
 
-              <%= for {id, name} <- @items do %>
+              <%= for {id, item_name} <- @items do %>
                 <li>
                   <button
                     type="button"
                     phx-click="search-select-item"
                     phx-target={@parent}
-                    phx-value-type={@type}
-                    phx-value-name={name}
+                    phx-value-type={@name}
+                    phx-value-name={item_name}
                     phx-value-id={id}
                     class={item_class(id, @selected_item)}>
-                    <span><%= name %></span>
+                    <span><%= item_name %></span>
                   </button>
                 </li>
               <% end %>
@@ -78,9 +76,9 @@ defmodule SnownixWeb.SharedLive.UI.BigSearchSelectComponent do
     "search__select__item"
   end
 
-  def input_placeholder(_type, {_item_id, item_name}), do: item_name
+  def input_placeholder(_title, {_item_id, item_name}), do: item_name
 
-  def input_placeholder(type, nil), do: "Select a #{type}"
+  def input_placeholder(title, nil), do: "Select a #{title}"
 
   def item_input_class(nil), do: "search__input"
 

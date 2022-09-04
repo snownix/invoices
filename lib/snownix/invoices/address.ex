@@ -4,10 +4,13 @@ defmodule Snownix.Invoices.Address do
   @timestamps_opts [type: :utc_datetime]
 
   import Snownix.Helpers.Model
+  alias Snownix.Invoices.Address
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @address_fields [:country, :city, :zip, :state, :street, :street_2]
   @fields [:country, :city, :state, :zip, :street, :street_2, :fax, :phone]
+  @valid [:street, :city, :state, :zip, :street_2, :fax, :phone]
+  @types ["billing", "shipping"]
 
   schema "invoice_addresses" do
     field :city, :string
@@ -19,6 +22,8 @@ defmodule Snownix.Invoices.Address do
     field :street_2, :string
     field :zip, :string
 
+    field :type, :string, options: ["billing", "shipping"]
+
     belongs_to :address, Snownix.Customers.Address, type: :binary_id
     belongs_to :invoice, Snownix.Invoices.Invoice, type: :binary_id
 
@@ -29,14 +34,20 @@ defmodule Snownix.Invoices.Address do
   end
 
   @doc false
-  def changeset(address, attrs) do
+  def changeset(address, attrs, ops \\ []) do
     address
-    |> cast(attrs, @fields)
+    |> cast(attrs, @fields, empty_values: [""])
     |> cast_assocs()
-    |> validate_required([:country, :city, :state, :zip, :street])
+    |> put_type(ops)
+    |> validate_required([:country, :city, :street, :type])
     |> address_changeset(attrs)
     |> validate_length(:fax, min: 0, max: 15)
     |> validate_length(:phone, min: 0, max: 15)
+    |> validate_inclusion(:type, @types)
+  end
+
+  defp put_type(changeset, opts) do
+    changeset |> put_change(:type, Keyword.get(opts, :type, nil))
   end
 
   defp cast_assocs(changeset) do
@@ -74,5 +85,12 @@ defmodule Snownix.Invoices.Address do
     item
     |> change()
     |> put_assoc(:project, project)
+  end
+
+  def is_valid(nil), do: false
+
+  def is_valid(invoice) do
+    changeset = change(invoice)
+    !is_nil(Enum.find(@valid, &get_field(changeset, &1)))
   end
 end

@@ -21,6 +21,8 @@ defmodule Snownix.Repo.Migrations.CreateInvoices do
       add :street_2, :string
       add :zip, :string
 
+      add :type, :string, options: ["billing", "shipping"]
+
       add :address_id, references(:customer_addresses, on_delete: :nothing, type: :uuid)
 
       add :user_id, references(:users, on_delete: :nothing, type: :uuid)
@@ -64,10 +66,10 @@ defmodule Snownix.Repo.Migrations.CreateInvoices do
       add :allow_edit, :boolean, default: false, null: false
 
       add :billing_address_id,
-          references(:invoice_addresses, on_delete: :delete_all, type: :uuid)
+          references(:invoice_addresses, on_delete: :delete_all, type: :uuid), null: true
 
       add :shipping_address_id,
-          references(:invoice_addresses, on_delete: :delete_all, type: :uuid)
+          references(:invoice_addresses, on_delete: :delete_all, type: :uuid), null: true
 
       add :user_id, references(:users, on_delete: :nothing, type: :uuid)
       add :group_id, references(:groups, on_delete: :nilify_all, type: :uuid)

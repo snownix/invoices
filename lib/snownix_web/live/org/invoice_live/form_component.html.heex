@@ -35,8 +35,9 @@
 		<div class="form__group"> 
 			<.live_component
 				id="customer-search-select"
-				type="customer"
 				form={f}
+				name="customer"
+				title="Customer"
 				parent={@myself}
 				items={@customers}
 				field={:customer_id}
@@ -46,37 +47,39 @@
 			<%= error_tag f, :customer_id %>
 		</div>
 
-		<div class="flex md:flex-row md:space-x-4 w-full md:flex-between"> 
-			<div class="form__group w-full"> 
-				<.live_component
-					form={f}
-					id="billing_address"
-					name="Billing Address"
-					display={@billing_address_display}
-					field_name={:billing_address}
-					parent={@myself}
-					addresses={@addresses}
-					selected_item={@selected_billing_address}
-					module={SnownixWeb.Org.InvoiceLive.Addresses.FormComponent}
-				/>
-				<%= error_tag f, :billing_address %>
+		<%= if @selected_customer do %>
+			<div class="flex md:flex-row md:space-x-4 w-full md:flex-between"> 
+				<div class="form__group w-full">
+					<.live_component
+						form={f}
+						id="billing_address"
+						title="Billing Address"
+						added={@added_billing_address}
+						field_name={:billing_address}
+						parent={@myself}
+						addresses={@addresses}
+						selected_item={@selected_billing_address}
+						module={SnownixWeb.Org.InvoiceLive.Addresses.FormComponent}
+					/>
+					<%= error_tag f, :billing_address %>
+				</div>
+				
+				<div class="form__group w-full"> 
+					<.live_component
+						form={f}
+						id="shipping_address"
+						title="Shipping Address"
+						added={@added_shipping_address}
+						field_name={:shipping_address}
+						parent={@myself}
+						addresses={@addresses}
+						selected_item={@selected_shipping_address}
+						module={SnownixWeb.Org.InvoiceLive.Addresses.FormComponent}
+					/>
+					<%= error_tag f, :shipping_address %>
+				</div>
 			</div>
-			
-			<div class="form__group w-full"> 
-				<.live_component
-					form={f}
-					id="shipping_address"
-					name="Billing Address"
-					display={@shipping_address_display}
-					field_name={:shipping_address}
-					parent={@myself}
-					addresses={@addresses}
-					selected_item={@selected_shipping_address}
-					module={SnownixWeb.Org.InvoiceLive.Addresses.FormComponent}
-				/>
-				<%= error_tag f, :shipping_address %>
-			</div>
-		</div>
+		<% end %>
 
 		<%# Items %>
 		<div class="!my-8">

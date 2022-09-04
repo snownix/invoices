@@ -16,7 +16,8 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign(:changeset, changeset)
-     |> assign(billing_address_display: false, shipping_address_display: false)
+     |> assign(added_billing_address: !is_nil(invoice.billing_address))
+     |> assign(added_shipping_address: !is_nil(invoice.shipping_address))
      |> assign_customers()
      |> assign_selected_customer()
      |> assign_addresses()
@@ -62,35 +63,61 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
   def handle_event(
         "search-select-item",
         %{"id" => id, "name" => name, "type" => type},
-        socket
+        %{assigns: assigns} = socket
       ) do
+    %{customers: customers} = assigns
+
     socket =
       case type do
         "customer" ->
-          socket |> assign(:selected_customer, {id, name})
+          if Enum.find(customers, &(&1 == {id, name})) do
+            socket
+            |> assign(:selected_customer, {id, name})
+            |> assign_addresses()
+          end
 
         "billing_address" ->
           socket
           |> assign(:selected_billing_address, {id, name})
+          |> assign(:added_billing_address, true)
           |> assign_new_addresses(:billing_address)
 
         "shipping_address" ->
           socket
           |> assign(:selected_shipping_address, {id, name})
+          |> assign(:added_shipping_address, true)
           |> assign_new_addresses(:shipping_address)
+
+        _ ->
+          socket
       end
 
     {:noreply, socket}
   end
 
-  def handle_event("toggle-display", %{"field" => field_name}, %{assigns: assigns} = socket) do
+  def handle_event("add-address", %{"field" => field_name}, socket) do
     {:noreply,
      case field_name do
        "billing_address" ->
-         socket |> assign(:billing_address_display, !assigns.billing_address_display)
+         socket |> assign(:added_billing_address, true)
 
        "shipping_address" ->
-         socket |> assign(:shipping_address_display, !assigns.shipping_address_display)
+         socket |> assign(:added_shipping_address, true)
+     end}
+  end
+
+  def handle_event("remove-address", %{"field" => field_name}, socket) do
+    {:noreply,
+     case field_name do
+       "billing_address" ->
+         socket
+         |> assign(added_billing_address: false)
+         |> assign(:selected_billing_address, nil)
+
+       "shipping_address" ->
+         socket
+         |> assign(added_shipping_address: false)
+         |> assign(:selected_shipping_address, nil)
      end}
   end
 
@@ -154,15 +181,14 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
   defp save_invoice(socket, :new, invoice_params) do
     %{project: project, current_user: user, return_to: return_to} = socket.assigns
 
-    invoice_params =
-      Map.merge(invoice_params, %{"sequence_number" => Invoices.get_last_sequence_number()})
-
     case Invoices.create_invoice(project, user, invoice_params) do
       {:ok, _invoice} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Invoice created successfully")
-         |> push_patch(to: return_to)}
+        {
+          :noreply,
+          socket
+          |> put_flash(:info, "Invoice created successfully")
+          |> push_patch(to: return_to)
+        }
 
       {:error, changeset} ->
         {:noreply, handle_changeset_state(socket, changeset)}
@@ -176,8 +202,6 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
       invoice: invoice,
       return_to: return_to
     } = socket.assigns
-
-    invoice_params = invoice_params |> put_default_items()
 
     case Invoices.update_invoice(invoice, project, user, invoice_params) do
       {:ok, _invoice} ->
@@ -236,31 +260,35 @@ defmodule SnownixWeb.Org.InvoiceLive.FormComponent do
   defp assign_billing_address(%{assigns: assigns} = socket) do
     %{changeset: changeset, project: project} = assigns
 
-    case Ecto.Changeset.get_field(changeset, :billing_address) do
+    case Invoices.get_field(changeset, :billing_address) do
       nil ->
         socket |> assign(:selected_billing_address, nil)
 
       address ->
-        socket |> assign(:selected_billing_address, {address.id, item_label(address)})
+        socket
+        |> assign(:selected_billing_address, {address.id, item_label(address)})
+        |> assign(:added_billing_address, true)
     end
   end
 
   defp assign_shipping_address(%{assigns: assigns} = socket) do
     %{changeset: changeset, project: project} = assigns
 
-    case Ecto.Changeset.get_field(changeset, :shipping_address) do
+    case Invoices.get_field(changeset, :shipping_address) do
       nil ->
         socket |> assign(:selected_shipping_address, nil)
 
       address ->
-        socket |> assign(:selected_shipping_address, {address.id, item_label(address)})
+        socket
+        |> assign(:selected_shipping_address, {address.id, item_label(address)})
+        |> assign(:added_shipping_address, true)
     end
   end
 
   defp assign_selected_customer(%{assigns: assigns} = socket) do
     %{changeset: changeset, project: project} = assigns
 
-    id = Ecto.Changeset.get_field(changeset, :customer_id)
+    id = Invoices.get_field(changeset, :customer_id)
 
     case id do
       nil ->

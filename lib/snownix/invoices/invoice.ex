@@ -5,6 +5,7 @@ defmodule Snownix.Invoices.Invoice do
 
   alias Snownix.Invoices.Item
   alias Snownix.Invoices.Invoice
+  alias Snownix.Invoices.Address
 
   @timestamps_opts [type: :utc_datetime]
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -54,11 +55,24 @@ defmodule Snownix.Invoices.Invoice do
 
     belongs_to :user, Snownix.Accounts.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
-    belongs_to :group, Snownix.Organizations.Group, type: :binary_id
-    belongs_to :customer, Snownix.Customers.User, type: :binary_id, on_replace: :nilify
 
-    belongs_to :billing_address, Snownix.Invoices.Address, type: :binary_id
-    belongs_to :shipping_address, Snownix.Invoices.Address, type: :binary_id
+    belongs_to :group, Snownix.Organizations.Group,
+      type: :binary_id,
+      on_replace: :nilify
+
+    belongs_to :customer, Snownix.Customers.User,
+      type: :binary_id,
+      on_replace: :nilify
+
+    has_one :billing_address, Snownix.Invoices.Address,
+      on_replace: :delete,
+      on_delete: :delete_all,
+      where: [type: "billing"]
+
+    has_one :shipping_address, Snownix.Invoices.Address,
+      on_replace: :delete,
+      on_delete: :delete_all,
+      where: [type: "shipping"]
 
     field :parent_id, :binary_id, virtual: true, default: ""
     field :selected, :boolean, virtual: true, default: false
@@ -109,8 +123,8 @@ defmodule Snownix.Invoices.Invoice do
   defp cast_assocs(changeset) do
     changeset
     |> cast_assoc(:customer)
-    |> cast_assoc(:billing_address)
-    |> cast_assoc(:shipping_address)
+    |> cast_assoc(:billing_address, with: {Address, :changeset, [[type: "billing"]]})
+    |> cast_assoc(:shipping_address, with: {Address, :changeset, [[type: "shipping"]]})
   end
 
   def cast_items(changeset) do
@@ -210,5 +224,13 @@ defmodule Snownix.Invoices.Invoice do
     item
     |> change()
     |> put_assoc(:group, group)
+  end
+
+  def keep_or_delete_address(params, field) do
+    if Map.get(params, field) do
+      params
+    else
+      Map.put(params, field, nil)
+    end
   end
 end

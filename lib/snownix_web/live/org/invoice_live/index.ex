@@ -135,8 +135,10 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
         due_date: Timex.shift(Timex.today(), months: project.due_duration),
         items: [
           %Item{
+            name: "Web Developer",
             temp_id: SnownixWeb.Org.InvoiceLive.FormComponent.get_temp_id(),
-            quantity: 1
+            quantity: 1,
+            price: 1000
           }
         ],
         invoice_number: "INV-#{String.pad_leading("#{seq}", 6, "0000000000")}",
@@ -177,8 +179,6 @@ defmodule SnownixWeb.Org.InvoiceLive.Index do
 
   defp get_invoice_by_id(project_id, id) do
     Invoices.get_invoice!(project_id, id)
-    |> Invoices.customer()
-    |> Invoices.items()
   end
 
   defp project_id(%{assigns: %{project: %{id: id}}}) do

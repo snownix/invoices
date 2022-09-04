@@ -1,44 +1,57 @@
 <section>
     <.live_component
         id={"#{@field_name}-search-select"}
-        type={@field_name}
         form={@form}
+        title={@title}
+        name={@field_name}
         parent={@parent}
         items={@addresses}
-        field={@field_name}
+        field={@field_name_id}
         selected_item={@selected_item}
         module={SnownixWeb.SharedLive.UI.BigSearchSelectComponent}>
-        <button type="button" phx-target={@parent} id={"#{@field_name}-toggle-display"} phx-click="toggle-display" phx-value-field={@field_name} class="primary">
-            Edit
-        </button>
+        <%= if @added do %>
+            <button type="button" phx-target={@parent} id={"#{@field_name}-remove-address"} phx-click="remove-address" phx-value-field={@field_name} class="danger">
+                Remove
+            </button>
+        <% else %>
+            <button type="button" phx-target={@parent} id={"#{@field_name}-add-address"} phx-click="add-address" phx-value-field={@field_name} class="primary">
+                Add
+            </button>
+        <% end %>
     </.live_component>
 
-    <div class={"mt-2 " <> (if @display, do: "", else: "hidden")}>
-        <%= inputs_for @form, @field_name, fn f -> %>
-            <div class="form__group mb-2">
-                <%= text_input f, :street, placeholder: "Street" %>
-                <%= error_tag f, :street %>
-            </div>
-            <div class="form__group mb-2">
-                <%= text_input f, :street_2, placeholder: "Street 2" %>
-                <%= error_tag f, :street_2 %>
-            </div>
-            <div class="form__group mb-2">
-                <%= select f, :country, countries_options(), placeholder: "Country" , prompt: "Select a country" %>
-                <%= error_tag f, :country%>
-            </div>
-            <div class="form__group mb-2">
-                <%= text_input f, :state, placeholder: "State" %>
-                <%= error_tag f, :state %>
-            </div>
-            <div class="form__group mb-2">
-                <%= text_input f, :city, placeholder: "City" %>
-                <%= error_tag f, :city %>
-            </div>
-            <div class="form__group mb-2">
-                <%= text_input f, :zip, placeholder: "Zip Postal" %>
-                <%= error_tag f, :zip %>
-            </div>
-        <% end %>
-    </div>
+    <%= if @added do %>
+        <div class="mt-2">
+            <%= inputs_for @form, @field_name, fn f -> %>
+                <div class="form__group mb-2">
+                    <%= text_input f, :street, placeholder: "Street" %>
+                    <%= error_tag f, :street %>
+                </div>
+                <div class="form__group mb-2">
+                    <%= text_input f, :street_2, placeholder: "Street 2" %>
+                    <%= error_tag f, :street_2 %>
+                </div>
+                <div class="form__groups mb-2">
+                    <div class="form__group">
+                        <%= select f, :country, countries_options(), placeholder: "Country" , prompt: "Select a country" %>
+                        <%= error_tag f, :country%>
+                    </div>
+                    <div class="form__group">
+                        <%= text_input f, :state, placeholder: "State" %>
+                        <%= error_tag f, :state %>
+                    </div>
+                </div>
+                <div class="form__groups mb-2">
+                    <div class="form__group">
+                        <%= text_input f, :city, placeholder: "City" %>
+                        <%= error_tag f, :city %>
+                    </div>
+                    <div class="form__group">
+                        <%= text_input f, :zip, placeholder: "Zip Postal" %>
+                        <%= error_tag f, :zip %>
+                    </div>
+                </div>
+            <% end %>
+        </div>
+    <% end %>
 </section>
