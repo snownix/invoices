@@ -17,15 +17,20 @@ defmodule Snownix.Repo.Migrations.CreateCustomerAddresses do
       add :phone, :string
       add :currency, :string
 
-      add :default, :boolean, default: false
+      add :billing_default, :boolean, default: false
+      add :shipping_default, :boolean, default: false
 
+      add :customer_id, references(:customer_users, on_delete: :delete_all, type: :uuid)
+
+      add :user_id, references(:users, on_delete: :delete_all, type: :uuid)
       add :project_id, references(:projects, on_delete: :delete_all, type: :uuid)
-      add :user_id, references(:customer_users, on_delete: :delete_all, type: :uuid)
 
       timestamps()
     end
 
-    create index(:customer_addresses, [:project_id])
+    create index(:customer_addresses, [:customer_id])
+
     create index(:customer_addresses, [:user_id])
+    create index(:customer_addresses, [:project_id])
   end
 end

@@ -1,20 +1,20 @@
-defmodule Snownix.Customers.Address do
+defmodule Snownix.Invoices.Address do
   use Ecto.Schema
   import Ecto.Changeset
   @timestamps_opts [type: :utc_datetime]
 
   import Snownix.Helpers.Model
+  alias Snownix.Invoices.Address
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @address_fields [:country, :city, :zip, :state, :street, :street_2]
-  @fields [:currency, :country, :title, :city, :state, :zip, :street, :street_2, :fax, :phone]
+  @fields [:country, :city, :state, :zip, :street, :street_2, :fax, :phone]
+  @valid [:street, :city, :state, :zip, :street_2, :fax, :phone]
+  @types ["billing", "shipping"]
 
-  schema "customer_addresses" do
-    field :title, :string
-
+  schema "invoice_addresses" do
     field :city, :string
     field :country, :string
-    field :currency, :string
     field :fax, :string
     field :phone, :string
     field :state, :string
@@ -22,10 +22,10 @@ defmodule Snownix.Customers.Address do
     field :street_2, :string
     field :zip, :string
 
-    field :billing_default, :boolean, default: false
-    field :shipping_default, :boolean, default: false
+    field :type, :string, options: ["billing", "shipping"]
 
-    belongs_to :customer, Snownix.Customers.User, type: :binary_id
+    belongs_to :address, Snownix.Customers.Address, type: :binary_id
+    belongs_to :invoice, Snownix.Invoices.Invoice, type: :binary_id
 
     belongs_to :user, Snownix.Accounts.User, type: :binary_id
     belongs_to :project, Snownix.Organizations.Project, type: :binary_id
@@ -34,23 +34,28 @@ defmodule Snownix.Customers.Address do
   end
 
   @doc false
-  def changeset(address, attrs) do
+  def changeset(address, attrs, ops \\ []) do
     address
-    |> cast(attrs, @fields)
+    |> cast(attrs, @fields, empty_values: [""])
     |> cast_assocs()
-    |> validate_required([:country, :city, :state, :zip, :street])
+    |> put_type(ops)
+    |> validate_required([:country, :city, :street, :type])
     |> address_changeset(attrs)
     |> validate_length(:fax, min: 0, max: 15)
     |> validate_length(:phone, min: 0, max: 15)
-    |> validate_length(:title, min: 0, max: 200)
-    |> validate_inclusion(:currency, currencies())
+    |> validate_inclusion(:type, @types)
+  end
+
+  defp put_type(changeset, opts) do
+    changeset |> put_change(:type, Keyword.get(opts, :type, nil))
   end
 
   defp cast_assocs(changeset) do
     changeset
     |> cast_assoc(:user)
     |> cast_assoc(:project)
-    |> cast_assoc(:customer)
+    |> cast_assoc(:address)
+    |> cast_assoc(:invoice)
   end
 
   def address_changeset(item, attrs) do
@@ -64,15 +69,28 @@ defmodule Snownix.Customers.Address do
     |> validate_inclusion(:country, countries())
   end
 
-  def customer_changeset(item, customer) do
+  def invoice_changeset(item, invoice) do
     item
     |> change()
-    |> put_assoc(:customer, customer)
+    |> put_assoc(:invoice, invoice)
+  end
+
+  def user_changeset(item, user) do
+    item
+    |> change()
+    |> put_assoc(:user, user)
   end
 
   def project_changeset(item, project) do
     item
     |> change()
     |> put_assoc(:project, project)
+  end
+
+  def is_valid(nil), do: false
+
+  def is_valid(invoice) do
+    changeset = change(invoice)
+    !is_nil(Enum.find(@valid, &get_field(changeset, &1)))
   end
 end

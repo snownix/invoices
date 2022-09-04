@@ -134,6 +134,11 @@ const Hooks = {
         destroyed() {
             clearTimeout(this.timer);
         },
+        updated(){
+            this.date = moment.utc(this.el.getAttribute('datetime'));
+            clearTimeout(this.timer);
+            this.updateTime();
+        },
         updateTime() {
             let nextUpdate = moment.utc().local().diff(this.date) / 1000;
 
@@ -225,7 +230,7 @@ const Hooks = {
                 clearTimeout(this.keyupTimeout);
                 this.keyupTimeout = setTimeout(() => {
                     const value = evt.target.value;
-                    this.pushEventTo(this.el.getAttribute("phx-target"), "filter", value);
+                    this.pushEventTo(this.el.getAttribute("phx-target"), "search-filter-items", value);
                 }, 400);
             });
             this.blurEvt = input.addEventListener("blur", (evt) => {

@@ -124,8 +124,10 @@ defmodule SnownixWeb.Org.ActivityLive.Index do
     socket |> list_activities()
   end
 
-  def render_activity(assigns, row, last_inserted_at \\ nil) do
+  def render_activity(socket, assigns, row, last_inserted_at \\ nil) do
     same_prev_time = hour_format(last_inserted_at) === hour_format(row.inserted_at)
+
+    row = Snownix.Helpers.Activity.put_links(socket, row)
 
     ~H"""
     <div class={"activity__block px-8 " <> (if same_prev_time, do: "", else: "pt-2")} id={"activity-#{row.id}"}>
@@ -150,12 +152,16 @@ defmodule SnownixWeb.Org.ActivityLive.Index do
                   </div>
                   <span class="font-semibold"><%= row.from %></span>
                 </a>
-                <p><%= get_emoji(row.action) %>
+                <p>
+                <span><%= get_emoji(row.action) %></span>
+
                   <%= for txt <- row.title |> String.split("**") do %>
                     <%= if txt == row.name do %>
-                      <a class="font-bold" href={row.link} target="_blank">
-                        <%= txt %>
-                      </a>
+                    <%= if row.link do %>
+                      <%= live_patch txt, to: row.link, class: "font-bold" %>
+                    <% else %>
+                      <i><%= txt %></i>
+                    <% end %>
                     <% else %>
                     <%= txt %>
                     <% end %>

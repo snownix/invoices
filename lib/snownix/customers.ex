@@ -10,6 +10,7 @@ defmodule Snownix.Customers do
   alias Snownix.Projects
   alias Snownix.Customers.User
   alias Snownix.Organizations.Project
+  alias Snownix.Customers.Address
 
   @topic inspect(__MODULE__)
   @activity_field :contact_name
@@ -84,6 +85,49 @@ defmodule Snownix.Customers do
     sort_query_by(query, orderby, order)
   end
 
+  def list_customers(%Project{} = project, search_term)
+      when is_binary(search_term) and not is_nil(search_term) and bit_size(search_term) > 0 do
+    search_customers(project, search_term)
+    |> Repo.all()
+    |> Enum.map(& &1.row)
+  end
+
+  def list_customers(%Project{} = project, _) do
+    from(r in User,
+      where: r.project_id == ^project.id
+    )
+    |> Repo.all()
+  end
+
+  defp search_customers(%Project{} = project, search_term, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 10)
+
+    from(
+      # normally these even have joins
+      row in User,
+      select: %{
+        row: row,
+        rank:
+          fragment(
+            "GREATEST(similarity(?, ?), similarity(?, ?), similarity(?, ?)) AS rank",
+            row.email,
+            ^search_term,
+            row.contact_name,
+            ^search_term,
+            row.name,
+            ^search_term
+          )
+      },
+      where:
+        row.project_id == ^project.id and
+          (fragment("similarity(?, ?)", row.contact_name, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.name, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.email, ^search_term) > 0.1),
+      order_by: fragment("rank DESC"),
+      limit: ^limit
+    )
+  end
+
   @doc """
   Gets a single user.
 
@@ -103,7 +147,9 @@ defmodule Snownix.Customers do
       Repo.get!(User, id)
       |> Repo.preload(:addresses)
 
-  def get_user!(project_id, id),
+  def get_user!(%Project{} = project, id), do: get_user!(project.id, id)
+
+  def get_user!(project_id, id) when byte_size(id) > 0,
     do:
       from(u in User, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
@@ -222,8 +268,6 @@ defmodule Snownix.Customers do
     User.changeset(user, attrs)
   end
 
-  alias Snownix.Customers.Address
-
   @doc """
   Returns the list of addresses.
 
@@ -233,8 +277,83 @@ defmodule Snownix.Customers do
       [%Address{}, ...]
 
   """
-  def list_addresses do
-    Repo.all(Address)
+  def list_addresses() do
+    User |> Repo.all()
+  end
+
+  def list_addresses(%Project{} = project) do
+    list_addresses(project.id, [])
+  end
+
+  def list_addresses(project_id, opts \\ []) do
+    orderby = Keyword.get(opts, :order_by)
+    order = Keyword.get(opts, :order, :asc)
+
+    query =
+      from(r in Address,
+        where:
+          r.project_id ==
+            ^project_id
+      )
+
+    sort_query_by(query, orderby, order)
+  end
+
+  def list_customer_addresses(%Project{} = project, %User{} = customer, search_term)
+      when is_binary(search_term) and not is_nil(search_term) and bit_size(search_term) > 0 do
+    search_customer_addresses(project.id, customer.id, search_term)
+    |> Repo.all()
+    |> Enum.map(& &1.row)
+  end
+
+  def list_customer_addresses(%Project{} = project, %User{} = customer, _) do
+    from(r in Address,
+      where:
+        r.project_id == ^project.id and
+          r.customer_id == ^customer.id
+    )
+    |> Repo.all()
+  end
+
+  def list_customer_addresses(%Project{} = _project, %User{} = _customer, _), do: []
+
+  defp search_customer_addresses(project_id, customer_id, search_term, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 10)
+
+    from(
+      # normally these even have joins
+      row in Address,
+      select: %{
+        row: row,
+        rank:
+          fragment(
+            "GREATEST(similarity(?, ?), similarity(?, ?), similarity(?, ?), similarity(?, ?), similarity(?, ?), similarity(?, ?)) AS rank",
+            row.street,
+            ^search_term,
+            row.street_2,
+            ^search_term,
+            row.city,
+            ^search_term,
+            row.country,
+            ^search_term,
+            row.state,
+            ^search_term,
+            row.zip,
+            ^search_term
+          )
+      },
+      where:
+        row.project_id == ^project_id and
+          row.customer_id == ^customer_id and
+          (fragment("similarity(?, ?)", row.street, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.street_2, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.city, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.country, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.state, ^search_term) > 0.1 or
+             fragment("similarity(?, ?)", row.zip, ^search_term) > 0.1),
+      order_by: fragment("rank DESC"),
+      limit: ^limit
+    )
   end
 
   @doc """
@@ -251,7 +370,15 @@ defmodule Snownix.Customers do
       ** (Ecto.NoResultsError)
 
   """
-  def get_address!(id), do: Repo.get!(Address, id)
+  def get_address!(id),
+    do: Repo.get!(Address, id)
+
+  def get_address!(%Project{} = project, id), do: get_address!(project.id, id)
+
+  def get_address!(project_id, id),
+    do:
+      from(u in Address, where: u.project_id == ^project_id and u.id == ^id)
+      |> Repo.one!()
 
   @doc """
   Creates a address.
@@ -306,25 +433,37 @@ defmodule Snownix.Customers do
     |> Projects.log_activity(project, user, :update, @activity_field_address)
   end
 
-  def change_default_address(address, project, user, addresses) do
-    old_default = Enum.find(addresses, & &1.default)
+  def change_default_address(field_name, address, project, user, addresses)
+      when field_name in [:shipping_address, :billing_address] do
+    default_field =
+      if field_name == :shipping_address, do: :shipping_default, else: :billing_default
 
-    address
-    |> switch_default_address(old_default)
+    old_default = Enum.find(addresses, &Map.get(&1, default_field))
+
+    default_field
+    |> switch_default_address(address, old_default)
     |> notify_subscribers(address.user_id, [:address, :updated])
     |> Projects.log_activity(project, user, :update, @activity_field_address)
   end
 
-  defp switch_default_address(new_default, nil) do
+  def switch_default_address(default_field, new_default, nil)
+      when default_field in [:shipping_default, :billing_default] do
     new_default
-    |> Ecto.Changeset.change(%{default: true})
+    |> Ecto.Changeset.change(Map.put(%{}, default_field, true))
     |> Repo.update()
   end
 
-  defp switch_default_address(new_default, old_default) do
+  def switch_default_address(default_field, new_default, old_default)
+      when default_field in [:shipping_default, :billing_default] do
     Ecto.Multi.new()
-    |> Ecto.Multi.update(:new, Ecto.Changeset.change(new_default, %{default: true}))
-    |> Ecto.Multi.update(:old, Ecto.Changeset.change(old_default, %{default: false}))
+    |> Ecto.Multi.update(
+      :new,
+      Ecto.Changeset.change(new_default, Map.put(%{}, default_field, true))
+    )
+    |> Ecto.Multi.update(
+      :old,
+      Ecto.Changeset.change(old_default, Map.put(%{}, default_field, false))
+    )
     |> Repo.transaction()
     |> case do
       {:ok, %{new: address}} ->

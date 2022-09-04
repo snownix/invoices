@@ -22,21 +22,64 @@
 		</div>
 		<div class="form__groups">
 			<div class="form__group">
-				<%= label f, :from_date %>
+				<div class="flex justify-between"><%= label f, :from_date %> <time phx-hook="TimeAgo" id="from_date" datetime={"#{input_value(f, :from_date)} 24:00:00"}></time></div>
 				<%= date_input f, :from_date %>
 				<%= error_tag f, :from_date %>
 			</div>
 			<div class="form__group">
-				<%= label f, :due_date %>
+				<div class="flex justify-between"><%= label f, :due_date %> <time phx-hook="TimeAgo" id="due_date" datetime={"#{input_value(f, :due_date)} 24:00:00"}></time></div>
 				<%= date_input f, :due_date %>
 				<%= error_tag f, :due_date %>
 			</div>
 		</div>
 		<div class="form__group"> 
-			<%= label f, :customer_id, gettext("Customer") %>
-			<%= select f, :customer_id, customers_options(assigns), placeholder: gettext("customer_id") , required: true, phx_debounce: "blur", value: input_value(f, :customer_id), class: tag_class_error(f, :customer_id)  %>
+			<.live_component
+				id="customer-search-select"
+				form={f}
+				name="customer"
+				title="Customer"
+				parent={@myself}
+				items={@customers}
+				field={:customer_id}
+				selected_item={@selected_customer}
+				module={SnownixWeb.SharedLive.UI.BigSearchSelectComponent}
+			/>
 			<%= error_tag f, :customer_id %>
 		</div>
+
+		<%= if @selected_customer do %>
+			<div class="flex md:flex-row md:space-x-4 w-full md:flex-between"> 
+				<div class="form__group w-full">
+					<.live_component
+						form={f}
+						id="billing_address"
+						title="Billing Address"
+						added={@added_billing_address}
+						field_name={:billing_address}
+						parent={@myself}
+						addresses={@addresses}
+						selected_item={@selected_billing_address}
+						module={SnownixWeb.Org.InvoiceLive.Addresses.FormComponent}
+					/>
+					<%= error_tag f, :billing_address %>
+				</div>
+				
+				<div class="form__group w-full"> 
+					<.live_component
+						form={f}
+						id="shipping_address"
+						title="Shipping Address"
+						added={@added_shipping_address}
+						field_name={:shipping_address}
+						parent={@myself}
+						addresses={@addresses}
+						selected_item={@selected_shipping_address}
+						module={SnownixWeb.Org.InvoiceLive.Addresses.FormComponent}
+					/>
+					<%= error_tag f, :shipping_address %>
+				</div>
+			</div>
+		<% end %>
 
 		<%# Items %>
 		<div class="!my-8">
@@ -149,6 +192,10 @@
 				</div>
 			</label>
 		</div>
+		<.live_component module={SnownixWeb.SharedLive.AlertsComponent} flash={@flash} 
+			id="invoice-flashs"
+		 />
+		
 		<div class="mt-10">
 			<%= submit "Save", phx_disable_with: "Saving...", class: "primary" %>
 		</div>

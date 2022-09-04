@@ -139,9 +139,13 @@ defmodule Snownix.Invoices do
       from(u in Invoice, where: u.project_id == ^project_id and u.id == ^id)
       |> Repo.one!()
       |> Repo.preload(:items)
+      |> Repo.preload(:customer)
+      |> Repo.preload(:billing_address)
+      |> Repo.preload(:shipping_address)
       |> invoice_calcs()
 
-  def assign_customer(query, %Project{} = project, %{"customer_id" => customer_id}) do
+  def assign_customer(query, %Project{} = project, %{"customer_id" => customer_id})
+      when byte_size(customer_id) > 0 do
     customer = Customers.get_user!(project.id, customer_id)
 
     query
@@ -149,30 +153,6 @@ defmodule Snownix.Invoices do
   end
 
   def assign_customer(query, %Project{} = _project, _attrs), do: query
-
-  @doc """
-  Creates a invoice.
-
-  ## Examples
-
-      iex> create_invoice(%Invoice{}, %{title: "Invoice X"})
-      {:ok, %Invoice{}}
-
-      iex> create_invoice(%Invoice{}, %{title: "Invoice X"})
-      {:error, %Ecto.Changeset{}}
-
-  """
-
-  def create_invoice(%Invoice{} = invoice, attrs) do
-    invoice
-    |> Invoice.changeset(attrs)
-    |> Repo.insert()
-    |> notify_subscribers([:invoice, :created])
-  end
-
-  def create_invoice(attrs \\ %{}) do
-    create_invoice(%Invoice{}, attrs)
-  end
 
   @doc """
   ## Examples
@@ -188,11 +168,19 @@ defmodule Snownix.Invoices do
     do: create_invoice(%Invoice{}, project, user, attrs)
 
   def create_invoice(%Invoice{} = invoice, project, user, attrs \\ %{}) do
-    invoice
-    |> Invoice.changeset(attrs)
-    |> Invoice.owner_changeset(user)
-    |> Invoice.project_changeset(project)
-    |> assign_customer(project, attrs)
+    attrs =
+      attrs
+      |> Invoice.keep_or_delete_address("billing_address")
+      |> Invoice.keep_or_delete_address("shipping_address")
+
+    changeset =
+      invoice
+      |> change_invoice(attrs)
+      |> Invoice.owner_changeset(user)
+      |> Invoice.project_changeset(project)
+      |> assign_customer(project, attrs)
+
+    changeset
     |> Repo.insert()
     |> notify_subscribers([:invoice, :created])
     |> Projects.log_activity(project, user, :create, @activity_field)
@@ -213,16 +201,24 @@ defmodule Snownix.Invoices do
 
   def update_invoice(%Invoice{} = invoice, attrs) do
     invoice
-    |> Invoice.changeset(attrs)
+    |> change_invoice(attrs)
     |> Repo.update()
     |> notify_subscribers([:invoice, :updated])
   end
 
   def update_invoice(%Invoice{} = invoice, %Project{} = project, attrs) do
-    invoice
-    |> Repo.preload(:customer)
-    |> Invoice.changeset(attrs)
-    |> assign_customer(project, attrs)
+    attrs =
+      attrs
+      |> Invoice.keep_or_delete_address("billing_address")
+      |> Invoice.keep_or_delete_address("shipping_address")
+
+    changeset =
+      invoice
+      |> Repo.preload(:customer)
+      |> change_invoice(attrs)
+      |> assign_customer(project, attrs)
+
+    changeset
     |> Repo.update()
     |> notify_subscribers([:invoice, :updated])
   end
@@ -272,16 +268,8 @@ defmodule Snownix.Invoices do
       from(u in Invoice, where: u.project_id == ^project_id and u.id in ^ids)
       |> Repo.all()
       |> Enum.map(fn item ->
-        item =
-          item
-          |> Repo.preload(:items)
-
-        # items =
-        #   item.items
-        #   |> Map.take([Item.__schema__(:fields)])
-        #   |> Enum.map(&Map.delete(&1, [:id, :invoice_id]))
-
         item
+        |> Repo.preload(:items)
         |> Map.take([
           :parent_id,
           :customer_id,
@@ -292,8 +280,6 @@ defmodule Snownix.Invoices do
         |> Map.delete(:id)
         |> Map.put(:title, "#{item.title}-1")
         |> Map.put(:reference_number, "#{item.reference_number}-1")
-
-        # |> Map.put(:items, items)
       end)
 
     result = {:ok, []}
@@ -303,12 +289,6 @@ defmodule Snownix.Invoices do
       |> Enum.map(fn invoice ->
         row = Repo.insert!(Invoice.changeset(%Invoice{}, invoice))
 
-        # items =
-        #   invoice
-        #   |> then(& &1.items)
-        #   |> Enum.map(&Map.drop(&1, [:id, :invoice_id]))
-
-        # Repo.update!(Invoice.items_changeset(row, items))
         row.id
       end)
     end)
@@ -615,4 +595,132 @@ defmodule Snownix.Invoices do
 
   defp cast_str_to_int(val),
     do: if(is_number(val), do: val, else: String.to_integer(val))
+
+  alias Snownix.Invoices.Address
+
+  @doc """
+  Returns the list of invoice_addresses.
+
+  ## Examples
+
+      iex> list_invoice_addresses()
+      [%Address{}, ...]
+
+  """
+  def list_invoice_addresses do
+    Repo.all(Address)
+  end
+
+  @doc """
+  Gets a single address.
+
+  Raises `Ecto.NoResultsError` if the Address does not exist.
+
+  ## Examples
+
+      iex> get_address!(123)
+      %Address{}
+
+      iex> get_address!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_address!(id),
+    do:
+      Repo.get!(Address, id)
+      |> Repo.preload(:addresses)
+
+  def get_address!(%Project{} = project, id), do: get_address!(project.id, id)
+
+  def get_address!(project_id, id),
+    do:
+      from(u in Address, where: u.project_id == ^project_id and u.id == ^id)
+      |> Repo.one!()
+      |> Repo.preload(:addresses)
+
+  @doc """
+  Creates a address.
+
+  ## Examples
+
+      iex> create_address(%{field: value})
+      {:ok, %Address{}}
+
+      iex> create_address(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_address(attrs \\ %{}) do
+    %Address{}
+    |> Address.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a address.
+
+  ## Examples
+
+      iex> update_address(address, %{field: new_value})
+      {:ok, %Address{}}
+
+      iex> update_address(address, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_address(%Address{} = address, attrs) do
+    address
+    |> Address.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a address.
+
+  ## Examples
+
+      iex> delete_address(address)
+      {:ok, %Address{}}
+
+      iex> delete_address(address)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_address(%Address{} = address) do
+    Repo.delete(address)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking address changes.
+
+  ## Examples
+
+      iex> change_address(address)
+      %Ecto.Changeset{data: %Address{}}
+
+  """
+  def change_address(%Address{} = address, attrs \\ %{}) do
+    Address.changeset(address, attrs)
+  end
+
+  def change_invoice_address(changeset, field_name, address) do
+    changeset_address =
+      Ecto.Changeset.get_field(changeset, field_name) ||
+        %Address{}
+
+    changeset_address = change_address(changeset_address)
+
+    changeset_address =
+      [:street, :street_2, :city, :state, :zip, :country]
+      |> Enum.reduce(changeset_address, fn field, acc ->
+        Ecto.Changeset.put_change(acc, field, Map.get(address, field))
+      end)
+
+    changeset
+    |> Ecto.Changeset.put_change(field_name, changeset_address)
+  end
+
+  def get_field(changeset, field_name) do
+    Ecto.Changeset.get_field(changeset, field_name)
+  end
 end

@@ -5,6 +5,8 @@ defmodule Snownix.Projects.Activity do
 
   @primary_key {:id, :binary_id, autogenerate: true}
 
+  alias Snownix.Projects.Activity
+
   schema "activities" do
     field :from, :string
     field :level, :string

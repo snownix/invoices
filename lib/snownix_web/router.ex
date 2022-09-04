@@ -206,14 +206,14 @@ defmodule SnownixWeb.Router do
           live "/:id/show/edit", UserLive.Show, :edit
         end
 
-        # Address
-        scope "/addresses" do
-          live "/", AddressLive.Index, :index
-          live "/new", AddressLive.Index, :new
-          live "/:id/edit", AddressLive.Index, :edit
+        # Invoice Address
+        scope "/invoice_addresses" do
+          live "/", InvoiceAddressLive.Index, :index
+          live "/new", InvoiceAddressLive.Index, :new
+          live "/:id/edit", InvoiceAddressLive.Index, :edit
 
-          live "/:id", AddressLive.Show, :show
-          live "/:id/show/edit", AddressLive.Show, :edit
+          live "/:id", InvoiceAddressLive.Show, :show
+          live "/:id/show/edit", InvoiceAddressLive.Show, :edit
         end
       end
 

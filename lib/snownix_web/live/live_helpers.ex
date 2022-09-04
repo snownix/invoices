@@ -114,6 +114,8 @@ defmodule SnownixWeb.LiveHelpers do
     utc_date |> DateTime.from_naive!("Etc/UTC") |> Calendar.strftime("%a, %B %d %Y %H:%M:%S")
   end
 
+  def money_format(price, "ZMK"), do: "#{price} ZMK"
+
   def money_format(price, currency) do
     if !is_nil(currency) and is_integer(price) do
       Money.to_string(Money.new(price, currency))

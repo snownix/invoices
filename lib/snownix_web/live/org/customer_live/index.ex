@@ -5,7 +5,7 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
   alias Snownix.Pagination
 
   alias Snownix.Customers
-  alias Snownix.Customers.User
+  alias Snownix.Customers.User, as: Customer
 
   @impl true
   def mount(_params, _session, socket) do
@@ -37,7 +37,7 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
         )
 
       :address ->
-        {:noreply, socket |> fetch_one(result.user_id)}
+        {:noreply, socket |> fetch_one(result.customer_id)}
 
       _ ->
         {:noreply, socket}
@@ -143,7 +143,7 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
   defp apply_action(socket, :new) do
     socket
     |> assign(:page_title, "New Customer")
-    |> assign(:customer, %User{})
+    |> assign(:customer, %Customer{})
   end
 
   defp apply_action(socket, :show) do
@@ -223,7 +223,7 @@ defmodule SnownixWeb.Org.CustomerLive.Index do
   defp assign_table_order(socket, order) do
     order = String.to_atom(order)
 
-    case order in Customers.User.__schema__(:fields) do
+    case order in Customer.__schema__(:fields) do
       true ->
         socket
         |> assign(:table, %{

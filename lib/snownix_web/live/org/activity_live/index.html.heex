@@ -29,13 +29,12 @@
                 </summary>
                 <div id={"list-activites-#{date}"} phx-update="append">
                 <%= for {last, row} <- items do %>
-                    <%= render_activity(assigns, row, last) %>
+                    <%= render_activity(@socket, assigns, row, last) %>
                 <% end %>
                 </div>
             </details>
             <% end %>
             <!--  -->
         </div>
-
     </section>
 </main>
