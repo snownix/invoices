@@ -80,3 +80,6 @@ mix phx.server
 ## Docs
 
 - Docs: https://hexdocs.pm/phoenix
+
+
+![Alt](https://repobeats.axiom.co/api/embed/808439c6307a26d0f72760b887e76aea4cbf51e9.svg "Repobeats analytics image")
